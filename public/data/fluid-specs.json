@@ -1295,8 +1295,8 @@
           "fluid": "Engine Oil",
           "engine": "2.0T GDI",
           "volume": "5.07 US qt. (4.8L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
           "note": ""
         },
         {
@@ -1334,7 +1334,7 @@
         {
           "fluid": "Coolant",
           "engine": "2.0T GDI",
-          "volume": "7.92 US qt. (7.5L)",
+          "volume": "7.50 US qt. (7.1L)",
           "spec": "Mix of Anti-Freeze and Water",
           "partNumber": "0023219010",
           "note": ""
@@ -1342,10 +1342,10 @@
         {
           "fluid": "Coolant",
           "engine": "2.4 GDI",
-          "volume": "7.60 US qt. (7.2L)",
+          "volume": "7.92 US qt. (7.5L) or 7.60 US qt. (7.2L)",
           "spec": "Mix of Anti-Freeze and Water",
           "partNumber": "0023219010",
-          "note": ""
+          "note": "The guide lists both volumes for the 2.4 GDI."
         },
         {
           "fluid": "Brake/Clutch Fluid",

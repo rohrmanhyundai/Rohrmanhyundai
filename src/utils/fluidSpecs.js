@@ -19,7 +19,8 @@ Rules:
 - make: usually HYUNDAI. model: e.g. "SONATA", "SONATA HYBRID", "PALISADE". code: the generation code in brackets, e.g. "LFA", "DN8 HEV" ("" if none).
 - year_from / year_to: from the section title (e.g. 2015-2019). If the page itself has no year/model, use the FILE NAME hint below; if still unknown use null / "".
 - fluids: one row per fluid per engine. "fluid" = the lubricant name (Engine Oil, Automatic Transmission Fluid, Coolant, Brake Fluid, Refrigerant, …). "engine" = the engine size / variant for that row ("" if the row is for all engines). Keep any years printed in the engine cell, e.g. "2021 1.6T GDI".
-- When one cell spans several rows (a classification or part number shared by several engines, a volume shared by two engines), REPEAT it on every row it covers.
+- When one cell spans several rows (a classification or part number shared by several engines, a volume shared by two engines), REPEAT it on every row it covers. A value printed once, vertically BETWEEN two engine rows (centred on the line between them), belongs to BOTH rows — e.g. "5W-30" printed between the 1.6T and 2.0T rows applies to 1.6T and 2.0T, and the next value down starts with the following engine. Never shift values down a row to fill gaps.
+- When a cell holds two values for one engine (e.g. two volumes stacked for the same engine), keep both in that one row joined with " or ".
 - When a row lists two choices (e.g. DOT 3 and DOT 4 with different part numbers), make two rows.
 - volume: exactly as printed incl. units and metric in brackets, e.g. "5.07 US qt (4.8 L)". spec: the classification / specification text. part_number: the OEM part number, or the printed text such as "Refer to the Hyundai Lubricants Program". note: any footnote that changes what to use (keep it short), else "".
 - Copy values exactly; do not invent anything. Skip marketing text, warnings and table headers.`;
