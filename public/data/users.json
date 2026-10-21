@@ -282,7 +282,12 @@
       "lastName": "",
       "email": "devin.drake@rohrmanauto.com",
       "managementAccess": false,
-      "pageOverrides": {}
+      "pageOverrides": {},
+      "passwordReset": {
+        "hash": "a251ae6df240f3fa0838bc83fe0d0424836275cde78e9ebf2ffdfe523c334a4a",
+        "expires": "2026-10-21T16:28:01.743Z",
+        "requestedAt": "2026-10-21T15:28:01.743Z"
+      }
     },
     {
       "username": "Cory",
