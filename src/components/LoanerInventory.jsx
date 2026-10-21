@@ -23,6 +23,8 @@ const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
 const btn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(255,255,255,.04)', border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 9, padding: '7px 13px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' });
 const label = { fontSize: 12, fontWeight: 800, color: '#94a3b8' };
+// Fleet card action buttons: equal size, centred, one line.
+const ACT = { fontSize: 14, padding: '10px 8px', width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap' };
 const notesStyle = { ...inputStyle, fontWeight: 600, fontSize: 14, lineHeight: 1.45, resize: 'vertical' };
 
 // Whole days between a YYYY-MM-DD date and today (local), or null.
@@ -382,18 +384,23 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                       {v.notesAt && <><br />Notes by {v.notesBy} · {fmtWhen(v.notesAt)}</>}
                     </div>
                     {!editing && (
-                      <div style={{ display: 'flex', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
-                        <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
-                        <button disabled={busy} title="Check-in / check-out pictures and videos" style={{ ...btn('192,132,252'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setMediaFor(v)}>📸 Media ({sessionsOf(v).length})</button>
-                        <button disabled={busy} title="Spin the car in 3D and click a panel to report damage" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px', position: 'relative' }} onClick={() => setDamageFor(v)}>
+                      <>
+                      {/* Four everyday actions in an even 2×2; Remove sits apart, quieter. */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 2 }}>
+                        <button disabled={busy} style={{ ...btn('110,231,249'), ...ACT }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
+                        <button disabled={busy} title="Check-in / check-out pictures and videos" style={{ ...btn('192,132,252'), ...ACT }} onClick={() => setMediaFor(v)}>📸 Media ({sessionsOf(v).length})</button>
+                        <button disabled={busy} title="Spin the car in 3D and click a panel to report damage" style={{ ...btn('248,113,113'), ...ACT, position: 'relative' }} onClick={() => setDamageFor(v)}>
                           🚨 Report damage
                           {toSort(v) > 0 && <span title={`${toSort(v)} damage picture${toSort(v) === 1 ? '' : 's'} from the phone to sort`} style={{ position: 'absolute', top: -8, left: -8, height: 20, padding: '0 6px', borderRadius: 999, background: '#f59e0b', color: '#1a1206', fontSize: 11.5, fontWeight: 900, lineHeight: '20px', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(245,158,11,.7)' }}>📸{toSort(v)}</span>}
                           {openDamage(v) > 0 && <span style={{ position: 'absolute', top: -8, right: -8, minWidth: 20, height: 20, padding: '0 5px', boxSizing: 'border-box', borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 11.5, fontWeight: 900, lineHeight: '20px', textAlign: 'center', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(239,68,68,.7)' }}>{openDamage(v)}</span>}
                         </button>
-                        {onMaintenance && <button disabled={busy} title="New maintenance request for this loaner" style={{ ...btn('251,146,60'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => onMaintenance(v)}>🔧 Maintenance</button>}
-                        <div style={{ flex: 1 }} />
-                        <button disabled={busy} title="Take out of the fleet" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => remove(v)}>🗑 Remove</button>
+                        {onMaintenance && <button disabled={busy} title="New maintenance request for this loaner" style={{ ...btn('251,146,60'), ...ACT }} onClick={() => onMaintenance(v)}>🔧 Maintenance</button>}
                       </div>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid rgba(148,163,184,.12)', paddingTop: 8 }}>
+                        <button disabled={busy} title="Take out of the fleet" onClick={() => remove(v)}
+                          style={{ background: 'none', border: 'none', color: '#f87171', opacity: 0.75, fontSize: 12.5, fontWeight: 800, cursor: 'pointer', padding: '2px 4px', fontFamily: 'inherit' }}>🗑 Remove from fleet</button>
+                      </div>
+                      </>
                     )}
                   </div>
                 );
