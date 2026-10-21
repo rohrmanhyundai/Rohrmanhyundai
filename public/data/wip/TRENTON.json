@@ -16,22 +16,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "mvfk07ck3ihz",
-    "ro": "781632",
-    "roDate": "2026-10-19",
-    "vehicle": "2022 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES - rear sensor error",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "MATTHEW CLARK"
-  },
-  {
     "id": "mvbgtmlfodn6",
     "ro": "781615",
     "roDate": "2026-10-16",
