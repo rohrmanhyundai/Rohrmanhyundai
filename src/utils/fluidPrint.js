@@ -1,4 +1,4 @@
-import { engineYearOk, engineMatches, isEngineOil } from './fluidSpecs';
+import { engineYearOk, engineMatches, isEngineOil, filterLines } from './fluidSpecs';
 
 // ── Oil Capacity → 🖨 Print / Save PDF ────────────────────────────────────────
 // One vehicle's fluid sheet as a clean, light, print-first page, printed from
@@ -39,7 +39,7 @@ th { text-align: left; font-size: 10px; font-weight: 800; letter-spacing: .1em; 
 td { padding: 8px 10px; border-top: 1px solid #edf1f6; vertical-align: top; }
 tr:nth-child(even) td { background: #fafbfd; }
 tr { break-inside: avoid; }
-td.fluid { font-weight: 700; } td.vol { font-weight: 800; white-space: nowrap; } td.eng { color: #475569; white-space: nowrap; } td.eng.mine { color: #15803d; font-weight: 800; }
+td.fluid { font-weight: 700; } tr.filt td { background: #fffbeb !important; } tr.filt td:last-child { font-weight: 800; color: #0f172a; } td.vol { font-weight: 800; white-space: nowrap; } td.eng { color: #475569; white-space: nowrap; } td.eng.mine { color: #15803d; font-weight: 800; }
 .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
 .tnote { font-size: 11px; color: #92400e; font-weight: 500; margin-top: 2px; }
 .foot { margin-top: 18px; padding-top: 10px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; gap: 12px; font-size: 10.5px; color: #64748b; }
@@ -47,7 +47,7 @@ td.fluid { font-weight: 700; } td.vol { font-weight: 800; white-space: nowrap; }
 
 export function fluidSheetHtml(v, { year, vin, decoded, by } = {}) {
   const rows = v.fluids.filter(f => engineYearOk(f.engine, year));
-  const oil = rows.filter(isEngineOil), other = rows.filter(f => !isEngineOil(f));
+  const oil = rows.filter(isEngineOil), other = [...filterLines(oil), ...rows.filter(f => !isEngineOil(f))];
   const disp = decoded && decoded.displacement;
   const name = `${year || v.yearFrom} ${v.make ? v.make.charAt(0) + v.make.slice(1).toLowerCase() : ''} ${v.model.split(' ').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ')}`.replace(/\s+/g, ' ').trim();
   const now = new Date();
@@ -62,7 +62,7 @@ export function fluidSheetHtml(v, { year, vin, decoded, by } = {}) {
       ${f.note ? `<div class="note">${esc(f.note)}</div>` : ''}
     </div>`;
   }).join('');
-  const table = other.map(f => `<tr>
+  const table = other.map(f => `<tr${f.isFilter ? ' class="filt"' : ''}>
       <td class="fluid">${esc(f.fluid)}${f.note ? `<div class="tnote">${esc(f.note)}</div>` : ''}</td>
       <td class="eng${engineMatches(f.engine, disp) ? ' mine' : ''}">${esc(f.engine || 'All')}</td>
       <td class="vol">${esc(f.volume)}</td>

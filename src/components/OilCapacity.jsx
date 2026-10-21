@@ -3,7 +3,7 @@ import * as github from '../utils/github';
 import { decodeVin, validateVin } from '../utils/vinLookup';
 import { loadPdfJs } from '../utils/pdfText';
 import { printFluidSheet } from '../utils/fluidPrint';
-import { carryFilters, findOnFile, compareToOnFile, readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
+import { filterLines, carryFilters, findOnFile, compareToOnFile, readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
 
 // ── 🛢 Oil Capacity ───────────────────────────────────────────────────────────
 // Engine oil (and every other fluid) capacity, spec and part number — by VIN
@@ -143,7 +143,7 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
   // ── Look-up card for one vehicle ──
   const vehicleCard = (v, i) => {
     const rows = v.fluids.filter(f => engineYearOk(f.engine, lookupYear));
-    const oil = rows.filter(isEngineOil), other = rows.filter(f => !isEngineOil(f));
+    const oil = rows.filter(isEngineOil), other = [...filterLines(oil), ...rows.filter(f => !isEngineOil(f))];
     const disp = fromVin ? decoded.displacement : null;
     const top = fromVin && results.length > 1 && i === 0 && v.score > results[1].score;
     return (
@@ -187,12 +187,12 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
               <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th></tr></thead>
               <tbody>
                 {other.map((f, j) => (
-                  <tr key={j}>
-                    <td style={{ ...td, fontWeight: 800 }}>{f.fluid}{f.note && <div style={{ fontSize: 11.5, color: '#fde68a', fontWeight: 600, marginTop: 2 }}>📝 {f.note}</div>}</td>
+                  <tr key={j} style={f.isFilter ? { background: 'rgba(251,191,36,.06)' } : undefined}>
+                    <td style={{ ...td, fontWeight: 800, color: f.isFilter ? '#fcd34d' : td.color }}>{f.isFilter ? '🔧 ' : ''}{f.fluid}{f.note && <div style={{ fontSize: 11.5, color: '#fde68a', fontWeight: 600, marginTop: 2 }}>📝 {f.note}</div>}</td>
                     <td style={{ ...td, color: engineMatches(f.engine, disp) ? '#86efac' : '#94a3b8' }}>{f.engine || 'All'}</td>
-                    <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>{f.volume}</td>
-                    <td style={td}>{f.spec}</td>
-                    <td style={{ ...td, fontFamily: /^\d/.test(f.partNumber) ? 'ui-monospace, Menlo, monospace' : 'inherit', fontSize: 12.5 }}>{f.partNumber}</td>
+                    <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>{f.isFilter ? <span style={{ color: '#475569' }}>—</span> : f.volume}</td>
+                    <td style={td}>{f.isFilter ? <span style={{ color: '#475569' }}>—</span> : f.spec}</td>
+                    <td style={{ ...td, fontFamily: /^\d/.test(f.partNumber) ? 'ui-monospace, Menlo, monospace' : 'inherit', fontSize: f.isFilter ? 14 : 12.5, fontWeight: f.isFilter ? 900 : 400, color: f.isFilter ? '#fff' : td.color }}>{f.partNumber}</td>
                   </tr>
                 ))}
               </tbody>

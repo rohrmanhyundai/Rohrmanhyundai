@@ -223,3 +223,5 @@ export function yearsIn(vehicles) {
 }
 export const modelsFor = (vehicles, year) => [...new Set(vehicles.filter(v => coversYear(v, year)).map(v => v.model))].sort();
 export const isEngineOil = (f) => /ENGINE OIL/i.test(f.fluid);
+// Hand-entered oil filters as their own lines for the fluids table (one per engine that has one).
+export const filterLines = (oilRows) => oilRows.filter(f => f.filter).map(f => ({ fluid: 'Oil Filter', engine: f.engine, volume: '', spec: '', partNumber: f.filter, note: '', isFilter: true }));
