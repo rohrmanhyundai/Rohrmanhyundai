@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-21T19:34:42.474Z",
+    "type": "page",
+    "label": "charge-account-list"
+  },
+  {
     "at": "2026-10-21T19:29:43.086Z",
     "type": "action",
     "label": "login"
