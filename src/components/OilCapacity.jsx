@@ -249,9 +249,12 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
             </label>
           ))}
         </div>
+        {d.fluids.some(isEngineOil) && (
+          <div style={{ marginTop: 10, fontSize: 12.5, fontWeight: 800, color: '#fcd34d' }}>🔧 Oil filter part numbers go in the last column, on the Engine Oil line{d.fluids.filter(isEngineOil).length > 1 ? 's' : ''} — typed by hand.</div>
+        )}
         <div style={{ overflowX: 'auto', marginTop: 12 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto', minWidth: 760 }}>
-            <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={th} title="Typed by hand — engine oil lines only">Oil filter</th><th style={th} /></tr></thead>
+            <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={{ ...th, color: '#fcd34d' }} title="Typed by hand — engine oil lines only">🔧 Oil filter P/N</th><th style={th} /></tr></thead>
             <tbody>
               {d.fluids.map((f, j) => {
                 const ch = cmp && cmp.changed[j];
@@ -268,8 +271,10 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                   ))}
                   <td style={{ ...td, padding: 4 }}>
                     {isEngineOil(f)
-                      ? <input value={f.filter || ''} onChange={setRow(j, 'filter')} disabled={busy} placeholder="P/N (optional)"
-                          style={{ ...cell, ...(f.filter ? { border: '1px solid rgba(74,222,128,.6)' } : null) }} />
+                      ? <input value={f.filter || ''} onChange={setRow(j, 'filter')} disabled={busy} placeholder="＋ Type oil filter P/N"
+                          style={{ ...cell, minWidth: 150, fontWeight: 800, ...(f.filter
+                            ? { border: '1px solid rgba(74,222,128,.7)', background: 'rgba(74,222,128,.08)' }
+                            : { border: '1px dashed rgba(251,191,36,.75)', background: 'rgba(251,191,36,.07)' }) }} />
                       : <span style={{ color: '#475569', fontSize: 12, paddingLeft: 8 }}>—</span>}
                   </td>
                   <td style={{ ...td, padding: 4 }}>
