@@ -117,5 +117,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792608896333
+  },
+  {
+    "id": "gm-mviibiz8yxv3",
+    "from": "KAI",
+    "to": [
+      "SHAWN"
+    ],
+    "text": "📷 Sent a picture",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mviibiax-h7c495.png",
+        "name": "Screenshot 2026-10-21 at 3.29.53 PM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792611024596
   }
 ]
