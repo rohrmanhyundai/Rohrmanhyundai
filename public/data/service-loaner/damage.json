@@ -13,6 +13,20 @@
       "status": "open",
       "reportedAt": "2026-10-21T00:42:15.830Z",
       "reportedBy": "SHAWN"
+    },
+    {
+      "id": "ld-mvhe3gz9d0nv",
+      "vehicleId": "li-mvbddmwhj1xe",
+      "vin": "KM8HDCA39TU393247",
+      "stockNo": "LHY2733",
+      "part": "windshield",
+      "partLabel": "Windshield",
+      "type": "Crack",
+      "description": "NOT DRIVEABLE",
+      "photos": [],
+      "status": "open",
+      "reportedAt": "2026-10-21T00:44:24.117Z",
+      "reportedBy": "SHAWN"
     }
   ]
 }
