@@ -1,37 +1,32 @@
 [
   {
-    "at": "2026-07-28T22:05:16.778Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-28T21:14:24.151Z",
+    "at": "2026-10-21T15:34:12.421Z",
     "type": "page",
-    "label": "aftermarket-warranty"
+    "label": "charge-account-list"
   },
   {
-    "at": "2026-07-28T21:13:23.961Z",
+    "at": "2026-10-21T15:33:50.214Z",
     "type": "page",
-    "label": "aftermarket-warranty"
+    "label": "oil-capacity"
   },
   {
-    "at": "2026-07-28T21:13:16.299Z",
+    "at": "2026-10-21T15:33:38.888Z",
+    "type": "page",
+    "label": "battery-guide"
+  },
+  {
+    "at": "2026-10-21T15:33:37.460Z",
+    "type": "page",
+    "label": "parts-hub"
+  },
+  {
+    "at": "2026-10-21T15:33:24.428Z",
+    "type": "page",
+    "label": "charge-account-list"
+  },
+  {
+    "at": "2026-10-21T15:33:12.939Z",
     "type": "action",
     "label": "login"
-  },
-  {
-    "at": "2026-07-17T13:36:43.867Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-16T20:53:03.298Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-16T20:53:03.296Z",
-    "type": "page",
-    "label": "hot-repairs"
   }
 ]
