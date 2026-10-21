@@ -27,7 +27,7 @@ const LINKS = {
   'rentals-hub': ['service-loaner', 'loaner-media', 'shop-appointments', 'work-schedule', 'work-in-progress', 'white-paint', 'aftermarket-warranty',
     'document-library', 'tire-quote'],
   'warranty-hub': ['aftermarket-warranty', 'at-diag-worksheet', 'document-library', 'hot-repairs', 'ntt-att-worksheet',
-    'original-owner', 'registration-uploads', 'service-loaner', 'white-paint', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
+    'original-owner', 'registration-uploads', 'service-loaner', 'white-paint', 'oil-guard', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
 };
 
 // Pages behind a page-access box (Role Setup / User Management).
