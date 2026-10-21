@@ -116,6 +116,21 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   // Badge on the Loaner Maintenance tab: loaners with an open request or due by
   // mileage. Re-read on every tab switch so it follows what was just done there.
   const [maint, setMaint] = useState(null);
+  // Open damage reports (🚨 Report damage on Loaner Inventory) — flagged on the
+  // contract row of the loaner they're on.
+  const [damage, setDamage] = useState([]);
+  useEffect(() => { ((io || github).loadLoanerDamage)().then(d => setDamage(d.reports || [])).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Still out: any open damage on that car. Returned: damage reported during
+  // that loan (out → up to 3 days after it came back), repaired or not.
+  const damageOn = (c) => {
+    const vin = String(c.vin || '').trim().toUpperCase();
+    if (!vin) return [];
+    const onCar = damage.filter(r => String(r.vin || '').toUpperCase() === vin);
+    if (!c.completedUrl) return onCar.filter(r => r.status !== 'repaired');
+    const from = c.dateOut ? new Date(`${c.dateOut}T00:00:00`).getTime() : 0;
+    const to = new Date(c.completedAt || 0).getTime() + 3 * 86400000;
+    return onCar.filter(r => { const t = new Date(r.reportedAt).getTime(); return t >= from && t <= to; });
+  };
   // Badge on Loaner Request: requests for today or later (same re-read rule).
   const [loanerReqs, setLoanerReqs] = useState([]);
   useEffect(() => { ((io || github).loadLoanerRequests)().then(d => setLoanerReqs(d.requests || [])).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -438,7 +453,20 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                             </td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>
-                              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+                                {(() => {
+                                  const dmg = damageOn(c);
+                                  if (!dmg.length) return null;
+                                  return (
+                                    <div title={dmg.map(r => `${r.partLabel} — ${r.type}${r.description ? `: ${r.description}` : ''}`).join('\n')}
+                                      style={{ padding: '6px 12px', borderRadius: 9, fontSize: 12.5, fontWeight: 900, color: '#fed7aa', background: 'rgba(249,115,22,.16)', border: '1px solid rgba(249,115,22,.65)', boxShadow: '0 0 10px rgba(249,115,22,.3)', maxWidth: 300, whiteSpace: 'normal', textAlign: 'right' }}>
+                                      🚨 Damage reported{dmg.length > 1 ? ` (${dmg.length})` : ''}
+                                      <div style={{ fontSize: 11.5, fontWeight: 700, color: '#fdba74', marginTop: 2 }}>
+                                        {dmg.slice(0, 2).map(r => `${r.partLabel} · ${r.type}`).join(' / ')}{dmg.length > 2 ? ` +${dmg.length - 2} more` : ''}
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
                                 {!(c.completedUrl || c.fileUrl) && (
                                   <>
                                     {/* Warning only — everything else is inside the contract (click the row). */}
