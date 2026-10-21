@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:20:20.822Z",
+  "updatedAt": "2026-10-21T15:58:26.690Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -951,133 +951,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7xny3kyun"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "SANTA FE SPORT",
-      "code": "DMA",
-      "yearFrom": 2013,
-      "yearTo": 2018,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "Theta II 2.0T GDI",
-          "volume": "5.07 US qt. (4.8L)",
-          "spec": "5W-30 Conventional",
-          "partNumber": "0023319004",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "Theta II 2.4T GDI",
-          "volume": "5.07 US qt. (4.8L)",
-          "spec": "5W-30 Conventional",
-          "partNumber": "0023319004",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "Theta II 2.0T GDI",
-          "volume": "8.24 US qt. (7.8L)",
-          "spec": "ATF SPIV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "Theta II 2.4T GDI",
-          "volume": "7.50 US qt. (7.1L)",
-          "spec": "ATF SPIV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Theta II 2.0T GDI",
-          "volume": "10.24 US qt. (9.7L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Theta II 2.4T GDI",
-          "volume": "7.50-7.51 US qt. (7.1 - 7.4L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "0.74-0.85 US qt. (0.7-0.8L)",
-          "spec": "DOT 3",
-          "partNumber": "0023219033",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "0.74-0.85 US qt. (0.7-0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Rear Differential Oil (AWD)",
-          "engine": "",
-          "volume": "0.56 US qt. (0.53L)",
-          "spec": "Hypoid Gear Oil SAE 75W/90",
-          "partNumber": "0023219037",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (AWD)",
-          "engine": "",
-          "volume": "0.63 US qt. (0.6L)",
-          "spec": "Hypoid Gear Oil SAE 75W/90",
-          "partNumber": "0023219037",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "Front A/Con",
-          "volume": "600 ± 25g",
-          "spec": "R-134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "Front + Rear A/Con",
-          "volume": "750 ± 25g",
-          "spec": "R-134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "Front A/Con",
-          "volume": "120 ± 10g",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "Front + Rear A/Con",
-          "volume": "210 ± 10G",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "santa fe.pdf",
-        "uploadedAt": "2026-10-21T14:40:39.584Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7yza3u0wk"
     },
     {
       "make": "HYUNDAI",
@@ -4288,6 +4161,135 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi83z0krbo5"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "SANTA FE SPORT",
+      "code": "DMA",
+      "yearFrom": 2013,
+      "yearTo": 2018,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "Theta II 2.0T GDI",
+          "volume": "5.07 US qt. (4.8L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": "",
+          "filter": "26300-35505"
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "Theta II 2.4T GDI",
+          "volume": "5.07 US qt. (4.8L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": "",
+          "filter": "26300-35505"
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "Theta II 2.0T GDI",
+          "volume": "8.24 US qt. (7.8L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "Theta II 2.4T GDI",
+          "volume": "7.50 US qt. (7.1L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Theta II 2.0T GDI",
+          "volume": "10.24 US qt. (9.7L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Theta II 2.4T GDI",
+          "volume": "7.50-7.51 US qt. (7.1 - 7.4L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt. (0.7-0.8L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt. (0.7-0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (AWD)",
+          "engine": "",
+          "volume": "0.56 US qt. (0.53L)",
+          "spec": "Hypoid Gear Oil SAE 75W/90",
+          "partNumber": "0023219037",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "",
+          "volume": "0.63 US qt. (0.6L)",
+          "spec": "Hypoid Gear Oil SAE 75W/90",
+          "partNumber": "0023219037",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "Front A/Con",
+          "volume": "600 ± 25g",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "Front + Rear A/Con",
+          "volume": "750 ± 25g",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "Front A/Con",
+          "volume": "120 ± 10g",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "Front + Rear A/Con",
+          "volume": "210 ± 10G",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "santa fe.pdf",
+        "uploadedAt": "2026-10-21T14:40:39.584Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7yza3u0wk"
     }
   ]
 }
