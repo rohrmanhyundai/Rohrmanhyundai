@@ -17,7 +17,7 @@ import QuickMediaSend from './QuickMediaSend';
 // the session lands in data/service-loaner/media.json and shows on that
 // loaner's card under 📸 Media.
 // Damage: picking a loaner with open damage (🚨 Report damage on the website)
-// pops a warning listing it. After Send it asks "Was any damage found?" — Yes
+// pops a warning listing it. After a check-out Send it asks "Was any damage found?" — Yes
 // opens a camera screen whose files land on that loaner's damage page as media
 // to sort (damage.json `pending`), where they're matched to the damaged part.
 
@@ -150,7 +150,9 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
       };
       await updateLoanerMedia(cur => ({ ...cur, sessions: [...cur.sessions, rec] }), `${kind === 'in' ? 'check in' : 'check out'} ${rec.stockNo}`);
       files.forEach(f => URL.revokeObjectURL(f.preview));
-      setAskDamage({ vehicle, kind, customer: `${rec.customerFirst} ${rec.customerLast}`.trim(), done: { stockNo: rec.stockNo, kind, count: uploaded.length } });
+      // "Was any damage found?" is asked on check-out only.
+      if (kind === 'out') setAskDamage({ vehicle, kind, customer: `${rec.customerFirst} ${rec.customerLast}`.trim(), done: { stockNo: rec.stockNo, kind, count: uploaded.length } });
+      else setDone({ stockNo: rec.stockNo, kind, count: uploaded.length });
       setFiles([]); setStock(''); setKind(''); setFirst(''); setLast('');
     } catch (err) {
       setError(`${err.message || 'Save failed.'} Tap Send again.`);
