@@ -86,6 +86,26 @@
           "size": 2090786
         }
       ]
+    },
+    {
+      "id": "mvhf77m6xy0a",
+      "vehicleId": "li-mvbdf7tb8cef",
+      "stockNo": "LHY2517",
+      "vin": "5NTJCDDE8TH161729",
+      "kind": "out",
+      "customerFirst": "TEST",
+      "customerLast": "TEST",
+      "at": "2026-10-21T01:15:19.330Z",
+      "by": "SHAWN",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/LHY2517/mvhf77m6xy0a/mvhf70dd6lcg.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2595562
+        }
+      ]
     }
   ]
 }
