@@ -116,9 +116,10 @@ const norm = (t) => String(t || '').toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').r
 export const coversYear = (v, y) => y >= v.yearFrom && y <= (v.yearTo || v.yearFrom);
 
 // An engine cell can carry its own years: "2021 1.6T GDI", "2022-2023 2.5 GDI",
-// "2020 Model SmartStream G 2.5 GDI". A row for other years is hidden.
+// "2020 Model SmartStream G 2.5 GDI", "2020-2021MY". A row for other years is hidden.
+const ENGINE_YEARS = /^\s*(\d{4})(?:\s*[-–]\s*(\d{4}))?\s*(?:MY|Model(?:\s+Year)?)?(?![0-9])/i;
 export function engineYearOk(engine, year) {
-  const m = String(engine || '').match(/^\s*(\d{4})(?:\s*[-–]\s*(\d{4}))?(?:\s+Model)?\b/i);
+  const m = String(engine || '').match(ENGINE_YEARS);
   if (!m || !year) return true;
   const from = Number(m[1]), to = m[2] ? Number(m[2]) : from;
   return year >= from && year <= to;
@@ -128,7 +129,7 @@ export function engineYearOk(engine, year) {
 export function engineMatches(engine, displacement) {
   if (!displacement) return false;
   const d = Number(displacement).toFixed(1);
-  return new RegExp(`(^|[^0-9.])${d.replace('.', '\\.')}(?![0-9])`).test(String(engine || '').replace(/^\s*\d{4}(\s*[-–]\s*\d{4})?(\s+Model)?\s+/i, ''));
+  return new RegExp(`(^|[^0-9.])${d.replace('.', '\\.')}(?![0-9])`).test(String(engine || '').replace(ENGINE_YEARS, ''));
 }
 
 // Vehicles for a VIN (year + model), hybrids steered by the decoder's kind.
