@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-21T18:17:45.981Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-10-21T13:24:01.032Z",
     "type": "page",
     "label": "dashboard"
