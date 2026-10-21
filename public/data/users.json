@@ -280,19 +280,25 @@
         "oilCapacity": true,
         "atDiagWorksheet": true,
         "usedCarHub": true,
-        "mobileWorkSchedule": true,
+        "mobileWorkSchedule": false,
         "mobileTireWarranty": true,
-        "mobileAdditionalTime": true,
-        "mobileRegistrationUpload": true,
-        "mobileMediaUpload": true,
-        "mobileLoanerMedia": true
+        "mobileAdditionalTime": false,
+        "mobileRegistrationUpload": false,
+        "mobileMediaUpload": false,
+        "mobileLoanerMedia": false
       },
       "chatAccess": true,
       "techChatAccess": true,
       "lastName": "",
       "email": "devin.drake@rohrmanauto.com",
       "managementAccess": false,
-      "pageOverrides": {},
+      "pageOverrides": {
+        "mobileWorkSchedule": false,
+        "mobileAdditionalTime": false,
+        "mobileMediaUpload": false,
+        "mobileRegistrationUpload": false,
+        "mobileLoanerMedia": false
+      },
       "pwSalt": "554b39ef5a76de16d017d0b55364d516",
       "hidden": false,
       "passwordEnc": {
