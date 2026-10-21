@@ -22,7 +22,7 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const TOOLBAR_PATH = 'data/advisor-toolbar.json';
 const TOOL_LABELS = {
   completedTime: '⏰ Completed Time', hotRepairs: '🔧 Recalls/TSB Bulletins', documentLibrary: '📁 Document Library',
-  chargeList: '💳 Charge List', battery: '🔋 Battery', servicePricing: '💲 Service Pricing Menu', deferredService: '🔧 Deferred Service', oilGuard: '🛢 Oil Guard',
+  chargeList: '💳 Charge List', servicePricing: '💲 Service Pricing Menu', deferredService: '🔧 Deferred Service', oilGuard: '🛢 Oil Guard',
   serviceLoaner: '🚙 Service Loaner', whitePaint: '🎨 White Paint',
   workSchedule: '📅 Work Schedule', dailyWrench: '🔧 The Daily Wrench', aftermarketWarranty: '🛡 After Market Warranty/Tire Warranty',
   originalOwner: '📋 Original Owner', afterCall: '📞 After Call Reviews', surveyReports: '📊 Survey Reports',
@@ -53,7 +53,6 @@ const TOOL_CARDS = {
   hotRepairs:          { icon: '🔧', label: 'Recalls/TSB Bulletins',   desc: 'Recall and TSB bulletin releases',              ...card('248,113,113', '239,68,68', '#fca5a5') },
   documentLibrary:     { icon: '📁', label: 'Document Library',        desc: 'Forms and reference documents',                 ...card('110,231,249', '61,214,195', '#6ee7f9') },
   chargeList:          { icon: '💳', label: 'Charge List',             desc: 'Approved charge accounts and tax-exempt status', ...card('99,102,241', '79,70,229', '#a5b4fc') },
-  battery:             { icon: '🔋', label: 'Battery',                 desc: 'Battery part number by VIN or year and model',   ...card('74,222,128', '34,197,94', '#86efac') },
   servicePricing:      { icon: '💲', label: 'Service Pricing Menu',    desc: 'Services, prices and packages',                 ...card('52,211,153', '16,185,129', '#6ee7b7') },
   deferredService:     { icon: '🔧', label: 'Deferred Service',        desc: 'Declined work to follow up and book',           ...card('251,146,60', '234,88,12', '#fdba74') },
   oilGuard:            { icon: '🛢', label: 'Oil Guard',               desc: 'Prepaid oil changes left — look up by VIN',     ...card('251,191,36', '217,119,6', '#fcd34d') },
@@ -376,7 +375,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, onOilGuard, onServiceLoaner, onWhitePaint, onDailyWrench, onBattery, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, onOilGuard, onServiceLoaner, onWhitePaint, onDailyWrench, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -762,7 +761,6 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && { key: 'hotRepairs' },
               canSee(userPages, currentRole, 'documentLibrary') && { key: 'documentLibrary' },
               canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && { key: 'chargeList' },
-              onBattery && { key: 'battery' },
               canSee(userPages, currentRole, 'servicePricing') && onServicePricing && { key: 'servicePricing' },
               onDeferredService && { key: 'deferredService' },
               onOilGuard && { key: 'oilGuard' },
@@ -802,11 +800,6 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 case 'chargeList': return (
                   <button onClick={onChargeList} style={{ background: 'linear-gradient(180deg,rgba(251,113,133,.25),rgba(244,63,94,.18))', borderColor: 'rgba(251,113,133,.35)' }}>
                     💳 Charge List
-                  </button>
-                );
-                case 'battery': return (
-                  <button onClick={onBattery} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.25),rgba(34,197,94,.18))', borderColor: 'rgba(74,222,128,.35)' }}>
-                    🔋 Battery
                   </button>
                 );
                 case 'servicePricing': return (
@@ -987,7 +980,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   // button; the live badges ride along as a corner chip.
   const toolClick = {
     completedTime: () => setShowCompletedTime(true), hotRepairs: onHotRepairs, documentLibrary: onDocumentLibrary,
-    chargeList: onChargeList, battery: onBattery, servicePricing: onServicePricing, deferredService: onDeferredService, oilGuard: onOilGuard, serviceLoaner: onServiceLoaner, whitePaint: onWhitePaint, workSchedule: onWorkSchedule,
+    chargeList: onChargeList, servicePricing: onServicePricing, deferredService: onDeferredService, oilGuard: onOilGuard, serviceLoaner: onServiceLoaner, whitePaint: onWhitePaint, workSchedule: onWorkSchedule,
     dailyWrench: onDailyWrench ? () => { try { localStorage.setItem('dailyWrenchSeen', new Date().toDateString()); } catch {} onDailyWrench(); } : undefined,
     aftermarketWarranty: onAftermarketWarranty, originalOwner: onOriginalOwner, afterCall: onAfterCall, surveyReports: onSurveyReports,
     myReports: onMyReports, cashDash: onCashDash, bigMoneyLof: onBigMoneyLof, goalsForecasting: onGoalsForecasting,

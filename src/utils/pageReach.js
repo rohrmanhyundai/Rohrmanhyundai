@@ -15,7 +15,7 @@ const LINKS = {
   dashboard: ['additional-time-menu', 'media-upload', 'registration-upload', 'tire-warranty', 'used-car-hub'],
   'advisor-calendar': ['advisor-day', 'advisor-goals', 'aftermarket-warranty', 'big-money-lof', 'cash-dash', 'charge-account-list',
     'daily-wrench', 'deferred-service', 'oil-guard', 'service-loaner', 'white-paint', 'document-library', 'hot-repairs', 'live-pay-hub', 'original-owner', 'performance-report',
-    'ro-upload', 'service-pricing', 'tire-quote', 'work-in-progress', 'survey-reports', 'shop-appointments', 'after-call', 'battery-guide'],
+    'ro-upload', 'service-pricing', 'tire-quote', 'work-in-progress', 'survey-reports', 'shop-appointments', 'after-call'],
   'advisor-goals': ['live-pay'],
   'live-pay-hub': ['live-pay', 'tech-live-pay'],
   'tech-resources': ['additional-time-review', 'at-diag-worksheet', 'cash-dash', 'document-library', 'hot-repairs', 'live-pay-hub',

@@ -1980,7 +1980,6 @@ export default function App() {
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
-        onBattery={canAccess('batteryGuide') ? () => goTo('battery-guide', 'advisor-calendar') : undefined}
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
         onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}
