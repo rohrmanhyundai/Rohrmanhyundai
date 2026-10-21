@@ -76,5 +76,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mvile5xz13xy",
+    "ro": "781680",
+    "roDate": "2026-10-21",
+    "vehicle": "2022 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES GAS DOOR NOT OPENING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
