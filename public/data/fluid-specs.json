@@ -52,7 +52,7 @@
           "fluid": "Transfer case oil (4WD)",
           "engine": "",
           "volume": "0.74 US qt. (0.7 ℓ)",
-          "spec": "",
+          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
           "partNumber": "",
           "note": ""
         },
@@ -1467,7 +1467,7 @@
           "note": ""
         },
         {
-          "fluid": "Dual Clutch Transmission Fluid",
+          "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
           "engine": "SmartStream G 2.5T-GDI",
           "volume": "3.49–3.59 US qt. (3.3–3.4 L)",
           "spec": "WDCTF HD G",
@@ -1475,7 +1475,7 @@
           "note": ""
         },
         {
-          "fluid": "Dual Clutch Transmission Fluid",
+          "fluid": "Dual Clutch Transmission Fluid — Control Oil",
           "engine": "SmartStream G 2.5T-GDI",
           "volume": "2.59–2.64 US qt. (2.45–2.5 L)",
           "spec": "WDCTF HD H",
@@ -1673,7 +1673,7 @@
           "note": ""
         },
         {
-          "fluid": "Dual Clutch Transmission Fluid",
+          "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
           "engine": "2022-2023 2.5 T-GDI",
           "volume": "3.49~3.59 U.S.qt (3.3~3.4 ℓ)",
           "spec": "GS WDCTF HD G (GS CALTEX)",
@@ -1681,7 +1681,7 @@
           "note": ""
         },
         {
-          "fluid": "Dual Clutch Transmission Fluid",
+          "fluid": "Dual Clutch Transmission Fluid — Control Oil",
           "engine": "2022-2023 2.5 T-GDI",
           "volume": "2.59~2.64 U.S.qt (2.45~2.5 ℓ)",
           "spec": "GS WDCTF HD H (GS CALTEX)",
@@ -2324,7 +2324,7 @@
           "note": ""
         },
         {
-          "fluid": "Dual Clutch Transmission Fluid",
+          "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
           "engine": "2.5 T-GDI",
           "volume": "3.49–3.59 US qt. (3.3–3.4L)",
           "spec": "Wet DCTF HD G 70W",
@@ -2332,7 +2332,7 @@
           "note": ""
         },
         {
-          "fluid": "Dual Clutch Transmission Fluid",
+          "fluid": "Dual Clutch Transmission Fluid — Control Oil",
           "engine": "2.5 T-GDI",
           "volume": "2.59–2.64 US qt. (2.45–2.50L)",
           "spec": "Wet DCTF HD H 70W",
