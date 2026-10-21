@@ -1,0 +1,16 @@
+{
+  "partsHub": [
+    "shopAppointments",
+    "chargeAccountList",
+    "hotRepairs",
+    "aftermarketWarranty",
+    "documentLibrary",
+    "advisorCalendar",
+    "workSchedule",
+    "workInProgress",
+    "partsGoalForecast",
+    "tireQuote",
+    "batteryGuide",
+    "oilCapacity"
+  ]
+}
