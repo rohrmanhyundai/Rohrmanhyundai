@@ -331,7 +331,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
               {list.map(v => {
                 const editing = noteEdit && noteEdit.id === v.id;
                 return (
-                  <div key={v.id} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 14, padding: '20px 22px', display: 'grid', gap: 10, alignContent: 'start' }}>
+                  <div key={v.id} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 14, padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
                       <div style={{ fontWeight: 900, fontSize: 22, color: '#f1f5f9', flex: 1 }}>
                         {v.stockNo ? `Stock #${v.stockNo}` : <span style={{ color: '#fbbf24' }}>no stock #</span>}
@@ -384,8 +384,9 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                       {v.notesAt && <><br />Notes by {v.notesBy} · {fmtWhen(v.notesAt)}</>}
                     </div>
                     {!editing && (
-                      <>
-                      {/* Four everyday actions in an even 2×2; Remove sits apart, quieter. */}
+                      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {/* Four everyday actions in an even 2×2, pinned to the card's bottom so
+                          every card in a row lines up; Remove sits apart, quieter. */}
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 2 }}>
                         <button disabled={busy} style={{ ...btn('110,231,249'), ...ACT }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
                         <button disabled={busy} title="Check-in / check-out pictures and videos" style={{ ...btn('192,132,252'), ...ACT }} onClick={() => setMediaFor(v)}>📸 Media ({sessionsOf(v).length})</button>
@@ -400,7 +401,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                         <button disabled={busy} title="Take out of the fleet" onClick={() => remove(v)}
                           style={{ background: 'none', border: 'none', color: '#f87171', opacity: 0.75, fontSize: 12.5, fontWeight: 800, cursor: 'pointer', padding: '2px 4px', fontFamily: 'inherit' }}>🗑 Remove from fleet</button>
                       </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 );
