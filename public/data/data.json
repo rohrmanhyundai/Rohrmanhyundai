@@ -592,6 +592,19 @@
       "timeTo": "12:00",
       "reason": "Coming in late",
       "note": "dr app"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "In late until 8:30am",
+      "dateStart": "",
+      "dateEnd": "",
+      "status": "APPROVED",
+      "kind": "partial",
+      "partialDate": "",
+      "timeFrom": "",
+      "timeTo": "08:30",
+      "reason": "Coming in late",
+      "note": "dr app"
     }
   ]
 }
