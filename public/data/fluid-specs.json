@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:03:50.220Z",
+  "updatedAt": "2026-10-21T15:03:57.784Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -3880,109 +3880,6 @@
     },
     {
       "make": "HYUNDAI",
-      "model": "ELANTRA GT",
-      "code": "PD",
-      "yearFrom": 2018,
-      "yearTo": 2020,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6T GDI",
-          "volume": "4.76 US qt. (4.5L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0 GDI",
-          "volume": "4.23 US qt. (4.0L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "1.6T GDI",
-          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
-          "spec": "SAE 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "2.0 GDI",
-          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
-          "spec": "SAE 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "2.0 GDI",
-          "volume": "7.71 US qt. (7.3L)",
-          "spec": "ATF SPIV",
-          "partNumber": "0023219052",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "1.6T GDI",
-          "volume": "2.01-2.11 US qt. (1.9-2.0L)",
-          "spec": "DCTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI M/T",
-          "volume": "6.23 US qt. (5.9L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI DCT",
-          "volume": "6.12 US qt. (5.8L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "",
-          "volume": "17.63 (500)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Oil",
-          "engine": "",
-          "volume": "3.88 + 0.35 (110 + 10)",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        },
-        {
-          "fluid": "Brake/Clutch Fluid",
-          "engine": "",
-          "volume": "0.74 - 0.85 US qt. (0.7 - 0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "elantra.pdf",
-        "uploadedAt": "2026-10-21T14:44:31.420Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi83z0krbo5"
-    },
-    {
-      "make": "HYUNDAI",
       "model": "ELANTRA COUPE",
       "code": "JK",
       "yearFrom": 2013,
@@ -4288,6 +4185,109 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi84fq6qdrt"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ELANTRA GT",
+      "code": "PD",
+      "yearFrom": 2018,
+      "yearTo": 2020,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6T GDI",
+          "volume": "4.76 US qt. (4.5L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0 GDI",
+          "volume": "4.23 US qt. (4.0L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "1.6T GDI",
+          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
+          "spec": "SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "2.0 GDI",
+          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
+          "spec": "SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.0 GDI",
+          "volume": "7.71 US qt. (7.3L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219052",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "1.6T GDI",
+          "volume": "2.01-2.11 US qt. (1.9-2.0L)",
+          "spec": "DCTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI M/T",
+          "volume": "6.23 US qt. (5.9L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI DCT",
+          "volume": "6.12 US qt. (5.8L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "17.63 (500)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Oil",
+          "engine": "",
+          "volume": "3.88 + 0.35 (110 + 10)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.74 - 0.85 US qt. (0.7 - 0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "elantra.pdf",
+        "uploadedAt": "2026-10-21T14:44:31.420Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi83z0krbo5"
     }
   ]
 }
