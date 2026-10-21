@@ -7,6 +7,12 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "765 COLLISION REPAIR",
+      "id": "765249",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
       "name": "A & J AUTO REPAIRS",
       "id": "765235",
       "chargeAcct": "No",
@@ -129,12 +135,6 @@
     {
       "name": "AUTO DIAGNOSTIC REPAIR",
       "id": "765013",
-      "chargeAcct": "No",
-      "taxExempt": "Yes"
-    },
-    {
-      "name": "AUTO EXPRESS",
-      "id": "1715_7254",
       "chargeAcct": "Yes",
       "taxExempt": "Yes"
     },
@@ -175,12 +175,6 @@
       "taxExempt": "Yes"
     },
     {
-      "name": "BEN DAVIS CHEVROLET INC",
-      "id": "1152839",
-      "chargeAcct": "No",
-      "taxExempt": "Yes"
-    },
-    {
       "name": "B&B AUTO CENTER",
       "id": "765021",
       "chargeAcct": "No",
@@ -217,9 +211,27 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "BECK'S AUTO CENTER SOUTH",
+      "id": "765276",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BECK'S AUTO CENTER FARABEE",
+      "id": "765277",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "BELLE TIRE DISTRIBUTORS",
       "id": "1715_7246",
       "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BEN DAVIS CHEVROLET INC",
+      "id": "1152839",
+      "chargeAcct": "No",
       "taxExempt": "Yes"
     },
     {
@@ -439,6 +451,12 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "CROWE AUTOMOTIVE",
+      "id": "765286",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "DADACZ SERVICE CENTER",
       "id": "1715_7238",
       "chargeAcct": "Yes",
@@ -625,6 +643,12 @@
       "taxExempt": "No"
     },
     {
+      "name": "FRANKFORT TRUCK AND CAR SALES",
+      "id": "1715_5168",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "FRANKIE'S GARAGE",
       "id": "765094",
       "chargeAcct": "No",
@@ -673,6 +697,12 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "GREG HUBLER HYUNDAI",
+      "id": "1144667",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "GOULD BODY AND PAINT INC",
       "id": "1715_6865",
       "chargeAcct": "Yes",
@@ -700,6 +730,12 @@
       "name": "GUTWEIN MOTOR COMPANY",
       "id": "1715_5110",
       "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HANCOCK AUTOMOTIVE",
+      "id": "765287",
+      "chargeAcct": "No",
       "taxExempt": "Yes"
     },
     {
@@ -763,6 +799,12 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "JARRELL'S AUTO REPAIR",
+      "id": "765274",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "J&R AUTO BODY",
       "id": "765115",
       "chargeAcct": "No",
@@ -775,10 +817,22 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "JEFFRIES BODY SHOP",
+      "id": "1715_5190",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "JERRY'S BODY SHOP",
       "id": "1715_5071",
       "chargeAcct": "Yes",
       "taxExempt": "No"
+    },
+    {
+      "name": "JIFFY LUBE",
+      "id": "765283",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
     },
     {
       "name": "JIM DOBSON FORD",
@@ -877,15 +931,15 @@
       "taxExempt": "Yes"
     },
     {
-      "name": "LAFAYETTE FORD LINCOLN",
-      "id": "765134",
-      "chargeAcct": "Yes",
-      "taxExempt": "Yes"
-    },
-    {
       "name": "LAFAYETTE FLEET SERVICES",
       "id": "1175170",
       "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE FORD LINCOLN",
+      "id": "765134",
+      "chargeAcct": "Yes",
       "taxExempt": "Yes"
     },
     {
@@ -903,6 +957,12 @@
     {
       "name": "LEWIS MOTOR SALES",
       "id": "1715_7959",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LOGAN TIRE SERVICE",
+      "id": "765285",
       "chargeAcct": "Yes",
       "taxExempt": "Yes"
     },
@@ -1069,6 +1129,12 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "MOORE AUTOMOTIVE",
+      "id": "1186786",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "MOOZ MOTORS",
       "id": "765161",
       "chargeAcct": "No",
@@ -1201,6 +1267,12 @@
       "taxExempt": "Yes"
     },
     {
+      "name": "PUMARINO BROTHERS AUTO BODY AND PAINTING LLC",
+      "id": "765281",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "RABBIT TRACK REPAIR",
       "id": "765182",
       "chargeAcct": "No",
@@ -1216,6 +1288,18 @@
       "name": "RAY SKILLMAN WESTSIDE IMPORTS",
       "id": "1715_7185",
       "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RAYSKILLMAN AVON IMPORTS, INC.",
+      "id": "765288",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "Reynolds Body Shop",
+      "id": "765289",
+      "chargeAcct": "No",
       "taxExempt": "Yes"
     },
     {
@@ -1327,6 +1411,12 @@
       "taxExempt": "No"
     },
     {
+      "name": "SCOTT'S CUSTOM COLORS",
+      "id": "765275",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
       "name": "SEDALIA AUTO REPAIR",
       "id": "765204",
       "chargeAcct": "No",
@@ -1387,15 +1477,15 @@
       "taxExempt": "Yes"
     },
     {
-      "name": "TIM'S AUTO BODY & SALES",
-      "id": "1053659",
-      "chargeAcct": "Yes",
-      "taxExempt": "Yes"
-    },
-    {
       "name": "TIME 4 RIDE",
       "id": "765268",
       "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TIM'S AUTO BODY & SALES",
+      "id": "1053659",
+      "chargeAcct": "Yes",
       "taxExempt": "Yes"
     },
     {
@@ -1495,15 +1585,15 @@
       "taxExempt": "No"
     },
     {
-      "name": "WALTER'S AUTO SALES INC.",
-      "id": "1154048",
-      "chargeAcct": "No",
-      "taxExempt": "Yes"
-    },
-    {
       "name": "WALTER'S AUTO IMPORTS REPAIR",
       "id": "1715_5687",
       "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WALTER'S AUTO SALES INC.",
+      "id": "1154048",
+      "chargeAcct": "No",
       "taxExempt": "Yes"
     },
     {
@@ -1565,14 +1655,8 @@
       "id": "765234",
       "chargeAcct": "No",
       "taxExempt": "Yes"
-    },
-    {
-      "name": "765 COLLISION REPAIR",
-      "id": "765249",
-      "chargeAcct": "No",
-      "taxExempt": "No"
     }
   ],
-  "uploadedAt": "4/29/2026, 8:52:33 AM",
-  "savedAt": "2026-04-29T12:52:33.274Z"
+  "uploadedAt": "10/21/2026, 9:18:47 AM",
+  "savedAt": "2026-10-21T13:18:47.584Z"
 }
