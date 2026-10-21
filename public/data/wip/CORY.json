@@ -28,5 +28,21 @@
     "advisor": "JORDAN",
     "notes": "Engine seized. Waiting on registration. STILL WAITING. ",
     "flag": "purple"
+  },
+  {
+    "id": "mvi4bc1mwkhz",
+    "ro": "781711",
+    "roDate": "2026-10-21",
+    "vehicle": "2025 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES FRONT CENTER LIGHT BAR NOT LIGHTING UP AND MOISTURE IN IT. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
