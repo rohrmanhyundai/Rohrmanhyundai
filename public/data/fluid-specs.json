@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:14:02.948Z",
+  "updatedAt": "2026-10-21T15:14:49.816Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -471,181 +471,6 @@
     {
       "make": "HYUNDAI",
       "model": "TUCSON",
-      "code": "TL",
-      "yearFrom": 2016,
-      "yearTo": 2021,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6L T-GDI",
-          "volume": "4.76 US qt. (4.5 L)",
-          "spec": "5W-30",
-          "partNumber": "0023319000",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0 GDI",
-          "volume": "4.23 US qt. (4.0 L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.4 GDI",
-          "volume": "5.07 US qt. (4.8 L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "2.0 GDI 2WD",
-          "volume": "7.71 US qt. (7.3 L)",
-          "spec": "ATF SP-IV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "2.0 GDI AWD",
-          "volume": "7.5 US qt. (7.1 L)",
-          "spec": "ATF SP-IV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "2.4 GDI 2WD",
-          "volume": "7.71 US qt. (7.3 L)",
-          "spec": "ATF SP-IV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "AWD",
-          "volume": "2.01–2.11 US qt. (1.9–2.0 L)",
-          "spec": "DCT 70WT (6/7-speed wet clutch)",
-          "partNumber": "0023219108",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2016–2017 Gamma 1.6 & 2018 1.6 T-GDI",
-          "volume": "7.5 US qt. (7.1 L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2.0 GDI",
-          "volume": "7.93 US qt. (7.5 L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2.4 GDI",
-          "volume": "8.14 US qt. (7.7 L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "0.07–0.08 US qt.",
-          "spec": "DOT 3",
-          "partNumber": "0023219033",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "0.07–0.08 US qt.",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Rear Differential Oil (AWD)",
-          "engine": "",
-          "volume": "0.56–0.67 US qt. (0.53–0.63 L)",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219097",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (AWD)",
-          "engine": "2016–2017 & 2019–2021 2.0/2.4 GDI",
-          "volume": "0.45–0.50 US qt.",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219097",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (AWD)",
-          "engine": "2016–2017 Nu 2.0 & 2018 2.0/2.4 GDI",
-          "volume": "0.36–0.38 US qt.",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219097",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (AWD)",
-          "engine": "2016–2017 Gamma 1.6 & 1.6 Turbo-GDI",
-          "volume": "0.51–0.55 US qt.",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219097",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2016",
-          "volume": "*",
-          "spec": "R-134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2017–2018",
-          "volume": "19.4 ± 0.88 oz.",
-          "spec": "R-134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2019–2021",
-          "volume": "19.4 ± 0.88 oz.",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "",
-          "volume": "4.23 ± 0.35 oz. (120 ± 10 g)",
-          "spec": "PAG 30 → standard PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "tucson.pdf",
-        "uploadedAt": "2026-10-21T14:38:19.434Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7vyxcr86u"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "TUCSON",
       "code": "NX4",
       "yearFrom": 2022,
       "yearTo": 2024,
@@ -769,109 +594,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7vyxcq8oh"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "TUCSON HYBRID",
-      "code": "NX4 HEV/PHEV",
-      "yearFrom": 2022,
-      "yearTo": 2024,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "",
-          "volume": "5.07 US qt. (4.8 L)",
-          "spec": "0W-20 Full Synthetic",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "",
-          "volume": "6.34 US qt. (6 L)",
-          "spec": "ATF SP-IV",
-          "partNumber": "0023219052",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "",
-          "volume": "7.7 US qt. (7.3 L)",
-          "spec": "Mixture of antifreeze and water (Phosphate-based ethylene glycol coolant for aluminum radiator)",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
-          "note": ""
-        },
-        {
-          "fluid": "Inverter Coolant",
-          "engine": "HEV",
-          "volume": "1.79 US qt. (1.7 L)",
-          "spec": "Mixture of antifreeze and water (Phosphate-based ethylene glycol coolant for aluminum radiator)",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
-          "note": ""
-        },
-        {
-          "fluid": "Inverter Coolant",
-          "engine": "PHEV",
-          "volume": "6.76 US qt. (6.4 L)",
-          "spec": "*",
-          "partNumber": "Contact an authorized Hyundai dealer or service partner",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "As Required",
-          "spec": "DOT-4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Rear Differential Oil (AWD)",
-          "engine": "",
-          "volume": "0.56–0.67 US qt. (0.53–0.63 L)",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219075 (with LSD) / 0023219097 (without LSD)",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (AWD)",
-          "engine": "",
-          "volume": "0.65–0.71 US qt. (0.62–0.68 L)",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219097",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2022 PHEV, 2022–2023 HEV",
-          "volume": "19.40 ± 0.88 oz. (550 ± 25 g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2023–2024 PHEV",
-          "volume": "22.92 ± 0.88 oz. (650 ± 25 g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "",
-          "volume": "5.29 ± 0.35 oz. (150 ± 10 g)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "tucson.pdf",
-        "uploadedAt": "2026-10-21T14:38:19.434Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7vyxcutqs"
     },
     {
       "make": "HYUNDAI",
@@ -4280,6 +4002,276 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7ut2yqmw5"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "TUCSON",
+      "code": "TL",
+      "yearFrom": 2016,
+      "yearTo": 2021,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6L T-GDI",
+          "volume": "4.76 US qt. (4.5 L)",
+          "spec": "5W-30",
+          "partNumber": "0023319000",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0 GDI",
+          "volume": "4.23 US qt. (4.0 L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.4 GDI",
+          "volume": "5.07 US qt. (4.8 L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.0 GDI 2WD",
+          "volume": "7.71 US qt. (7.3 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.0 GDI AWD",
+          "volume": "7.5 US qt. (7.1 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.4 GDI 2WD",
+          "volume": "7.5 US qt. (7.1 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "AWD",
+          "volume": "2.01–2.11 US qt. (1.9–2.0 L)",
+          "spec": "DCT 70WT (6/7-speed wet clutch)",
+          "partNumber": "0023219108",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2016–2017 Gamma 1.6 & 2018 1.6 T-GDI",
+          "volume": "7.5 US qt. (7.1 L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0 GDI",
+          "volume": "7.93 US qt. (7.5 L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.4 GDI",
+          "volume": "8.14 US qt. (7.7 L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.07–0.08 US qt.",
+          "spec": "DOT 3 / DOT 4",
+          "partNumber": "0023219033 / 0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (AWD)",
+          "engine": "",
+          "volume": "0.56–0.67 US qt. (0.53–0.63 L)",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219097",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "2016–2017 & 2019–2021 2.0/2.4 GDI",
+          "volume": "0.45–0.50 US qt.",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219097",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "2016–2017 Nu 2.0 & 2018 2.0/2.4 GDI",
+          "volume": "0.36–0.38 US qt.",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219097",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "2016–2017 Gamma 1.6 & 1.6 Turbo-GDI",
+          "volume": "0.51–0.55 US qt.",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219097",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2016",
+          "volume": "*",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2017–2018",
+          "volume": "19.4 ± 0.88 oz.",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2019–2021",
+          "volume": "19.4 ± 0.88 oz.",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "4.23 ± 0.35 oz. (120 ± 10 g)",
+          "spec": "PAG 30 → standard PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "tucson.pdf",
+        "uploadedAt": "2026-10-21T15:14:41.954Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7vyxcr86u"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "TUCSON HYBRID",
+      "code": "NX4 HEV/PHEV",
+      "yearFrom": 2022,
+      "yearTo": 2024,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "5.07 US qt. (4.8 L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.34 US qt. (6 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219052",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "7.7 US qt. (7.3 L)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based ethylene glycol coolant for aluminum radiator)",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Inverter Coolant",
+          "engine": "HEV",
+          "volume": "1.79 US qt. (1.7 L)",
+          "spec": "*",
+          "partNumber": "Contact an authorized Hyundai dealer or service partner",
+          "note": ""
+        },
+        {
+          "fluid": "Inverter Coolant",
+          "engine": "PHEV",
+          "volume": "6.76 US qt. (6.4 L)",
+          "spec": "*",
+          "partNumber": "Contact an authorized Hyundai dealer or service partner",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "As Required",
+          "spec": "DOT-4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (AWD)",
+          "engine": "",
+          "volume": "0.56–0.67 US qt. (0.53–0.63 L)",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219075 (with LSD) / 0023219097 (without LSD)",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "",
+          "volume": "0.65–0.71 US qt. (0.62–0.68 L)",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219097",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2022 PHEV, 2022–2023 HEV",
+          "volume": "19.40 ± 0.88 oz. (550 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2023–2024 PHEV",
+          "volume": "22.92 ± 0.88 oz. (650 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "5.29 ± 0.35 oz. (150 ± 10 g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "tucson.pdf",
+        "uploadedAt": "2026-10-21T15:14:41.954Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7vyxcutqs"
     }
   ]
 }
