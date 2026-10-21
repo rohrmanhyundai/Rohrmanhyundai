@@ -329,6 +329,8 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                           <span style={{ color: '#fcd34d', fontWeight: 800, marginLeft: 8 }}>{years(v)}</span>
                           <div style={{ fontSize: 11.5, color: '#64748b' }}>{v.fluids.length} lines{v.source && v.source.fileName ? ` · ${v.source.fileName}` : ''}{v.source && v.source.by ? ` · ${v.source.by}` : ''}</div>
                         </div>
+                        {/* Every saved vehicle — new uploads included — prints the same sheet. */}
+                        <button disabled={busy || reading} title="Print this sheet — or Save as PDF" onClick={() => printFluidSheet(v, { year: v.yearFrom, by: currentUser })} style={{ ...btn('148,163,184', false), padding: '5px 11px', fontSize: 12.5 }}>🖨</button>
                         <button disabled={busy || reading} onClick={() => editExisting(v)} style={{ ...btn('96,165,250'), padding: '5px 11px', fontSize: 12.5 }}>✏️ Edit</button>
                         <button disabled={busy || reading} onClick={() => remove(v)} style={{ ...btn('248,113,113', false), padding: '5px 11px', fontSize: 12.5 }}>🗑</button>
                       </div>
