@@ -3,10 +3,9 @@ import * as github from '../utils/github';
 import { decodeVin, validateVin } from '../utils/vinLookup';
 import { loadPdfJs } from '../utils/pdfText';
 import { readBatteryGuidePdf, matchVehicle, yearsIn, modelsFor, coversYear } from '../utils/batteryGuide';
-import VinScanner from './VinScanner';
 
 // ── 🔋 Battery ────────────────────────────────────────────────────────────────
-// Find the Hyundai battery part number two ways: type / scan a VIN (decoded by
+// Find the Hyundai battery part number two ways: type a VIN (decoded by
 // NHTSA → year, model, engine size, hybrid/EV) or pick the year and model.
 // Shows the factory battery and the replacement P/N from the Hyundai Battery
 // Guide. Managers upload a newer guide PDF to refresh the list; it's stored in
@@ -28,7 +27,6 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
   const [vin, setVin] = useState('');
   const [decoding, setDecoding] = useState(false);
   const [decoded, setDecoded] = useState(null);  // decodeVin result
-  const [scanning, setScanning] = useState(false);
   const [year, setYear] = useState('');
   const [model, setModel] = useState('');
   const [copied, setCopied] = useState('');
@@ -148,7 +146,6 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
-      {scanning && <VinScanner onCancel={() => setScanning(false)} onScan={(v) => { setScanning(false); setModel(''); setVin(v); }} />}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">🔋 Battery</div>
@@ -166,11 +163,8 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
           <div style={{ ...card, display: 'grid', gap: 18 }}>
             <div>
               <div style={label}>1 · VIN</div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <input value={vin} onChange={e => { setVin(e.target.value.toUpperCase()); setModel(''); }} maxLength={20} placeholder="Type or scan the 17-character VIN"
-                  autoCapitalize="characters" autoCorrect="off" style={{ ...inputStyle, letterSpacing: '.08em', fontFamily: 'ui-monospace, Menlo, monospace' }} />
-                <button onClick={() => setScanning(true)} style={{ ...btn('74,222,128'), whiteSpace: 'nowrap' }}>📷 Scan</button>
-              </div>
+              <input value={vin} onChange={e => { setVin(e.target.value.toUpperCase()); setModel(''); }} maxLength={20} placeholder="Type the 17-character VIN"
+                autoCapitalize="characters" autoCorrect="off" style={{ ...inputStyle, letterSpacing: '.08em', fontFamily: 'ui-monospace, Menlo, monospace' }} />
               <div style={{ fontSize: 13, fontWeight: 800, marginTop: 8, minHeight: 18 }}>
                 {clean.length > 0 && clean.length !== 17 && <span style={{ color: '#fde68a' }}>{clean.length} of 17 characters</span>}
                 {decoding && <span style={{ color: '#93c5fd' }}>Decoding the VIN…</span>}
