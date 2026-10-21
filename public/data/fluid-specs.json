@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T14:44:36.619Z",
+  "updatedAt": "2026-10-21T14:44:57.880Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4051,6 +4051,77 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi83z0k0uv3"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "AZERA",
+      "code": "HG",
+      "yearFrom": 2012,
+      "yearTo": 2017,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "6.02 US qt. (5.7L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "8.24 US qt. (7.8L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "9.6 US qt. (9.1L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt. (0.7-0.8L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt. (0.7-0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "22.93±0.88 oz. (650±25g)",
+          "spec": "R-134A",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "3.53±0.35 oz. (100±10cc)",
+          "spec": "POE",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "azera.pdf",
+        "uploadedAt": "2026-10-21T14:44:54.612Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi84fq6qdrt"
     }
   ]
 }
