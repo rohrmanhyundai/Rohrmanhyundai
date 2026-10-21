@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:15:40.025Z",
+  "updatedAt": "2026-10-21T15:16:36.636Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -1316,165 +1316,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7yza43pud"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "SANTA FE HYBRID",
-      "code": "TM HEV",
-      "yearFrom": 2021,
-      "yearTo": 2023,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6L",
-          "volume": "5.1 US qt. (4.8L)",
-          "spec": "0W-20 Full Synthetic",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page Here",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "",
-          "volume": "6.3 US qt. (6L)",
-          "spec": "SP4M-1",
-          "partNumber": "0023219107",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2021-2022",
-          "volume": "4.95 US qt. (4.69L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "003219091",
-          "note": "Blue Coolant"
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2023",
-          "volume": "7.72 US qt. (7.31L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "003219091",
-          "note": "Blue Coolant"
-        },
-        {
-          "fluid": "Invert Coolant",
-          "engine": "2021-2022 HEV",
-          "volume": "5.23 US qt.(4.95L)",
-          "spec": "Contact an authorized HMC dealer/service partner. If you are unsure please contact Techline 800-325-6604.",
-          "partNumber": "*",
-          "note": ""
-        },
-        {
-          "fluid": "Invert Coolant",
-          "engine": "2022 PHEV",
-          "volume": "7.46 US qt. (7.15L)",
-          "spec": "Contact an authorized HMC dealer/service partner. If you are unsure please contact Techline 800-325-6604.",
-          "partNumber": "*",
-          "note": ""
-        },
-        {
-          "fluid": "Invert Coolant",
-          "engine": "2023 HEV",
-          "volume": "1.8 US qt. (1.71L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "*",
-          "note": ""
-        },
-        {
-          "fluid": "Rear Differential Oil (4WD)",
-          "engine": "",
-          "volume": "0.56 - 0.67 US qt. (0.53 - 0.63L)",
-          "spec": "SAE 75W/85",
-          "partNumber": "0023219067",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (4WD)",
-          "engine": "",
-          "volume": "0.65 - 0.71 US qt. (0.62 -0.68L)",
-          "spec": "SAE 75W/85",
-          "partNumber": "0023219067",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "As Required",
-          "spec": "DOT-4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2021 & 2023 Front",
-          "volume": "22.05±0.88 oz. (625±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2022 Front",
-          "volume": "22.93±0.88 oz. (650±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2022 Rear",
-          "volume": "30.87±0.88 oz. (875±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2023 Front + Rear",
-          "volume": "28.22±0.88 oz. (800±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "2021 Front",
-          "volume": "4.23±0.35 oz. (120±10g)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "2021 Front + Rear",
-          "volume": "7.4±0.35 oz. (210±10g)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "2022 & 2023 Front",
-          "volume": "5.29±0.35 oz. (150±10g)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "2022 & 2023 Front + Rear",
-          "volume": "8.11±0.35 oz. (230±10g)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "santa fe.pdf",
-        "uploadedAt": "2026-10-21T14:40:39.584Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7yza4m6d1"
     },
     {
       "make": "HYUNDAI",
@@ -4272,6 +4113,165 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7xny31z7k"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "SANTA FE HYBRID",
+      "code": "TM HEV",
+      "yearFrom": 2021,
+      "yearTo": 2023,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6L",
+          "volume": "5.1 US qt. (4.8L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page Here",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.3 US qt. (6L)",
+          "spec": "SP4M-1",
+          "partNumber": "0023219107",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2021-2022",
+          "volume": "4.95 US qt. (4.69L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "0032319091",
+          "note": "Blue Coolant"
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2023",
+          "volume": "7.72 US qt. (7.31L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "0032319091",
+          "note": "Blue Coolant"
+        },
+        {
+          "fluid": "Invert Coolant",
+          "engine": "2021-2022 HEV",
+          "volume": "5.23 US qt.(4.95L)",
+          "spec": "Contact an authorized HMC dealer/service partner. If you are unsure please contact Techline 800-325-6604.",
+          "partNumber": "*",
+          "note": ""
+        },
+        {
+          "fluid": "Invert Coolant",
+          "engine": "2022 PHEV",
+          "volume": "7.46 US qt. (7.15L)",
+          "spec": "Contact an authorized HMC dealer/service partner. If you are unsure please contact Techline 800-325-6604.",
+          "partNumber": "*",
+          "note": ""
+        },
+        {
+          "fluid": "Invert Coolant",
+          "engine": "2023 HEV",
+          "volume": "1.8 US qt. (1.71L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "*",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (4WD)",
+          "engine": "",
+          "volume": "0.56 - 0.67 US qt. (0.53 - 0.63L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "0023219067",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (4WD)",
+          "engine": "",
+          "volume": "0.65 - 0.71 US qt. (0.62 -0.68L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "0023219067",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "As Required",
+          "spec": "DOT-4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2021 & 2023 Front",
+          "volume": "22.05±0.88 oz. (625±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2022 Front",
+          "volume": "22.93±0.88 oz. (650±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2022 Rear",
+          "volume": "30.87±0.88 oz. (875±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2023 Front + Rear",
+          "volume": "28.22±0.88 oz. (800±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "2021 Front",
+          "volume": "4.23±0.35 oz. (120±10g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "2021 Front + Rear",
+          "volume": "7.4±0.35 oz. (210±10g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "2022 & 2023 Front",
+          "volume": "5.29±0.35 oz. (150±10g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "2022 & 2023 Front + Rear",
+          "volume": "8.11±0.35 oz. (230±10g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "santa fe.pdf",
+        "uploadedAt": "2026-10-21T15:16:30.287Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7yza4m6d1"
     }
   ]
 }
