@@ -1,0 +1,86 @@
+{
+  "advisorName": "MATTHEW",
+  "date": "2026-10-21",
+  "rows": [
+    {
+      "id": "rmvi3xuak54zx",
+      "customerName": "Tara Raber",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43807",
+      "vehicle": "2023 Hyundai Tucson Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "290 R TOW HITCH HARN- INSP/REM/CAP(26-01-037H)",
+        "9C7 C ECM S/W UPDATE - EGR LOGIC (26-01-081H)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvi3xuakzeum",
+      "customerName": "Farzad Taheripour",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43828",
+      "vehicle": "2013 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvi3xuakhtpf",
+      "customerName": "Minka Wegner",
+      "appointmentTime": "11:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43291",
+      "vehicle": "2025 Hyundai Elantra",
+      "services": [
+        "PERFORM LOF ROTATION (WARRANTY)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvi3xuakzm5e",
+      "customerName": "Sandeep Jaiswal",
+      "appointmentTime": "1:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43708",
+      "vehicle": "2025 Hyundai Kona",
+      "services": [
+        "PERFORM LOF ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-21T12:47:55.493Z"
+}
