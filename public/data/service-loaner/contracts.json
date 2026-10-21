@@ -183,7 +183,13 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvi9l7yg-j5os1k5f.pdf",
       "completedFileName": "781255 invoice.pdf",
       "completedAt": "2026-10-21T15:26:01.820Z",
-      "completedBy": "HOLLI"
+      "completedBy": "HOLLI",
+      "warranty": {
+        "amount": 945,
+        "at": "2026-10-21T15:26:04.098Z",
+        "by": "HOLLI",
+        "fromContract": true
+      }
     },
     {
       "id": "sl-mve5lmp0m00x",
