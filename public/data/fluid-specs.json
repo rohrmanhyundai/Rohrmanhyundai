@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T14:36:12.758Z",
+  "updatedAt": "2026-10-21T14:36:51.594Z",
   "vehicles": [
     {
       "id": "fs-sonata-yfa",
@@ -871,6 +871,93 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7t6h34r4j"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "VENUE",
+      "code": "QX",
+      "yearFrom": 2020,
+      "yearTo": 2024,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "4.02 US qt. (3.8L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "",
+          "volume": "1.59 - 1.69 US qt. (1.5-1.6L)",
+          "spec": "MTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Intelligent Variable Transmission Fluid",
+          "engine": "",
+          "volume": "6.34 US qt. (6.7L)",
+          "spec": "IVTF (SP-IVT1)",
+          "partNumber": "0023219081",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "M/T",
+          "volume": "5.94 US qt. (5.62L)",
+          "spec": "Mix of Anti-Freeze and Water / Pink Coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "IVT",
+          "volume": "6.32 US qt. (5.78L)",
+          "spec": "Mix of Anti-Freeze and Water / Pink Coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74 - 0.85 US qt. (0.7 - 0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2020-2021",
+          "volume": "17.6±0.88 oz. (500±25g)",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2022-2024",
+          "volume": "17.6±0.88 oz. (500±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "4.23±0.35 oz. (120±10g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "venue.pdf",
+        "uploadedAt": "2026-10-21T14:36:48.146Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7u0hsmdkb"
     }
   ]
 }
