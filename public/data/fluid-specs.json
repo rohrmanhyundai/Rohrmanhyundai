@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:19:01.335Z",
+  "updatedAt": "2026-10-21T15:20:20.822Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -1661,284 +1661,6 @@
     },
     {
       "make": "HYUNDAI",
-      "model": "ELANTRA",
-      "code": "CN7/CN7N",
-      "yearFrom": 2021,
-      "yearTo": 2024,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0L",
-          "volume": "4.54 US qt. (4.3L)",
-          "spec": "0W-20 Full Synthetic",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6L T-GDI",
-          "volume": "5.07 US qt. (4.8L)",
-          "spec": "0W-20 Full Synthetic",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2022-2023 CN7N",
-          "volume": "5.49 US qt. (5.2 ℓ)",
-          "spec": "0W-30",
-          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "2022-2023 CN7N",
-          "volume": "1.9 ~ 2.0 US qt. (1.8 ~ 1.9 ℓ)",
-          "spec": "MTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "2.0 & 1.6",
-          "volume": "1.6-1.7 US qt. (1.5-1.6L)",
-          "spec": "MTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "2.0 & 1.6",
-          "volume": "1.7-1.8 US qt. (1.6-1.7L)",
-          "spec": "MTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "2022 CN7N Gear Oil",
-          "volume": "3.4 ~ 3.6 US qt. (3.3 ~ 3.4 ℓ)",
-          "spec": "GS WDCTF HD G (WDGO-1)",
-          "partNumber": "0023219100",
-          "note": "both Gear/Clutch Oil apply to CN7N"
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "2022 CN7N Control Oil",
-          "volume": "2.58 ~ 2.64 US qt. (2.45 ~ 2.5 ℓ)",
-          "spec": "GS WDCTF HD H (WDHO-1)",
-          "partNumber": "0023219101",
-          "note": "both Gear/Clutch Oil apply to CN7N"
-        },
-        {
-          "fluid": "Intelligent Variable Transmission (IVT)",
-          "engine": "2.0 & 1.6",
-          "volume": "6.87 US qt. (6.5L)",
-          "spec": "SP-CVT1",
-          "partNumber": "0023219081",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2.0L",
-          "volume": "7.82 US qt. (7.4L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "0023219010",
-          "note": "Green Coolant"
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6 T-GDI",
-          "volume": "7.19 US qt. (6.8L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "0023219098",
-          "note": "Pink Coolant"
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2022 CN7N",
-          "volume": "8.12 US qt. (7.68 ℓ)",
-          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant",
-          "partNumber": "*",
-          "note": "Contact your lubricant drop ship vendor"
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "0.74-0.85 US qt (0.7L-0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": "for aluminum radiator"
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "",
-          "volume": "17.6±0.88 oz. (500±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "",
-          "volume": "3.4±0.3 oz. (100±10g)",
-          "spec": "PAG (FD46XG)",
-          "partNumber": "0023219022",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "elantra.pdf",
-        "uploadedAt": "2026-10-21T14:44:31.420Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi83z0kzsas"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "ELANTRA",
-      "code": "AD & ADA",
-      "yearFrom": 2017,
-      "yearTo": 2020,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.4T GDI",
-          "volume": "4.44 US qt. (4.2L)",
-          "spec": "5W-30 Conventional",
-          "partNumber": "0023319004",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6T GDI",
-          "volume": "4.76 US qt. (4.5L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0 MPI",
-          "volume": "4.23 US qt. (4.0L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "1.6T GDI",
-          "volume": "1.6-1.7 US qt. (1.5-1.6L)",
-          "spec": "MTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "2.0 MPI",
-          "volume": "1.6-1.7 US qt. (1.5-1.6L)",
-          "spec": "MTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "2.0 MPI",
-          "volume": "7.08 US qt (6.7L)",
-          "spec": "ATF SPIV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Intelligent Variable",
-          "engine": "2.0 MPI",
-          "volume": "6.86 US qt. (6.5L)",
-          "spec": "IVT SP-CVT1",
-          "partNumber": "0023219081",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "1.4T GDI",
-          "volume": "1.9-2.0US qt. (1.8-1.9L)",
-          "spec": "DCTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "1.6T GDI",
-          "volume": "2.01-2.11 US qt. (1.9-2.0L)",
-          "spec": "DCTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI M/T",
-          "volume": "6.45 US qt. (6.1L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI DCT",
-          "volume": "6.34 US qt. (6.0L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2.0 MPI IVT",
-          "volume": "6.97 US qt. (6.6L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Brake / Clutch Fluid",
-          "engine": "",
-          "volume": ".07-.08 US qt. (.07-.08L)",
-          "spec": "DOT 3",
-          "partNumber": "0023219033",
-          "note": ""
-        },
-        {
-          "fluid": "Brake / Clutch Fluid",
-          "engine": "",
-          "volume": ".07-.08 US qt. (.07-.08L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "",
-          "volume": "17.6±0.88 oz. (500±25g)",
-          "spec": "R-134a",
-          "partNumber": "00232-9046",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "",
-          "volume": "3.88±0.35 oz. (110±10g)",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "elantra.pdf",
-        "uploadedAt": "2026-10-21T14:44:31.420Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi83z0kgw54"
-    },
-    {
-      "make": "HYUNDAI",
       "model": "ELANTRA HYBRID",
       "code": "CN7 HEV",
       "yearFrom": 2021,
@@ -2465,109 +2187,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi84fq6qdrt"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "ELANTRA GT",
-      "code": "PD",
-      "yearFrom": 2018,
-      "yearTo": 2020,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6T GDI",
-          "volume": "4.76 US qt. (4.5L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0 GDI",
-          "volume": "4.23 US qt. (4.0L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "1.6T GDI",
-          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
-          "spec": "SAE 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "2.0 GDI",
-          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
-          "spec": "SAE 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "2.0 GDI",
-          "volume": "7.71 US qt. (7.3L)",
-          "spec": "ATF SPIV",
-          "partNumber": "0023219052",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "1.6T GDI",
-          "volume": "2.01-2.11 US qt. (1.9-2.0L)",
-          "spec": "DCTF 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI M/T",
-          "volume": "6.23 US qt. (5.9L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI DCT",
-          "volume": "6.12 US qt. (5.8L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "",
-          "volume": "17.63 (500)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Oil",
-          "engine": "",
-          "volume": "3.88 + 0.35 (110 + 10)",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        },
-        {
-          "fluid": "Brake/Clutch Fluid",
-          "engine": "",
-          "volume": "0.74 - 0.85 US qt. (0.7 - 0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "elantra.pdf",
-        "uploadedAt": "2026-10-21T14:44:31.420Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi83z0krbo5"
     },
     {
       "make": "HYUNDAI",
@@ -4272,6 +3891,403 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi820eeeieh"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ELANTRA",
+      "code": "CN7/CN7N",
+      "yearFrom": 2021,
+      "yearTo": 2024,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0L",
+          "volume": "4.54 US qt. (4.3L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6L T-GDI",
+          "volume": "5.07 US qt. (4.8L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2022-2023 CN7N",
+          "volume": "5.49 US qt. (5.2 ℓ)",
+          "spec": "0W-30",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "2022-2023 CN7N",
+          "volume": "1.9 ~ 2.0 US qt. (1.8 ~ 1.9 ℓ)",
+          "spec": "MTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "2.0 & 1.6",
+          "volume": "1.6-1.7 US qt. (1.5-1.6L)",
+          "spec": "MTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
+          "engine": "2022 CN7N Gear",
+          "volume": "3.4 ~ 3.6 US qt. (3.3 ~ 3.4 ℓ)",
+          "spec": "GS WDCTF HD G (WDGO-1)",
+          "partNumber": "0023219100",
+          "note": "Note: both Gear/Clutch Oil apply to CN7N"
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid — Control Oil",
+          "engine": "2022 CN7N Control",
+          "volume": "2.58 ~ 2.64 US qt. (2.45 ~ 2.5 ℓ)",
+          "spec": "GS WDCTF HD H (WDHO-1)",
+          "partNumber": "0023219101",
+          "note": "Note: both Gear/Clutch Oil apply to CN7N"
+        },
+        {
+          "fluid": "Intelligent Variable Transmission (IVT)",
+          "engine": "2.0 & 1.6",
+          "volume": "6.87 US qt. (6.5L)",
+          "spec": "SP-CVT1",
+          "partNumber": "0023219081",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0L",
+          "volume": "7.82 US qt. (7.4L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Green Coolant 0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6 T-GDI",
+          "volume": "7.19 US qt. (6.8L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Pink Coolant 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2022 CN7N",
+          "volume": "8.12 US qt. (7.68 ℓ)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant",
+          "partNumber": "*",
+          "note": "Contact your lubricant drop ship vendor"
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt (0.7L-0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": "for aluminum radiator"
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "17.6±0.88 oz. (500±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "3.4±0.3 oz. (100±10g)",
+          "spec": "PAG (FD46XG)",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "elantra.pdf",
+        "uploadedAt": "2026-10-21T15:20:15.645Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi83z0kzsas"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ELANTRA",
+      "code": "AD & ADA",
+      "yearFrom": 2017,
+      "yearTo": 2020,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.4T GDI",
+          "volume": "4.44 US qt. (4.2L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6T GDI",
+          "volume": "4.76 US qt. (4.5L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0 MPI",
+          "volume": "4.23 US qt. (4.0L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "1.6T GDI",
+          "volume": "1.6-1.7 US qt. (1.5-1.6L)",
+          "spec": "MTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "2.0 MPI",
+          "volume": "1.6-1.7 US qt. (1.5-1.6L)",
+          "spec": "MTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.0 MPI",
+          "volume": "7.08 US qt (6.7L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Intelligent Variable Transmission Fluid",
+          "engine": "2.0 MPI",
+          "volume": "6.86 US qt. (6.5L)",
+          "spec": "IVT SP-CVT1",
+          "partNumber": "0023219081",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "1.4T GDI",
+          "volume": "1.9-2.0 US qt. (1.8-1.9L)",
+          "spec": "DCTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "1.6T GDI",
+          "volume": "2.01-2.11 US qt. (1.9-2.0L)",
+          "spec": "DCTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI M/T",
+          "volume": "6.45 US qt. (6.1L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI DCT",
+          "volume": "6.45 US qt. (6.1L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0 MPI M/T",
+          "volume": "6.34 US qt. (6.0L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0 MPI IVT",
+          "volume": "6.97 US qt. (6.6L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": ".07-.08 US qt. (.07-.08L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": ".07-.08 US qt. (.07-.08L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "17.6±0.88 oz. (500±25g)",
+          "spec": "R-134a",
+          "partNumber": "00232-9046",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "3.88±0.35 oz. (110±10g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": "*Pag oil in Oz measurement units"
+        }
+      ],
+      "source": {
+        "fileName": "elantra.pdf",
+        "uploadedAt": "2026-10-21T15:20:15.645Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi83z0kgw54"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ELANTRA GT",
+      "code": "PD",
+      "yearFrom": 2018,
+      "yearTo": 2020,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6T GDI",
+          "volume": "4.76 US qt. (4.5L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0 GDI",
+          "volume": "4.23 US qt. (4.0L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "1.6T GDI",
+          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
+          "spec": "SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "2.0 GDI",
+          "volume": "1.8 - 1.9 US qt. (1.7 - 1.8L)",
+          "spec": "SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.0 GDI",
+          "volume": "7.71 US qt. (7.3L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219052",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "1.6T GDI",
+          "volume": "2.01-2.11 US qt. (1.9-2.0L)",
+          "spec": "DCTF 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI M/T",
+          "volume": "6.55 US qt. (6.2L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI DCT",
+          "volume": "6.55 US qt. (6.2L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0 GDI M/T",
+          "volume": "6.23 US qt. (5.9L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0 GDI A/T",
+          "volume": "6.12 US qt. (5.8L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "17.63 (500)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Oil",
+          "engine": "",
+          "volume": "3.88 + 0.35 (110 + 10)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.74 - 0.85 US qt. (0.7 - 0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "elantra.pdf",
+        "uploadedAt": "2026-10-21T15:20:15.645Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi83z0krbo5"
     }
   ]
 }
