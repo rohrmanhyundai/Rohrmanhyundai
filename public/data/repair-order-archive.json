@@ -1,5 +1,26 @@
 [
   {
+    "id": "mvfk01jpi3dj",
+    "ro": "781654",
+    "roDate": "2026-10-19",
+    "vehicle": "2024 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES BACK IN AUGUST HE REPLACED THE BATTERY, ALSO REPLACED ALTERNATOR, VEHICLE DIED LAST WEEK AND WOULD NOT START UNTIL BATTERY WAS REPLACED AGAIN. VEHICLE KEEPS DYING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "_archiveId": "mvi3kmspv7p",
+    "_archivedAt": "2026-10-21T12:37:35.209Z",
+    "_archivedBy": "SHAWN",
+    "_source": "wip",
+    "_sourceTech": "KADEN"
+  },
+  {
     "id": "mvfk08d1f6ax",
     "ro": "781648",
     "roDate": "2026-10-19",
