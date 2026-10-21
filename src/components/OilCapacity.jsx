@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { decodeVin, validateVin } from '../utils/vinLookup';
 import { loadPdfJs } from '../utils/pdfText';
@@ -39,6 +39,11 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
   const [reading, setReading] = useState(false);
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
+  const draftsRef = useRef(null);                // the review / edit form — scrolled into view when it opens
+  const [jump, setJump] = useState(0);
+  // The page scrolls inside its own panel, so bring the form to the user (Edit
+  // is clicked far down the On file list).
+  useEffect(() => { if (jump && draftsRef.current) draftsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [jump]);
 
   useEffect(() => { loadFluidSpecs().then(setData).catch(() => setData({ vehicles: [] })); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const vehicles = data ? data.vehicles : [];
@@ -76,14 +81,15 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
     try {
       const found = await readFluidSpecPdf(f, loadPdfJs);
       setDrafts(found.map(v => ({ ...v, _key: newId(), source: { fileName: f.name, uploadedAt: new Date().toISOString(), by: currentUser } })));
+      setJump(n => n + 1);
       setMsg(`Found ${found.length} vehicle section${found.length === 1 ? '' : 's'} in ${f.name}. Check everything — fill in anything marked red — then Save.`);
     } catch (err) {
       setMsg(`❌ ${err.message || 'Could not read that file.'}`);
     }
     setReading(false);
   }
-  const addByHand = () => { setMsg(''); setDrafts([{ _key: newId(), make: 'HYUNDAI', model: '', code: '', yearFrom: null, yearTo: null, fluids: [EMPTY_FLUID()], source: { fileName: '', uploadedAt: new Date().toISOString(), by: currentUser } }]); };
-  const editExisting = (v) => { setMsg(''); setDrafts([{ ...JSON.parse(JSON.stringify(v)), _key: newId() }]); window.scrollTo?.(0, 0); };
+  const addByHand = () => { setMsg(''); setJump(n => n + 1); setDrafts([{ _key: newId(), make: 'HYUNDAI', model: '', code: '', yearFrom: null, yearTo: null, fluids: [EMPTY_FLUID()], source: { fileName: '', uploadedAt: new Date().toISOString(), by: currentUser } }]); };
+  const editExisting = (v) => { setMsg(`✏️ Editing ${title(v)} ${years(v)} — make your changes, then Save.`); setDrafts([{ ...JSON.parse(JSON.stringify(v)), _key: newId() }]); setJump(n => n + 1); };
   const setDraft = (key, fn) => setDrafts(ds => ds.map(d => (d._key === key ? fn(d) : d)));
   const allReady = drafts && drafts.length > 0 && drafts.every(d => !missingFields(d).length && d.fluids.some(f => f.fluid && f.volume));
 
@@ -303,6 +309,7 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                 </label>
                 <button disabled={reading || busy} onClick={addByHand} style={btn('148,163,184', false)}>✍️ Add by hand</button>
               </div>
+              <div ref={draftsRef} style={{ scrollMarginTop: 12 }} />
               {msg && <div style={{ fontSize: 13.5, fontWeight: 800, color: msg.startsWith('❌') ? '#fca5a5' : msg.startsWith('✅') || msg.startsWith('✓') ? '#86efac' : '#fde68a' }}>{msg}</div>}
 
               {drafts && drafts.length > 0 && (
