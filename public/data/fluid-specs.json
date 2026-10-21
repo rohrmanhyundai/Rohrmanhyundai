@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:12:52.763Z",
+  "updatedAt": "2026-10-21T15:14:02.948Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -261,85 +261,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7ut2yaue1"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "VELOSTER N",
-      "code": "JSN",
-      "yearFrom": 2019,
-      "yearTo": 2022,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "",
-          "volume": "5.07 US qt. (4.8L)",
-          "spec": "0W-30 Synthetic",
-          "partNumber": "Refer to Hyundai Lubricants Program",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "",
-          "volume": "1.9 – 2.0 US qt. (1.8 – 1.9L)",
-          "spec": "SAE 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Wet Dual Clutch Transmission Fluid",
-          "engine": "Gear Oil",
-          "volume": "3.49 – 3.59 US qt. (3.3 – 3.4L)",
-          "spec": "WDCTF HD G",
-          "partNumber": "0023219100",
-          "note": ""
-        },
-        {
-          "fluid": "Wet Dual Clutch Transmission Fluid",
-          "engine": "Control Oil",
-          "volume": "2.59 – 2.64 US qt. (2.45 – 2.5L)",
-          "spec": "WDCTF HD H",
-          "partNumber": "0023219101",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "",
-          "volume": "7.8 US qt. (7.4L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Brake / Clutch Fluid",
-          "engine": "",
-          "volume": "0.74 – 0.85 US qt. (0.7 – 0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "",
-          "volume": "15.87 ± 0.88 oz. (450 ± 25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "",
-          "volume": "4.23 ± 0.35 oz. (120 ± 10g)",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "veloster.pdf",
-        "uploadedAt": "2026-10-21T14:37:18.626Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7ut2yqmw5"
     },
     {
       "make": "HYUNDAI",
@@ -4280,6 +4201,85 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7t6h34r4j"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "VELOSTER N",
+      "code": "JSN",
+      "yearFrom": 2019,
+      "yearTo": 2022,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "5.07 US qt. (4.8L)",
+          "spec": "0W-30 Synthetic",
+          "partNumber": "Refer to Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "",
+          "volume": "1.9 – 2.0 US qt. (1.8 – 1.9L)",
+          "spec": "SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Wet Dual Clutch Transmission Fluid — Gear Oil",
+          "engine": "",
+          "volume": "3.49 – 3.59 US qt. (3.3 – 3.4L)",
+          "spec": "WDCTF HD G",
+          "partNumber": "0023219100",
+          "note": ""
+        },
+        {
+          "fluid": "Wet Dual Clutch Transmission Fluid — Control Oil",
+          "engine": "",
+          "volume": "2.59 – 2.64 US qt. (2.45 – 2.5L)",
+          "spec": "WDCTF HD H",
+          "partNumber": "0023219101",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "7.8 US qt. (7.4L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": "0.74 – 0.85 US qt. (0.7 – 0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "15.87 ± 0.88 oz. (450 ± 25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "4.23 ± 0.35 oz. (120 ± 10g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "veloster.pdf",
+        "uploadedAt": "2026-10-21T15:13:48.761Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7ut2yqmw5"
     }
   ]
 }
