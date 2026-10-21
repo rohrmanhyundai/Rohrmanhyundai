@@ -95,13 +95,18 @@ function passwordProblem(pw) {
 
 // KV credential access, with a short in-isolate cache so the session check on
 // every proxied request doesn't turn into a KV read each time.
+// The cache can hold the OLD password for a while after a reset / manager set
+// (other isolates, the edge cache) — 10/21: Devin's new password kept failing
+// and his fresh session was rejected. So a failed check never trusts the cache:
+// login and session checks re-read KV fresh (`fresh: true`) before saying no.
 const credCache = new Map();   // USERNAME → { cred, at }
 const CRED_TTL = 5 * 60 * 1000;
-async function getCred(env, username) {
+async function getCred(env, username, { fresh = false } = {}) {
   const name = up(username);
   const hit = credCache.get(name);
-  if (hit && Date.now() - hit.at < CRED_TTL) return hit.cred;
-  const cred = await env.CREDS.get(`cred:${name}`, { type: 'json', cacheTtl: 300 });
+  if (!fresh && hit && Date.now() - hit.at < CRED_TTL) return hit.cred;
+  // 60s is the shortest edge cache KV allows; a fresh read skips it entirely.
+  const cred = await env.CREDS.get(`cred:${name}`, fresh ? { type: 'json' } : { type: 'json', cacheTtl: 60 });
   credCache.set(name, { cred, at: Date.now() });
   return cred;
 }
@@ -135,7 +140,9 @@ async function readSession(env, request) {
   let p;
   try { p = JSON.parse(dec.decode(unb64u(m[1]))); } catch { return null; }
   if (!p || !p.u || !p.exp || Date.now() > p.exp) return null;
-  const cred = await getCred(env, p.u);
+  let cred = await getCred(env, p.u);
+  // A session opened on a just-changed password looks "stale" to a cached copy.
+  if (!cred || cred.setAt !== p.pwv) cred = await getCred(env, p.u, { fresh: true });
   if (!cred || cred.setAt !== p.pwv) return null;
   return p;
 }
@@ -275,8 +282,15 @@ async function route(request, env, url) {
     const ip = request.headers.get('CF-Connecting-IP') || 'ip';
     throttle(`ip:${ip}`, 30, 10 * 60 * 1000);
     throttle(`user:${up(username)}`, 10, 10 * 60 * 1000);
-    const cred = await getCred(env, username);
-    if (!(await checkCredential(cred, password))) {
+    let cred = await getCred(env, username);
+    let good = await checkCredential(cred, password);
+    // Wrong against the cached copy? It may be the password from before a reset —
+    // re-check only if KV really holds a newer one (keeps a wrong guess to one hash).
+    if (!good) {
+      const now = await getCred(env, username, { fresh: true });
+      if (now && (!cred || now.setAt !== cred.setAt)) { cred = now; good = await checkCredential(cred, password); }
+    }
+    if (!good) {
       const user = cred ? null : await findUser(env, username);
       // A real user with no password yet gets told so — they need a manager
       // to set one or a reset link, not to keep guessing.

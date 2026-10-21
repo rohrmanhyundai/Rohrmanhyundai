@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadUsers, saveUsers, requestPasswordReset } from '../utils/github';
-import { checkResetToken, withPassword, passwordProblem } from '../utils/password';
+import { withPassword, passwordProblem } from '../utils/password';
 import * as api from '../utils/api';
 import { trackAction } from '../utils/activityTracker';
 
@@ -52,19 +52,12 @@ export function ResetPasswordPage({ token, username, onDone }) {
   const [pw2, setPw2] = useState('');
   const [err, setErr] = useState('');
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const loaded = await loadUsers();
-        const u = (loaded && loaded.users || []).find(x => (x.username || '').toUpperCase() === String(username || '').toUpperCase());
-        const res = u ? await checkResetToken(u, token) : { ok: false, reason: 'none' };
-        if (cancelled) return;
-        if (res.ok) setState('ready'); else { setState('invalid'); setReason(res.reason); }
-      } catch { if (!cancelled) { setState('invalid'); setReason('error'); } }
-    })();
-    return () => { cancelled = true; };
-  }, [token, username]);
+  // No pre-check here. Whoever opens the link isn't signed in, so the only user
+  // list the browser can read is the copy published with the site — refreshed on
+  // code deploys only, so it never has a fresh reset on it, and every new link
+  // looked "not valid" (10/21, Devin). The worker reads the live list and checks
+  // the link when the new password is saved.
+  useEffect(() => { setState(token && username ? 'ready' : 'invalid'); setReason(token && username ? '' : 'none'); }, [token, username]);
 
   async function save() {
     const problem = passwordProblem(pw);
@@ -79,10 +72,15 @@ export function ResetPasswordPage({ token, username, onDone }) {
       api.logout();
       trackAction('password-reset-complete');
       setState('done');
-    } catch (e) { setErr(e?.message || String(e)); setState('ready'); }
+    } catch (e) {
+      const m = e?.message || String(e);
+      // A dead link (expired / used / replaced) → explain it and point at Forgot?.
+      if (/expired|no longer valid|already been used/i.test(m)) { setReason(/expired/i.test(m) ? 'expired' : /already/i.test(m) ? 'used' : 'none'); setState('invalid'); }
+      else { setErr(m); setState('ready'); }
+    }
   }
 
-  const why = { none: "This link isn't valid — it may have been used already.", expired: 'This link has expired (they last one hour).', mismatch: "This link doesn't match the latest reset request — use the newest email.", error: 'Could not reach the user list. Try again in a minute.' }[reason] || 'This link is not valid.';
+  const why = { none: "This link isn't valid anymore — a newer link was sent, a manager set the password, or it was already used.", expired: 'This link has expired (they last one hour).', mismatch: "This link doesn't match the latest reset request — use the newest email.", used: 'This link has already been used — your password was set with it. Log in with that password, or get a fresh link.', error: 'Could not reach the user list. Try again in a minute.' }[reason] || 'This link is not valid.';
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'radial-gradient(circle at 20% 0%, rgba(61,214,195,.18), transparent 35%), radial-gradient(circle at 100% 100%, rgba(139,92,246,.2), transparent 40%), #050b13', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, zIndex: 1100 }}>
