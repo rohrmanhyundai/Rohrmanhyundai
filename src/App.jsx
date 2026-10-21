@@ -138,6 +138,23 @@ function vaultUnrecoverable(vault, users) {
   });
 }
 
+// New-build reload (see the check inside App). Only the dashboard and hubs are
+// safe to reload on — never a half-filled form.
+const BUILD_SAFE_PAGES = /^(dashboard|[a-z-]+-hub|tech-resources|advisor-calendar)$/;
+function reloadForBuild(build) {
+  // Once per build per tab: if the reload still comes back on the old bundle
+  // (a CDN edge lagging the deploy), don't loop — the next build tries again.
+  try {
+    if (sessionStorage.getItem('reloadedForBuild') === String(build)) return;
+    sessionStorage.setItem('reloadedForBuild', String(build));
+  } catch {}
+  try {
+    const u = new URL(window.location.href);
+    u.searchParams.set('_v', String(Date.now()));   // dodge the cached index.html
+    window.location.replace(u.toString());
+  } catch { window.location.reload(); }
+}
+
 function effectiveRole(record) {
   const base = (record && record.role) || '';
   if (record && record.managementAccess && base !== 'admin' && !base.includes('manager')) {
@@ -498,6 +515,46 @@ export default function App() {
       } catch {}
     };
   }, [isLoggedIn]);
+
+  // New-build check. A tab left open keeps running the bundle it loaded with, so
+  // a deploy (a new tile, a fix) never reaches it until someone reloads (a parts
+  // user sat on the morning's Parts Hub all afternoon). Compare this bundle's build id with
+  // the deployed version.json every few minutes and whenever the tab comes back
+  // into view. Reload only on the dashboard or a hub, never mid-form; if a new
+  // build lands while someone is working, it waits until they go back to one.
+  const newBuildRef = useRef(false);
+  const shownPageRef = useRef(page);
+  shownPageRef.current = page;
+  useEffect(() => {
+    if (import.meta.env.DEV) return;
+    const reloadIfSafe = () => {
+      if (!newBuildRef.current || !BUILD_SAFE_PAGES.test(shownPageRef.current || 'dashboard')) return;
+      reloadForBuild(newBuildRef.current);
+    };
+    const check = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.BASE_URL}version.json?v=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) return;
+        const { build } = await res.json();
+        if (build && build !== __BUILD_ID__) { newBuildRef.current = build; reloadIfSafe(); }
+      } catch {}
+    };
+    const onVisible = () => { if (document.visibilityState === 'visible') check(); };
+    check();
+    const poll = setInterval(check, 3 * 60 * 1000);
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', check);
+    return () => {
+      clearInterval(poll);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', check);
+    };
+  }, []);
+  // A build that arrived mid-form applies the moment they're back on a hub.
+  useEffect(() => {
+    if (!newBuildRef.current || import.meta.env.DEV) return;
+    if (BUILD_SAFE_PAGES.test(page || 'dashboard')) reloadForBuild(newBuildRef.current);
+  }, [page]);
 
   // `window.innerWidth < 600` was read during render with nothing to re-run it,
   // so rotating a phone left it stranded in whichever layout it loaded with.
