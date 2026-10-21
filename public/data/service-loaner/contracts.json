@@ -172,8 +172,8 @@
       "dueTime": "09:48",
       "phone": "+1 (765) 366-1506",
       "notes": "",
-      "fileUrl": "",
-      "fileName": "",
+      "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mviaer6s-8t7otk3d.pdf",
+      "fileName": "LANAM AGREEMENT.pdf",
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
@@ -189,7 +189,9 @@
         "at": "2026-10-21T15:26:04.098Z",
         "by": "HOLLI",
         "fromContract": true
-      }
+      },
+      "scanAttachedAt": "2026-10-21T15:49:00.133Z",
+      "scanAttachedBy": "HOLLI"
     },
     {
       "id": "sl-mve5lmp0m00x",
