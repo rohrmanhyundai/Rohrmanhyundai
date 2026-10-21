@@ -59,6 +59,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
   const [contracts, setContracts] = useState([]);   // Service Loaner contracts — an open one means the car is out
   const [where, setWhere] = useState('all');        // all | lot | out
   const [damage, setDamage] = useState([]);         // damage reports (data/service-loaner/damage.json)
+  const [damagePending, setDamagePending] = useState([]); // phone damage media not yet matched to a part
   const [damageFor, setDamageFor] = useState(null); // loaner whose 🚨 Report damage page is open
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
       .catch(() => { if (alive) setLoading(false); });
     loadLoanerMedia().then(d => { if (alive) setMedia(d.sessions || []); }).catch(() => {});
     ((io || github).loadServiceLoaners)().then(d => { if (alive) setContracts(d.contracts || []); }).catch(() => {});
-    ((io || github).loadLoanerDamage)().then(d => { if (alive) setDamage(d.reports || []); }).catch(() => {});
+    ((io || github).loadLoanerDamage)().then(d => { if (alive) { setDamage(d.reports || []); setDamagePending(d.pending || []); } }).catch(() => {});
     return () => { alive = false; };
   }, []);
 
@@ -265,6 +266,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
   }, [contracts, items]);
   const outCount = items.filter(v => outBy[v.id]).length;
   const openDamage = (v) => damage.filter(r => r.status !== 'repaired' && (r.vehicleId === v.id || (r.vin && r.vin === v.vin))).length;
+  const toSort = (v) => damagePending.filter(p => p.vehicleId === v.id || (p.vin && p.vin === v.vin)).reduce((n, p) => n + (p.files || []).length, 0);
 
   const list = useMemo(() => {
     const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
@@ -385,6 +387,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                         <button disabled={busy} title="Check-in / check-out pictures and videos" style={{ ...btn('192,132,252'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setMediaFor(v)}>📸 Media ({sessionsOf(v).length})</button>
                         <button disabled={busy} title="Spin the car in 3D and click a panel to report damage" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px', position: 'relative' }} onClick={() => setDamageFor(v)}>
                           🚨 Report damage
+                          {toSort(v) > 0 && <span title={`${toSort(v)} damage picture${toSort(v) === 1 ? '' : 's'} from the phone to sort`} style={{ position: 'absolute', top: -8, left: -8, height: 20, padding: '0 6px', borderRadius: 999, background: '#f59e0b', color: '#1a1206', fontSize: 11.5, fontWeight: 900, lineHeight: '20px', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(245,158,11,.7)' }}>📸{toSort(v)}</span>}
                           {openDamage(v) > 0 && <span style={{ position: 'absolute', top: -8, right: -8, minWidth: 20, height: 20, padding: '0 5px', boxSizing: 'border-box', borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 11.5, fontWeight: 900, lineHeight: '20px', textAlign: 'center', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(239,68,68,.7)' }}>{openDamage(v)}</span>}
                         </button>
                         {onMaintenance && <button disabled={busy} title="New maintenance request for this loaner" style={{ ...btn('251,146,60'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => onMaintenance(v)}>🔧 Maintenance</button>}
@@ -470,7 +473,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
 
       {damageFor && (
         <Suspense fallback={<div style={{ position: 'fixed', inset: 0, zIndex: 1200, background: '#050913', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>Loading the 3D car…</div>}>
-          <LoanerDamage vehicle={damageFor} currentUser={currentUser} io={io} onClose={() => setDamageFor(null)} onChanged={setDamage} />
+          <LoanerDamage vehicle={damageFor} currentUser={currentUser} io={io} onClose={() => setDamageFor(null)} onChanged={(r, p) => { setDamage(r); setDamagePending(p || []); }} />
         </Suspense>
       )}
       {mediaFor && (() => {

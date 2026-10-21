@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../../utils/github';
-import { uploadLoanerMaintenancePhotoToS3 } from '../../utils/s3';
+import { uploadLoanerMaintenancePhotoToS3, deleteS3ObjectByUrl } from '../../utils/s3';
 import { createCarScene, CAR_PARTS, PART_LABEL } from './carScene';
 
 // ── Report Damage (Loaner Inventory → 🚨 Report damage) ──────────────────────
@@ -9,6 +9,9 @@ import { createCarScene, CAR_PARTS, PART_LABEL } from './carScene';
 // the damage Repaired; repaired reports move to the car's history. Stored in
 // data/service-loaner/damage.json, photos in S3 beside the maintenance ones.
 // Loaded lazily so three.js only downloads when this page opens.
+// 📸 Manage media: damage pictures sent from the phone after a check-in / out
+// (damage.json `pending`) wait here — select them, click the damaged part, and
+// they're attached to that report (and leave the to-sort list).
 
 const TYPES = ['Scratch', 'Dent', 'Chip', 'Crack', 'Scuff', 'Missing', 'Other'];
 const MAX_PHOTOS = 6;
@@ -19,10 +22,13 @@ const isImg = (p) => /^image\//.test(p.type || '') || /\.(jpe?g|png|gif|webp|hei
 export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChanged }) {
   const { loadLoanerDamage, updateLoanerDamage } = io || github;
   const uploadPhoto = io?.uploadLoanerMaintenancePhotoToS3 || uploadLoanerMaintenancePhotoToS3;
+  const deleteByUrl = io?.deleteS3ObjectByUrl || deleteS3ObjectByUrl;
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const fileRef = useRef(null);
   const [reports, setReports] = useState([]);
+  const [pendingAll, setPendingAll] = useState([]); // damage media from the phone, not yet on a part
+  const [chosen, setChosen] = useState([]);         // phone files picked to attach: [{ url, name, type, kind, size }]
   const [loading, setLoading] = useState(true);
   const [hover, setHover] = useState(null);         // { id, x, y }
   const [part, setPart] = useState(null);           // selected part id
@@ -38,10 +44,16 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
   const open = mine.filter(r => r.status !== 'repaired');
   const repaired = mine.filter(r => r.status === 'repaired').sort((a, b) => String(b.repairedAt).localeCompare(String(a.repairedAt)));
   const damagedIds = useMemo(() => [...new Set(open.map(r => r.part))], [open]);
+  const pending = useMemo(() => pendingAll.filter(p => p.vehicleId === vehicle.id || (p.vin && p.vin === vehicle.vin))
+    .sort((a, b) => String(b.at).localeCompare(String(a.at))), [pendingAll, vehicle]);
+  const pendingFiles = pending.reduce((n, p) => n + (p.files || []).length, 0);
+  const isChosen = (f) => chosen.some(x => x.url === f.url);
+  const toggleChosen = (f) => setChosen(cur => (cur.some(x => x.url === f.url) ? cur.filter(x => x.url !== f.url) : [...cur, f]));
+  const applyStore = (d) => { setReports(d.reports || []); setPendingAll(d.pending || []); onChanged && onChanged(d.reports || [], d.pending || []); };
 
   useEffect(() => {
     let alive = true;
-    loadLoanerDamage().then(d => { if (alive) { setReports(d.reports || []); setLoading(false); } }).catch(() => alive && setLoading(false));
+    loadLoanerDamage().then(d => { if (alive) { setReports(d.reports || []); setPendingAll(d.pending || []); setLoading(false); } }).catch(() => alive && setLoading(false));
     return () => { alive = false; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -64,6 +76,8 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
 
   useEffect(() => { sceneRef.current && sceneRef.current.setDamaged(damagedIds); }, [damagedIds]);
   useEffect(() => { sceneRef.current && sceneRef.current.setSelected(part); }, [part]);
+  // Picking phone media means a part is next — hold the car still to aim.
+  useEffect(() => { if (chosen.length && sceneRef.current) sceneRef.current.setAutoRotate(false); }, [chosen.length]);
   useEffect(() => () => files.forEach(f => URL.revokeObjectURL(f.url)), []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape' && !busy) { if (part) setPart(null); else onClose(); } };
@@ -85,10 +99,12 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
 
   async function save() {
     if (!part || !type || busy) return;
+    const used = new Set(chosen.map(f => f.url));
     setBusy(true); setStatus(files.length ? `Uploading ${files.length} photo${files.length === 1 ? '' : 's'}…` : 'Saving…');
     try {
       const photos = [];
       for (const f of files) photos.push({ url: await uploadPhoto(f.file), name: f.file.name || 'photo', type: f.file.type || '' });
+      for (const f of chosen) photos.push({ url: f.url, name: f.name || 'photo', type: f.type || (f.kind === 'video' ? 'video/mp4' : 'image/jpeg'), fromPhone: true });
       const rec = {
         id: `ld-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
         vehicleId: vehicle.id, vin: vehicle.vin || '', stockNo: vehicle.stockNo || '',
@@ -96,15 +112,33 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
         status: 'open', reportedAt: new Date().toISOString(), reportedBy: currentUser,
       };
       setStatus('Saving…');
-      const next = await updateLoanerDamage(cur => ({ ...cur, reports: [...cur.reports, rec] }), `${rec.stockNo || rec.vin} ${rec.partLabel} ${type}`);
-      setReports(next.reports);
-      onChanged && onChanged(next.reports);
+      const next = await updateLoanerDamage(cur => ({
+        ...cur, reports: [...cur.reports, rec],
+        pending: (cur.pending || []).map(p => ({ ...p, files: (p.files || []).filter(f => !used.has(f.url)) })).filter(p => p.files.length),
+      }), `${rec.stockNo || rec.vin} ${rec.partLabel} ${type}`);
+      applyStore(next);
       files.forEach(f => URL.revokeObjectURL(f.url));
-      setFiles([]); setType(''); setDesc('');
+      setFiles([]); setType(''); setDesc(''); setChosen([]);
       setPart(null);   // deselect so the panel shows red straight away
       setStatus(`✓ ${type} on the ${rec.partLabel.toLowerCase()} saved.`);
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+
+  // Phone media that turned out not to be damage (or a duplicate): gone for good.
+  async function discardPending(p) {
+    if (!window.confirm(`Delete these ${p.files.length} file${p.files.length === 1 ? '' : 's'} from the phone? They won't be attached to any damage.`)) return;
+    setBusy(true); setStatus('Deleting…');
+    try {
+      const next = await updateLoanerDamage(cur => ({ ...cur, pending: (cur.pending || []).filter(x => x.id !== p.id) }), `discard damage media ${p.stockNo || p.vin}`);
+      for (const f of p.files || []) { try { await deleteByUrl(f.url); } catch {} }
+      setChosen(cur => cur.filter(f => !(p.files || []).some(x => x.url === f.url)));
+      applyStore(next);
+      setStatus('✓ Deleted.');
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Delete failed.'}`);
     }
     setBusy(false);
   }
@@ -114,8 +148,7 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
     setBusy(true); setStatus('Saving…');
     try {
       const next = await updateLoanerDamage(cur => ({ ...cur, reports: cur.reports.map(x => x.id === r.id ? { ...x, status: 'repaired', repairedAt: new Date().toISOString(), repairedBy: currentUser } : x) }), `repaired ${r.stockNo || r.vin} ${r.partLabel}`);
-      setReports(next.reports);
-      onChanged && onChanged(next.reports);
+      applyStore(next);
       setStatus(`✓ ${r.partLabel} marked repaired.`);
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
@@ -162,6 +195,11 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
           <div style={{ fontSize: 19, fontWeight: 900, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>🚨 {vehicle.stockNo ? `#${vehicle.stockNo}` : vehicle.vin} <span style={{ fontSize: 13, fontWeight: 800, color: '#fca5a5' }}>Report damage</span></div>
           <div style={{ fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}{vehicle.mileage ? ` · ${Number(vehicle.mileage).toLocaleString()} mi` : ''}</div>
         </div>
+        {pendingFiles > 0 && (
+          <span style={{ flexShrink: 0, fontSize: 13, fontWeight: 900, padding: '6px 12px', borderRadius: 999, color: '#fde68a', background: 'rgba(251,191,36,.14)', border: '1px solid rgba(251,191,36,.5)' }}>
+            📸 {pendingFiles} to sort
+          </span>
+        )}
         <span style={{ flexShrink: 0, fontSize: 13, fontWeight: 900, padding: '6px 12px', borderRadius: 999, color: open.length ? '#fecaca' : '#bbf7d0', background: open.length ? 'rgba(239,68,68,.15)' : 'rgba(74,222,128,.12)', border: `1px solid ${open.length ? 'rgba(239,68,68,.5)' : 'rgba(74,222,128,.45)'}` }}>
           {open.length ? `⚠ ${open.length} open damage${open.length === 1 ? '' : 's'}` : '✓ No open damage'}
         </span>
@@ -207,7 +245,23 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
               </div>
               <textarea value={desc} onChange={e => setDesc(e.target.value)} disabled={busy} rows={3} placeholder="Describe it — e.g. 4 inch scratch above the reflector"
                 style={{ marginTop: 10, width: '100%', boxSizing: 'border-box', background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 14, fontFamily: 'inherit', lineHeight: 1.45, resize: 'vertical', outline: 'none' }} />
-              <div style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8', margin: '10px 0 6px' }}>Photos <span style={{ color: '#fbbf24' }}>· recommended</span></div>
+              {chosen.length > 0 && (
+                <>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#fde68a', margin: '10px 0 6px' }}>📸 From the phone · {chosen.length}</div>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {chosen.map(f => (
+                      <div key={f.url} style={{ position: 'relative' }}>
+                        {f.kind === 'video'
+                          ? <video src={f.url} muted playsInline preload="metadata" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 9, border: '1px solid rgba(251,191,36,.5)' }} />
+                          : <img src={f.url} alt="" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 9, border: '1px solid rgba(251,191,36,.5)' }} />}
+                        <button disabled={busy} onClick={() => toggleChosen(f)}
+                          style={{ position: 'absolute', top: -7, right: -7, width: 20, height: 20, borderRadius: 999, border: 0, background: '#ef4444', color: '#fff', fontWeight: 900, cursor: 'pointer', lineHeight: '20px', padding: 0 }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              <div style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8', margin: '10px 0 6px' }}>{chosen.length ? 'More photos' : <>Photos <span style={{ color: '#fbbf24' }}>· recommended</span></>}</div>
               <input ref={fileRef} type="file" accept="image/*,video/*" multiple capture="environment" style={{ display: 'none' }} onChange={e => addFiles(e.target.files)} />
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                 {files.map((f, i) => (
@@ -237,6 +291,54 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
             </div>
           )}
           {status && !busy && <div style={{ fontSize: 13, fontWeight: 800, color: status.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{status}</div>}
+
+          {pending.length > 0 && (
+            <div style={{ borderRadius: 16, padding: 14, background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.45)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 22 }}>
+                <span style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.08em', color: '#fde68a' }}>📸 MANAGE MEDIA · {pendingFiles}</span>
+                {chosen.length > 0 && (
+                  <span style={{ marginLeft: 'auto', fontSize: 11.5, fontWeight: 900, color: '#042f2e', background: '#22d3ee', borderRadius: 999, padding: '2px 9px' }}>
+                    ✓ {chosen.length} selected{part ? '' : ' → click the part'}
+                  </span>
+                )}
+              </div>
+              <div style={{ fontSize: 12.5, color: '#fcd34d', marginTop: 4, lineHeight: 1.45 }}>
+                Damage pictures from the phone. <strong>Tap the ones that show one spot, then click that part on the car</strong> and save the report — they're attached to it.
+              </div>
+              <div style={{ display: 'grid', gap: 12, marginTop: 10 }}>
+                {pending.map(p => (
+                  <div key={p.id}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ flex: 1, minWidth: 0, fontSize: 12, color: '#cbd5e1' }}>
+                        <strong style={{ color: '#f8fafc' }}>{p.kind === 'in' ? '🅿️ Check-in' : p.kind === 'out' ? '🔑 Check-out' : '📸'}</strong>
+                        {p.customer ? ` · ${p.customer}` : ''} · {p.by} · {fmtWhen(p.at)}
+                        {p.note && <div style={{ color: '#fde68a', fontWeight: 700, marginTop: 2 }}>📝 {p.note}</div>}
+                      </div>
+                      <button disabled={busy} title="Select all of these" onClick={() => setChosen(cur => [...cur, ...p.files.filter(f => !cur.some(x => x.url === f.url))])} style={{ ...btn('34,211,238', false), padding: '4px 8px', fontSize: 11.5 }}>All</button>
+                      <button disabled={busy} title="Not damage — delete these" onClick={() => discardPending(p)} style={{ ...btn('248,113,113', false), padding: '4px 8px', fontSize: 11.5 }}>🗑</button>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginTop: 6 }}>
+                      {p.files.map(f => {
+                        const on = isChosen(f);
+                        return (
+                          <div key={f.url} style={{ position: 'relative', aspectRatio: '1', borderRadius: 9, overflow: 'hidden', cursor: 'pointer', background: '#000', outline: on ? '3px solid #22d3ee' : '1px solid rgba(148,163,184,.3)', outlineOffset: on ? -3 : -1 }}
+                            onClick={() => toggleChosen(f)} title={on ? 'Selected — click to unselect' : 'Click to select'}>
+                            {f.kind === 'video'
+                              ? <video src={f.url} muted playsInline preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              : <img src={f.url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                            {f.kind === 'video' && <span style={{ position: 'absolute', left: 4, bottom: 2, fontSize: 13 }}>🎬</span>}
+                            <span style={{ position: 'absolute', top: 4, left: 4, width: 18, height: 18, borderRadius: 999, background: on ? '#22d3ee' : 'rgba(2,6,23,.6)', border: '2px solid #fff', color: '#042f2e', fontSize: 11, fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{on ? '✓' : ''}</span>
+                            <a href={f.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title="Open full size"
+                              style={{ position: 'absolute', right: 4, bottom: 4, fontSize: 12, textDecoration: 'none', background: 'rgba(2,6,23,.7)', borderRadius: 6, padding: '1px 4px' }}>🔍</a>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div>
             <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.08em', color: '#fca5a5', marginBottom: 8 }}>OPEN DAMAGE · {open.length}</div>

@@ -16,6 +16,10 @@ import QuickMediaSend from './QuickMediaSend';
 // Files go to S3 (warranty-media/loaner-media/, big videos on a signed URL);
 // the session lands in data/service-loaner/media.json and shows on that
 // loaner's card under 📸 Media.
+// Damage: picking a loaner with open damage (🚨 Report damage on the website)
+// pops a warning listing it. After Send it asks "Was any damage found?" — Yes
+// opens a camera screen whose files land on that loaner's damage page as media
+// to sort (damage.json `pending`), where they're matched to the damaged part.
 
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const fmtSize = (b) => (b >= 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
@@ -57,6 +61,11 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const camRef = useRef(null);
   const libraryRef = useRef(null);
   const [quick, setQuick] = useState(false);       // 📤 Add media screen (not tied to a loaner)
+  const [damage, setDamage] = useState([]);        // open damage reports (damage.json)
+  const [dmgSeen, setDmgSeen] = useState({});      // vehicle id → damage warning dismissed
+  const [askDamage, setAskDamage] = useState(null); // after Send: { vehicle, kind, customer, done } — "Was any damage found?"
+  const [damageCap, setDamageCap] = useState(null); // same, while the damage camera screen is open
+  useEffect(() => { ((io || github).loadLoanerDamage)().then(d => setDamage((d.reports || []).filter(r => r.status !== 'repaired'))).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     loadLoanerInventory().then(d => setFleet(d.vehicles || [])).catch(() => setFleet([]));
@@ -72,6 +81,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const hasName = !!first.trim() && !!last.trim();
   const blHit = hasName ? blacklistHit(blacklist, { firstName: first, lastName: last }) : null;
   const ready = !!vehicle && hasName && !!kind;
+  const vehicleDamage = vehicle ? damage.filter(r => r.vehicleId === vehicle.id || (r.vin && r.vin === vehicle.vin)) : [];
   const canSend = ready && files.length > 0 && !saving;
 
   function addFiles(e) {
@@ -140,7 +150,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
       };
       await updateLoanerMedia(cur => ({ ...cur, sessions: [...cur.sessions, rec] }), `${kind === 'in' ? 'check in' : 'check out'} ${rec.stockNo}`);
       files.forEach(f => URL.revokeObjectURL(f.preview));
-      setDone({ stockNo: rec.stockNo, kind, count: uploaded.length });
+      setAskDamage({ vehicle, kind, customer: `${rec.customerFirst} ${rec.customerLast}`.trim(), done: { stockNo: rec.stockNo, kind, count: uploaded.length } });
       setFiles([]); setStock(''); setKind(''); setFirst(''); setLast('');
     } catch (err) {
       setError(`${err.message || 'Save failed.'} Tap Send again.`);
@@ -149,6 +159,23 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   }
 
   if (quick) return <QuickMediaSend currentUser={currentUser} io={io} onBack={() => setQuick(false)} />;
+  if (damageCap) {
+    const v = damageCap.vehicle;
+    const finish = (n) => { setDone({ ...damageCap.done, damage: n }); setDamageCap(null); };
+    return (
+      <QuickMediaSend currentUser={currentUser} io={io} accent="248,113,113"
+        title={`🚨 Damage · ${v.stockNo ? `#${v.stockNo}` : v.vin}`}
+        subtitle="Pictures / videos of the damage — matched to the part on the website's damage page"
+        notePlaceholder="Where and what? e.g. scratch on the rear bumper, right side"
+        folder={`loaner-damage/${String(v.stockNo || v.vin || 'loaner').replace(/[^A-Za-z0-9-]+/g, '_')}`}
+        backLabel="Skip"
+        onBack={() => finish(0)}
+        onSave={(rec) => (io || github).updateLoanerDamage(cur => ({ ...cur, pending: [...(cur.pending || []), {
+          ...rec, vehicleId: v.id, vin: v.vin || '', stockNo: v.stockNo || '', kind: damageCap.kind, customer: damageCap.customer,
+        }] }), `damage media ${v.stockNo || v.vin}`)}
+        onSent={finish} />
+    );
+  }
 
   if (done) {
     const k = KIND[done.kind];
@@ -159,6 +186,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           <div style={{ fontWeight: 900, fontSize: 19, color: '#4ade80', marginBottom: 8 }}>Sent</div>
           <div style={{ color: '#cbd5e1', fontSize: 15, lineHeight: 1.5 }}>
             {done.count} file{done.count === 1 ? '' : 's'} for <strong>stock #{done.stockNo}</strong> ({k.label.toLowerCase()}) {done.count === 1 ? 'is' : 'are'} on the Loaner Inventory page.
+            {done.damage > 0 && <div style={{ marginTop: 8, color: '#fca5a5', fontWeight: 800 }}>🚨 {done.damage} damage file{done.damage === 1 ? '' : 's'} sent to the damage page.</div>}
           </div>
         </div>
         <button onClick={() => setDone(null)} style={{ width: '100%', borderRadius: 10, padding: '15px 12px', fontSize: 16, fontWeight: 800, background: 'linear-gradient(180deg,#60a5fa,#2563eb)', color: '#fff', border: '1px solid rgba(96,165,250,.6)', cursor: 'pointer' }}>
@@ -326,6 +354,58 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         }}>
         {saving ? '⏳ Sending… keep this screen open' : `✓ Done — Send${files.length ? ` ${files.length} file${files.length === 1 ? '' : 's'}` : ''}`}
       </button>
+
+      {vehicle && vehicleDamage.length > 0 && !dmgSeen[vehicle.id] && !saving && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2050, background: 'rgba(2,6,23,.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
+          <div style={{ ...CARD, background: '#2a160a', borderColor: 'rgba(249,115,22,.8)', width: '100%', maxWidth: 440, maxHeight: '86vh', overflowY: 'auto', padding: '22px 18px', marginBottom: 0 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 44 }}>🚨</div>
+              <div style={{ fontWeight: 900, fontSize: 19, color: '#fdba74', marginTop: 4 }}>DAMAGE ALREADY REPORTED</div>
+              <div style={{ color: '#fed7aa', fontSize: 14, marginTop: 4 }}>{vehicle.stockNo ? `Stock #${vehicle.stockNo}` : vehicle.vin} · {vehicleText(vehicle)}</div>
+            </div>
+            <div style={{ display: 'grid', gap: 8, marginTop: 14 }}>
+              {vehicleDamage.map(r => (
+                <div key={r.id} style={{ display: 'flex', gap: 10, alignItems: 'center', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(249,115,22,.35)', borderRadius: 10, padding: 8 }}>
+                  {(r.photos || []).find(p => /^image\//.test(p.type || '') || /\.(jpe?g|png|webp|heic)$/i.test(p.url))
+                    ? <img src={(r.photos.find(p => /^image\//.test(p.type || '') || /\.(jpe?g|png|webp|heic)$/i.test(p.url))).url} alt="" style={{ width: 52, height: 52, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />
+                    : <span style={{ width: 52, height: 52, borderRadius: 8, background: 'rgba(249,115,22,.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>⚠️</span>}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 900, fontSize: 14.5, color: '#fff' }}>{r.partLabel}</div>
+                    <div style={{ fontSize: 13, color: '#fdba74', fontWeight: 800 }}>{r.type}</div>
+                    {r.description && <div style={{ fontSize: 12.5, color: '#e2e8f0', marginTop: 2, lineHeight: 1.35 }}>{r.description}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ color: '#cbd5e1', fontSize: 13, marginTop: 12, textAlign: 'center' }}>This damage is already on file — get it in your pictures / video so it's clear it was there.</div>
+            <button type="button" onClick={() => setDmgSeen(m => ({ ...m, [vehicle.id]: true }))}
+              style={{ width: '100%', marginTop: 14, borderRadius: 10, padding: '15px 12px', fontSize: 16.5, fontWeight: 900, background: 'rgba(249,115,22,.22)', color: '#fed7aa', border: '1px solid rgba(249,115,22,.75)', cursor: 'pointer' }}>
+              OK — I've seen it
+            </button>
+          </div>
+        </div>
+      )}
+
+      {askDamage && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2100, background: 'rgba(2,6,23,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
+          <div style={{ ...CARD, background: '#0f1b30', borderColor: 'rgba(248,113,113,.55)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
+            <div style={{ fontSize: 40 }}>✅</div>
+            <div style={{ fontWeight: 900, fontSize: 16, color: '#4ade80' }}>{askDamage.done.count} file{askDamage.done.count === 1 ? '' : 's'} sent</div>
+            <div style={{ fontWeight: 900, fontSize: 21, color: '#f8fafc', marginTop: 14 }}>Was any damage found?</div>
+            <div style={{ color: '#94a3b8', fontSize: 13.5, marginTop: 4 }}>{askDamage.vehicle.stockNo ? `Stock #${askDamage.vehicle.stockNo}` : askDamage.vehicle.vin} · {KIND[askDamage.kind].label.toLowerCase()}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 18 }}>
+              <button type="button" onClick={() => { setDamageCap(askDamage); setAskDamage(null); }}
+                style={{ borderRadius: 10, padding: '17px 8px', fontSize: 17, fontWeight: 900, background: 'rgba(248,113,113,.2)', color: '#fecaca', border: '1px solid rgba(248,113,113,.7)', cursor: 'pointer' }}>
+                🚨 Yes
+              </button>
+              <button type="button" onClick={() => { setDone(askDamage.done); setAskDamage(null); }}
+                style={{ borderRadius: 10, padding: '17px 8px', fontSize: 17, fontWeight: 900, background: 'rgba(74,222,128,.15)', color: '#86efac', border: '1px solid rgba(74,222,128,.55)', cursor: 'pointer' }}>
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {blHit && !blAck[blHit.id] && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 2100, background: 'rgba(2,6,23,.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>

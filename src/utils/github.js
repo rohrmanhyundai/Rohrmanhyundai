@@ -2557,7 +2557,10 @@ export async function updateQuickMedia(mutate, what = 'update') {
 // ── Loaner damage (3D Report Damage page) ─────────────────────────────────────
 // public/data/service-loaner/damage.json → { reports: [{ id, vehicleId, vin, stockNo, part, partLabel,
 //   type, description, photos: [{ url, name, type }], status: 'open'|'repaired',
-//   reportedAt, reportedBy, repairedAt, repairedBy }] }
+//   reportedAt, reportedBy, repairedAt, repairedBy }],
+//   pending: [{ id, vehicleId, vin, stockNo, kind: 'in'|'out', customer, note, by, at, files }] }
+// `pending` = damage media sent from the phone after a check-in / out, waiting
+// to be matched to a part on the 3D damage page (📸 Manage media).
 export async function loadLoanerDamage() {
   try { const d = await loadGithubFile('data/service-loaner/damage.json'); if (d && Array.isArray(d.reports)) return d; } catch {}
   return { reports: [] };

@@ -8,13 +8,21 @@ import { pruneQuickMedia } from '../utils/quickMedia';
 // as needed, Send. It lands on Service Loaner → 📸 Media on the website, where
 // it's kept 72 hours (utils/quickMedia). Files go to S3 under
 // warranty-media/quick-media/<upload id>/.
+// The same screen takes damage pictures after a check-in / check-out ("Was any
+// damage found?" → Yes): the Rental page passes its own title, S3 folder and
+// onSave, and onSent to carry on to its Sent screen.
 
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const CARD = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12, padding: '14px 16px', marginBottom: 12 };
 const LABEL = { color: '#7a92b8', fontSize: 12, fontWeight: 700, letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 6, display: 'block' };
 const SMALL_BTN = { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '8px 12px', cursor: 'pointer', fontSize: 13, fontWeight: 700 };
 
-export default function QuickMediaSend({ currentUser, onBack, io }) {
+export default function QuickMediaSend({
+  currentUser, onBack, io,
+  title = '📤 Add media', subtitle = 'Goes to Service Loaner → 📸 Media · kept 72 hours',
+  notePlaceholder = 'What is this? e.g. LHY2595 windshield chip, customer\'s car scratch…',
+  folder = 'quick-media', onSave, onSent, backLabel = '← Back', accent = '96,165,250',
+}) {
   const { updateQuickMedia } = io || github;
   const upload = io?.uploadWarrantyMediaToS3 || uploadWarrantyMediaToS3;
   const ensureCreds = io?.ensureAwsCreds || ensureAwsCreds;
@@ -48,15 +56,19 @@ export default function QuickMediaSend({ currentUser, onBack, io }) {
       if (!(await ensureCreds())) throw new Error('Please sign in again.');
       for (const f of files) {
         const ext = (f.file.name.split('.').pop() || (f.kind === 'video' ? 'mov' : 'jpg')).toLowerCase().replace(/[^a-z0-9]/g, '');
-        const url = await upload(`quick-media/${id}/${f.id}.${ext}`, f.file, p => setFiles(prev => prev.map(x => (x.id === f.id ? { ...x, progress: p } : x))));
+        const url = await upload(`${folder}/${id}/${f.id}.${ext}`, f.file, p => setFiles(prev => prev.map(x => (x.id === f.id ? { ...x, progress: p } : x))));
         setFiles(prev => prev.map(x => (x.id === f.id ? { ...x, progress: 1 } : x)));
         uploaded.push({ url, name: f.file.name || `${f.kind}.${ext}`, type: f.file.type || '', kind: f.kind, size: f.file.size });
       }
       const rec = { id, note: note.trim(), by: String(currentUser || '').toUpperCase(), at: new Date().toISOString(), files: uploaded };
-      await updateQuickMedia(cur => ({ ...cur, items: [...cur.items, rec] }), `add ${uploaded.length}`);
-      pruneQuickMedia(io).catch(() => {});
+      if (onSave) await onSave(rec);
+      else {
+        await updateQuickMedia(cur => ({ ...cur, items: [...cur.items, rec] }), `add ${uploaded.length}`);
+        pruneQuickMedia(io).catch(() => {});
+      }
       files.forEach(f => URL.revokeObjectURL(f.preview));
       setFiles([]); setNote('');
+      if (onSent) { onSent(uploaded.length); return; }
       setSent(uploaded.length);
     } catch (err) {
       setError(`${err.message || 'Upload failed.'} Nothing was sent — check the connection and tap Send again.`);
@@ -84,15 +96,15 @@ export default function QuickMediaSend({ currentUser, onBack, io }) {
     <div style={page}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 16 }}>
         <div>
-          <div style={{ color: '#93c5fd', fontWeight: 800, fontSize: 18 }}>📤 Add media</div>
-          <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 2 }}>Goes to Service Loaner → 📸 Media · kept 72 hours</div>
+          <div style={{ color: `rgb(${accent})`, fontWeight: 800, fontSize: 18 }}>{title}</div>
+          <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 2 }}>{subtitle}</div>
         </div>
-        <button onClick={onBack} disabled={saving} style={{ ...SMALL_BTN, flexShrink: 0 }}>← Back</button>
+        <button onClick={onBack} disabled={saving} style={{ ...SMALL_BTN, flexShrink: 0 }}>{backLabel}</button>
       </div>
 
       <div style={CARD}>
         <label style={LABEL}>1 · Notes</label>
-        <textarea value={note} onChange={e => setNote(e.target.value)} disabled={saving} rows={3} placeholder="What is this? e.g. LHY2595 windshield chip, customer's car scratch…"
+        <textarea value={note} onChange={e => setNote(e.target.value)} disabled={saving} rows={3} placeholder={notePlaceholder}
           style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, color: '#e2e8f0', padding: '11px 12px', fontSize: 16, fontFamily: 'inherit', resize: 'vertical' }} />
       </div>
 
@@ -101,7 +113,7 @@ export default function QuickMediaSend({ currentUser, onBack, io }) {
         <input ref={camRef} type="file" accept="image/*,video/*" capture="environment" onChange={addFiles} style={{ display: 'none' }} />
         <input ref={libRef} type="file" accept="image/*,video/*" multiple onChange={addFiles} style={{ display: 'none' }} />
         <button type="button" onClick={() => camRef.current?.click()} disabled={saving}
-          style={{ width: '100%', background: 'rgba(96,165,250,.12)', border: '1px dashed rgba(96,165,250,.6)', color: '#e2e8f0', borderRadius: 10, padding: '20px 6px', cursor: 'pointer', fontSize: 18, fontWeight: 900 }}>
+          style={{ width: '100%', background: `rgba(${accent},.12)`, border: `1px dashed rgba(${accent},.6)`, color: '#e2e8f0', borderRadius: 10, padding: '20px 6px', cursor: 'pointer', fontSize: 18, fontWeight: 900 }}>
           📷 {files.length ? 'Take more' : 'Open camera'}
         </button>
         <button type="button" onClick={() => libRef.current?.click()} disabled={saving}
