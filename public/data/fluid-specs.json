@@ -1,85 +1,6 @@
 {
-  "updatedAt": "2026-10-21T15:03:57.784Z",
+  "updatedAt": "2026-10-21T15:11:09.798Z",
   "vehicles": [
-    {
-      "make": "HYUNDAI",
-      "model": "PALISADE",
-      "code": "",
-      "yearFrom": 2026,
-      "yearTo": 2026,
-      "fluids": [
-        {
-          "fluid": "Engine oil",
-          "engine": "",
-          "volume": "6.13 US qt. (5.8 ℓ)",
-          "spec": "SAE 0W-20 API SN PLUS/SP or ILSAC GF-6",
-          "partNumber": "",
-          "note": "Requires <API SN PLUS (or above) Full synthetic> grade engine oil. If a lower grade engine oil (mineral oil including Semi-synthetic) is used, then the engine oil and engine oil filter must be replaced as indicated severe maintenance condition."
-        },
-        {
-          "fluid": "Automatic transmission fluid",
-          "engine": "",
-          "volume": "7.39 US qt. (7.0 ℓ)",
-          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1 or other brands meeting the above specification approved by HYUNDAI Motor Co.",
-          "partNumber": "",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "",
-          "volume": "12.44 US qt. (11.77 ℓ)",
-          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
-          "partNumber": "",
-          "note": ""
-        },
-        {
-          "fluid": "Brake fluid",
-          "engine": "",
-          "volume": "As required",
-          "spec": "DOT-4",
-          "partNumber": "",
-          "note": "To maintain the best braking performance and ABS/ESC performance, use genuine brake fluid that conform to specifications. (SAE J1704 DOT-4 LV, FMVSS 116 DOT-4, ISO4925 CLASS-6)"
-        },
-        {
-          "fluid": "Rear differential oil (4WD)",
-          "engine": "",
-          "volume": "0.67 US qt. (0.65 ℓ)",
-          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
-          "partNumber": "",
-          "note": "If the transfer case/rear differential is submerged, visit an authorized HYUNDAI genuine products to replace the differential oil."
-        },
-        {
-          "fluid": "Transfer case oil (4WD)",
-          "engine": "",
-          "volume": "0.74 US qt. (0.7 ℓ)",
-          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
-          "partNumber": "",
-          "note": ""
-        },
-        {
-          "fluid": "Electronic Limited Differential (e-LSD) oil",
-          "engine": "",
-          "volume": "0.507 ± 0.015 US qt. 480 ± 15 mℓ",
-          "spec": "SHELL TF0870C or equivalent",
-          "partNumber": "",
-          "note": ""
-        },
-        {
-          "fluid": "Fuel",
-          "engine": "",
-          "volume": "19 US gal. (72ℓ)",
-          "spec": "Refer to the Fuel Requirements.",
-          "partNumber": "",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "2026 Hyundai Palisade Maintenance Specs.pdf",
-        "uploadedAt": "2026-10-21T14:33:34.680Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7q9npe3ql"
-    },
     {
       "make": "HYUNDAI",
       "model": "TUCSON",
@@ -4288,6 +4209,85 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi83z0krbo5"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "PALISADE",
+      "code": "",
+      "yearFrom": 2026,
+      "yearTo": 2026,
+      "fluids": [
+        {
+          "fluid": "Engine oil",
+          "engine": "",
+          "volume": "6.13 US qt. (5.8 ℓ)",
+          "spec": "SAE 0W-20 API SN PLUS/SP or ILSAC GF-6",
+          "partNumber": "",
+          "note": "*3"
+        },
+        {
+          "fluid": "Automatic transmission fluid",
+          "engine": "",
+          "volume": "7.39 US qt. (7.0 ℓ)",
+          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1 or other brands meeting the above specification approved by HYUNDAI Motor Co.",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "12.44 US qt. (11.77 ℓ)",
+          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake fluid",
+          "engine": "",
+          "volume": "As required",
+          "spec": "DOT-4",
+          "partNumber": "",
+          "note": "*4"
+        },
+        {
+          "fluid": "Rear differential oil (4WD)",
+          "engine": "",
+          "volume": "0.67 US qt. (0.65 ℓ)",
+          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
+          "partNumber": "",
+          "note": "*5"
+        },
+        {
+          "fluid": "Transfer case oil (4WD)",
+          "engine": "",
+          "volume": "0.74 US qt. (0.7 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Electronic Limited Differential (e-LSD) oil",
+          "engine": "",
+          "volume": "0.507 ± 0.015 US qt. 480 ± 15 mℓ",
+          "spec": "SHELL TF0870C or equivalent",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Fuel",
+          "engine": "",
+          "volume": "19 US gal. (72ℓ)",
+          "spec": "Refer to the Fuel Requirements",
+          "partNumber": "",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2026 Hyundai Palisade Maintenance Specs.pdf",
+        "uploadedAt": "2026-10-21T15:10:45.569Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7q9npe3ql"
     }
   ]
 }
