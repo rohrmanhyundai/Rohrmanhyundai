@@ -1,0 +1,18 @@
+{
+  "reports": [
+    {
+      "id": "ld-mvhe0pzq5cc7",
+      "vehicleId": "li-mvbd9atwntoj",
+      "vin": "KMHL64JA2TA540230",
+      "stockNo": "LHY2595",
+      "part": "windshield",
+      "partLabel": "Windshield",
+      "type": "Chip",
+      "description": "chip in the glass. still driveable",
+      "photos": [],
+      "status": "open",
+      "reportedAt": "2026-10-21T00:42:15.830Z",
+      "reportedBy": "SHAWN"
+    }
+  ]
+}
