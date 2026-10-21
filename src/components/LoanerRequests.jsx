@@ -281,7 +281,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 14 }}>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Date loaner needed</span><input type="date" min={today} value={draft.date} onChange={set('date')} disabled={busy} style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Time</span><input type="time" value={draft.time} onChange={set('time')} disabled={busy} style={inputStyle} /></label>
-              <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}><span style={label}>Notes (optional)</span><input value={draft.notes} onChange={set('notes')} disabled={busy} placeholder="How many days, special needs…" style={{ ...inputStyle, fontWeight: 600 }} /></label>
+              <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}><span style={label}>Notes (optional)</span><input value={draft.notes} onChange={set('notes')} disabled={busy} placeholder="How many days… special needs… model of car…" style={{ ...inputStyle, fontWeight: 600 }} /></label>
             </div>
             <div style={{ display: 'flex', gap: 10, marginTop: 14, alignItems: 'center', flexWrap: 'wrap' }}>
               <button disabled={busy || missing.length > 0} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
