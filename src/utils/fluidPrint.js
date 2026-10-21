@@ -32,6 +32,8 @@ html, body { margin: 0; background: #fff; color: #0f172a; font: 13px/1.45 "Inter
 .card .spec { font-weight: 700; margin-top: 2px; }
 .card .pn { font-size: 11.5px; color: #475569; margin-top: 3px; }
 .card .note { font-size: 11px; color: #92400e; margin-top: 5px; }
+.card .filter { display: inline-block; margin-top: 7px; padding: 3px 9px; border-radius: 8px; background: #eef2f8; font-size: 11.5px; }
+.card .filter span { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #64748b; }
 table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
 th { text-align: left; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #64748b; background: #f1f5f9; padding: 8px 10px; }
 td { padding: 8px 10px; border-top: 1px solid #edf1f6; vertical-align: top; }
@@ -56,6 +58,7 @@ export function fluidSheetHtml(v, { year, vin, decoded, by } = {}) {
       <div class="vol">${esc(f.volume || '—')}</div>
       <div class="spec">${esc(f.spec)}</div>
       ${f.partNumber ? `<div class="pn">P/N <span class="${mono(f.partNumber) ? 'mono' : ''}">${esc(f.partNumber)}</span></div>` : ''}
+      ${f.filter ? `<div class="filter"><span>Oil filter</span> <b class="${mono(f.filter) ? 'mono' : ''}">${esc(f.filter)}</b></div>` : ''}
       ${f.note ? `<div class="note">${esc(f.note)}</div>` : ''}
     </div>`;
   }).join('');

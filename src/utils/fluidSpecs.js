@@ -3,7 +3,8 @@ import { openaiRequest } from './openai';
 // ── Oil capacity / fluid specs ────────────────────────────────────────────────
 // public/data/fluid-specs.json → { updatedAt, vehicles: [{ id, make, model, code,
 //   yearFrom, yearTo, source: { fileName, uploadedAt, by },
-//   fluids: [{ fluid, engine, volume, spec, partNumber, note }] }] }
+//   fluids: [{ fluid, engine, volume, spec, partNumber, note, filter }] }] }
+// `filter` (oil filter P/N) is typed by hand on Engine Oil lines — the PDFs don't have it.
 // Spec sheets come in two shapes: owner's-manual pages with a real text layer
 // (e.g. the Palisade "Maintenance Specs") and HMA fluid-spec articles whose text
 // is drawn as outlines — no text at all (e.g. the Sonata one, several model
@@ -132,6 +133,18 @@ export function findOnFile(vehicles, d) {
   return same.find(v => cmp(v.code) === c) || same[0]
     || vehicles.find(v => cmp(v.model) === m && cmp(v.code) === c && c && d.yearFrom && v.yearFrom <= (d.yearTo || d.yearFrom) && d.yearFrom <= (v.yearTo || v.yearFrom))
     || null;
+}
+
+// Hand-entered oil filters aren't in any PDF: copy them from the vehicle on
+// file onto the matching Engine Oil lines of a fresh reading.
+export function carryFilters(d, old) {
+  if (!old) return d;
+  const left = old.fluids.filter(g => g.filter);
+  return { ...d, fluids: d.fluids.map(f => {
+    if (f.filter) return f;
+    const g = left.find(x => lineKey(x) === lineKey(f));
+    return g ? { ...f, filter: g.filter } : f;
+  }) };
 }
 
 // → { changed: { [newIndex]: { field: oldValue } }, added: [newIndex], missing: [oldLine], header: { field: oldValue }, count }

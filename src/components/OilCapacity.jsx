@@ -3,7 +3,7 @@ import * as github from '../utils/github';
 import { decodeVin, validateVin } from '../utils/vinLookup';
 import { loadPdfJs } from '../utils/pdfText';
 import { printFluidSheet } from '../utils/fluidPrint';
-import { findOnFile, compareToOnFile, readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
+import { carryFilters, findOnFile, compareToOnFile, readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
 
 // ── 🛢 Oil Capacity ───────────────────────────────────────────────────────────
 // Engine oil (and every other fluid) capacity, spec and part number — by VIN
@@ -22,7 +22,7 @@ const td = { padding: '9px 10px', fontSize: 13.5, color: '#e2e8f0', borderBottom
 const years = (v) => (v.yearFrom && v.yearTo && v.yearTo !== v.yearFrom ? `${v.yearFrom}–${v.yearTo}` : `${v.yearFrom || '?'}`);
 const title = (v) => `${v.model || 'Unknown model'}${v.code ? ` (${v.code})` : ''}`;
 const newId = () => `fs-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-const EMPTY_FLUID = () => ({ fluid: '', engine: '', volume: '', spec: '', partNumber: '', note: '' });
+const EMPTY_FLUID = () => ({ fluid: '', engine: '', volume: '', spec: '', partNumber: '', note: '', filter: '' });
 const KIND_LABEL = { HEV: 'Hybrid', PHEV: 'Plug-in hybrid', EV: 'Electric', FCV: 'Fuel cell' };
 
 export default function OilCapacity({ currentUser, onBack, backLabel = '← Back', initialTab, io }) {
@@ -84,7 +84,7 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
       // Re-upload check: pair each section with what's on file and compare.
       const next = found.map(v => {
         const on = findOnFile(vehicles, v);
-        return { ...v, _key: newId(), _onFileId: on ? on.id : null, source: { fileName: f.name, uploadedAt: new Date().toISOString(), by: currentUser } };
+        return { ...carryFilters(v, on), _key: newId(), _onFileId: on ? on.id : null, source: { fileName: f.name, uploadedAt: new Date().toISOString(), by: currentUser } };
       });
       const counts = next.map(d => { const on = d._onFileId && vehicles.find(v => v.id === d._onFileId); return on ? compareToOnFile(d, on).count : -1; });
       setDrafts(next);
@@ -169,6 +169,12 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                   <div style={{ fontSize: 26, fontWeight: 900, color: '#fff', marginTop: 4, lineHeight: 1.15 }}>{f.volume || '—'}</div>
                   <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0', marginTop: 4 }}>{f.spec}</div>
                   {f.partNumber && <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 3 }}>P/N <span style={{ fontFamily: /^\d/.test(f.partNumber) ? 'ui-monospace, Menlo, monospace' : 'inherit', fontWeight: 800 }}>{f.partNumber}</span></div>}
+                  {f.filter && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 7, padding: '5px 9px', borderRadius: 8, background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.25)', width: 'fit-content' }}>
+                      <span style={{ fontSize: 10.5, fontWeight: 900, letterSpacing: '.07em', color: '#94a3b8' }}>OIL FILTER</span>
+                      <span style={{ fontSize: 13.5, fontWeight: 900, color: '#fff', fontFamily: /^\d/.test(f.filter) ? 'ui-monospace, Menlo, monospace' : 'inherit' }}>{f.filter}</span>
+                    </div>
+                  )}
                   {f.note && <div style={{ fontSize: 12, color: '#fde68a', marginTop: 5, lineHeight: 1.4 }}>📝 {f.note}</div>}
                 </div>
               );
@@ -245,7 +251,7 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
         </div>
         <div style={{ overflowX: 'auto', marginTop: 12 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto', minWidth: 760 }}>
-            <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={th} /></tr></thead>
+            <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={th} title="Typed by hand — engine oil lines only">Oil filter</th><th style={th} /></tr></thead>
             <tbody>
               {d.fluids.map((f, j) => {
                 const ch = cmp && cmp.changed[j];
@@ -260,6 +266,12 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                       {isNew && k === 'fluid' && <div style={{ fontSize: 10.5, color: '#c4b5fd', marginTop: 2 }}>new line — not on file</div>}
                     </td>
                   ))}
+                  <td style={{ ...td, padding: 4 }}>
+                    {isEngineOil(f)
+                      ? <input value={f.filter || ''} onChange={setRow(j, 'filter')} disabled={busy} placeholder="P/N (optional)"
+                          style={{ ...cell, ...(f.filter ? { border: '1px solid rgba(74,222,128,.6)' } : null) }} />
+                      : <span style={{ color: '#475569', fontSize: 12, paddingLeft: 8 }}>—</span>}
+                  </td>
                   <td style={{ ...td, padding: 4 }}>
                     <button disabled={busy} title="Remove this line" onClick={() => setDraft(d._key, x => ({ ...x, fluids: x.fluids.filter((_, n) => n !== j) }))} style={{ ...btn('248,113,113', false), padding: '4px 8px' }}>✕</button>
                   </td>
