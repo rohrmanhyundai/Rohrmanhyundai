@@ -1,81 +1,73 @@
 {
-  "updatedAt": "2026-10-19T20:59:32.912Z",
+  "updatedAt": "2026-10-21T12:58:26.186Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "781677",
-        "vehicle": "2024 Hyundai Elantra"
+        "ro": "781720",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "781714",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
+        "ro": "781711",
+        "vehicle": "2025 Hyundai Kona"
+      },
+      {
+        "ro": "781709",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "781680",
+        "vehicle": "2022 Hyundai Tucson Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "781719",
+        "vehicle": "2021 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781718",
+        "vehicle": "2015 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "781717",
+        "vehicle": "2019 Nissan Maxima"
+      },
+      {
+        "ro": "781715",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "781713",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "781712",
+        "vehicle": "2025 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
+    "MATTHEW": [
+      {
+        "ro": "781716",
+        "vehicle": "2023 Hyundai Tucson Hybrid"
       }
     ],
     "CORY": [
-      {
-        "ro": "781672",
-        "vehicle": "2023 Hyundai Palisade"
-      },
       {
         "ro": "781671",
         "vehicle": "2023 Hyundai Kona"
       },
       {
-        "ro": "781652",
-        "vehicle": "2024 Hyundai Santa Fe"
-      },
-      {
         "ro": "781625",
         "vehicle": "2014 Toyota Corolla"
-      },
-      {
-        "ro": "781624",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781623",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781568",
-        "vehicle": "2018 Genesis G80"
-      }
-    ],
-    "MATTHEW": [
-      {
-        "ro": "781657",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "781646",
-        "vehicle": "2020 Hyundai Kona"
-      },
-      {
-        "ro": "781632",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "781621",
-        "vehicle": "2017 Hyundai Sonata"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781641",
-        "vehicle": "2025 Hyundai Elantra"
-      },
-      {
-        "ro": "781639",
-        "vehicle": "2023 Hyundai Kona Electric"
-      },
-      {
-        "ro": "781638",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "781634",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
       }
     ]
   }
