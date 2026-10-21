@@ -28,5 +28,21 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": true,
     "partsArrivedDate": "10/21/2026"
+  },
+  {
+    "id": "mvile3e2sxxw",
+    "ro": "781723",
+    "roDate": "2026-10-21",
+    "vehicle": "2024 Hyundai Tucson Hybrid",
+    "jobDesc": "CONCERN - CUSTOMER STATES - check engine light is on",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
