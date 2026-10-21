@@ -25,6 +25,7 @@ const PAGE_LABELS = {
   'parts-goal-forecast': 'Parts Goal Forecast',
   'ro-upload': 'RO Upload',
   'charge-account-list': 'Charge Account List',
+  'battery-guide': 'Battery',
   'employee-review': 'Employee Review',
   'tech-self-review': 'Tech Self-Review',
   'original-owner': 'Original Owner Affidavit',

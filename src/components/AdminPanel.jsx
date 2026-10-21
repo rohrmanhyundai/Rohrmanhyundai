@@ -225,6 +225,7 @@ const PAGE_ACCESS = [
   { key: 'chargeAccountList', label: '💳 Charge Account List',      group: 'Manager', defaultOff: true },
   { key: 'partsHub',           label: '📦 Parts Hub',               group: 'Parts' },
   { key: 'tireQuote',          label: '🛞 Tire Quote',              group: 'Shared' },
+  { key: 'batteryGuide',       label: '🔋 Battery',                 group: 'Shared' },
   { key: 'atDiagWorksheet',   label: '⚙️ AT Diag Worksheet',       group: 'Tech' },
   { key: 'usedCarHub',         label: '🚗 Used Car Hub',            group: 'Used Cars' },
   // The tiles on the phone view (MobileDashboard). On by default for everyone.

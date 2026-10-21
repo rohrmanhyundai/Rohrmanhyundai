@@ -15,7 +15,7 @@ const LINKS = {
   dashboard: ['additional-time-menu', 'media-upload', 'registration-upload', 'tire-warranty', 'used-car-hub'],
   'advisor-calendar': ['advisor-day', 'advisor-goals', 'aftermarket-warranty', 'big-money-lof', 'cash-dash', 'charge-account-list',
     'daily-wrench', 'deferred-service', 'oil-guard', 'service-loaner', 'white-paint', 'document-library', 'hot-repairs', 'live-pay-hub', 'original-owner', 'performance-report',
-    'ro-upload', 'service-pricing', 'tire-quote', 'work-in-progress', 'survey-reports', 'shop-appointments', 'after-call'],
+    'ro-upload', 'service-pricing', 'tire-quote', 'work-in-progress', 'survey-reports', 'shop-appointments', 'after-call', 'battery-guide'],
   'advisor-goals': ['live-pay'],
   'live-pay-hub': ['live-pay', 'tech-live-pay'],
   'tech-resources': ['additional-time-review', 'at-diag-worksheet', 'cash-dash', 'document-library', 'hot-repairs', 'live-pay-hub',
@@ -23,7 +23,7 @@ const LINKS = {
   'at-diag-worksheet': ['atm-worksheet', 'dct-mtm-worksheet', 'ivt-worksheet', 'ntt-att-worksheet'],
   'additional-time-menu': ['additional-diag-time', 'additional-time', 'additional-time-review'],
   'parts-hub': ['advisor-calendar', 'aftermarket-warranty', 'document-library', 'hot-repairs', 'parts-goal-forecast',
-    'shop-appointments', 'tire-quote', 'work-in-progress'],
+    'shop-appointments', 'tire-quote', 'work-in-progress', 'charge-account-list', 'battery-guide'],
   'rentals-hub': ['service-loaner', 'loaner-media', 'shop-appointments', 'work-schedule', 'work-in-progress', 'white-paint', 'aftermarket-warranty',
     'document-library', 'tire-quote'],
   'warranty-hub': ['aftermarket-warranty', 'at-diag-worksheet', 'document-library', 'hot-repairs', 'ntt-att-worksheet',
@@ -36,7 +36,7 @@ const ACCESS_KEY = {
   'survey-reports': 'surveyReports', 'work-in-progress': 'workInProgress', 'shop-appointments': 'shopAppointments',
   'used-car-hub': 'usedCarHub', 'media-upload': 'mobileMediaUpload', 'registration-upload': 'mobileRegistrationUpload',
   'tire-warranty': 'mobileTireWarranty', 'additional-time-menu': 'mobileAdditionalTime',
-  'service-loaner': 'serviceLoaner', 'white-paint': 'whitePaint', 'document-library': 'documentLibrary', 'tire-quote': 'tireQuote', 'loaner-media': 'mobileLoanerMedia',
+  'service-loaner': 'serviceLoaner', 'white-paint': 'whitePaint', 'document-library': 'documentLibrary', 'tire-quote': 'tireQuote', 'loaner-media': 'mobileLoanerMedia', 'battery-guide': 'batteryGuide',
 };
 const DEFAULT_OFF = new Set(['surveyReports']);
 

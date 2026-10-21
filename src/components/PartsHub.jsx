@@ -105,6 +105,15 @@ const NAV_BUTTONS = [
     prop: 'onChargeList',
   },
   {
+    key: 'batteryGuide',
+    label: '🔋 Battery',
+    desc: 'Battery part number by VIN or year and model — from the Hyundai Battery Guide',
+    bg: 'linear-gradient(135deg,rgba(74,222,128,.25),rgba(34,197,94,.15))',
+    border: 'rgba(74,222,128,.5)',
+    color: '#86efac',
+    prop: 'onBattery',
+  },
+  {
     key: 'globalMessage',
     adminOnly: true,
     label: '📣 Global Message',
@@ -120,9 +129,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList,
+  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList, onBattery,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList, onBattery };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b)

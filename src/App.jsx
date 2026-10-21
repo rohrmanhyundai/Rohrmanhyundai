@@ -60,6 +60,7 @@ import EmployeeReviewHub from './components/EmployeeReviewHub';
 import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
 import ChargeAccountList from './components/ChargeAccountList';
+import BatteryGuide from './components/BatteryGuide';
 import { recalcTech, recalcAdvisorSummary, roh50Goals } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
@@ -227,6 +228,7 @@ export default function App() {
     cashDash:         { page: 'cash-dash' },
     histReports:      { page: 'mgr-performance-reports', tab: 'backfill' },
     chargeAccounts:   { page: 'charge-account-list' },
+    batteryGuide:     { page: 'battery-guide' },
     hotRepairs:       { page: 'hot-repairs' },
     warrantyContacts: { page: 'aftermarket-warranty', tab: 'contacts' },
     documents:        { page: 'document-library' },
@@ -1478,6 +1480,7 @@ export default function App() {
         onGlobalMessage={() => goTo('global-message', 'parts-hub')}
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'parts-hub') : undefined}
         onChargeList={canAccess('chargeAccountList') ? () => goTo('charge-account-list', 'parts-hub') : undefined}
+        onBattery={canAccess('batteryGuide') ? () => goTo('battery-guide', 'parts-hub') : undefined}
       />
     );
   }
@@ -1857,6 +1860,18 @@ export default function App() {
     );
   }
 
+  if (page === 'battery-guide') {
+    if (!canAccess('batteryGuide')) { setPage('dashboard'); return null; }
+    return (
+      <BatteryGuide
+        currentUser={currentUser.toUpperCase()}
+        isManager={currentRole === 'admin' || (currentRole || '').includes('manager')}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'dashboard')}
+        backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
+      />
+    );
+  }
+
   if (page === 'charge-account-list') {
     if (!canAccess('chargeAccountList')) { setPage('dashboard'); return null; }
     return <ChargeAccountList onBack={launched ? backToUploads : () => setPage(prevPage || 'manager-hub')} backLabel={launched ? UP : undefined} />;
@@ -1950,6 +1965,7 @@ export default function App() {
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
+        onBattery={canAccess('batteryGuide') ? () => goTo('battery-guide', 'advisor-calendar') : undefined}
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
         onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}

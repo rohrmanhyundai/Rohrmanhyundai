@@ -61,6 +61,10 @@ export async function decodeVin(vin, { timeoutMs = 12000 } = {}) {
       trim: (r.Trim || r.Series || '').trim(),
       electrified: /HEV|PHEV|BEV|FCEV|Electric/i.test(elec),
       electrificationLabel: (r.ElectrificationLevel || '').replace(/\s*-\s*Level Unknown/i, '').trim(),
+      // For the Battery page: engine size and gas / HEV / PHEV / EV / FCV.
+      displacement: parseFloat(r.DisplacementL) || null,
+      kind: /PHEV/i.test(elec) ? 'PHEV' : /FCEV|Fuel Cell/i.test(elec) ? 'FCV' : /BEV/i.test(elec) ? 'EV'
+        : /HEV/i.test(elec) ? 'HEV' : /Electric/i.test(r.FuelTypePrimary || '') ? 'EV' : (r.FuelTypePrimary ? 'ICE' : null),
     };
   } catch (err) {
     // Offline / blocked / unrecognised: hand back the year from the VIN itself so
