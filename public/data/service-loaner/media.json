@@ -126,6 +126,26 @@
           "size": 2507800
         }
       ]
+    },
+    {
+      "id": "mvi6rtru6fj1",
+      "vehicleId": "li-mvbczco95qd5",
+      "stockNo": "LHY2473",
+      "vin": "5NTJBDDE5TH159469",
+      "kind": "out",
+      "customerFirst": "KIMBERLY",
+      "customerLast": "LANAM",
+      "at": "2026-10-21T14:07:10.854Z",
+      "by": "HOLLI",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE5TH159469/mvi6rtru6fj1/mvi6qvglyfsp.mov",
+          "name": "81428435925__9FE5BF95-1151-4CFD-BAA8-4628A584D313.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 3894978
+        }
+      ]
     }
   ]
 }
