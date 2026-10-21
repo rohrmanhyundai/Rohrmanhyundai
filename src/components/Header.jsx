@@ -34,15 +34,25 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
 
   return (
     <section className="hero">
-      <div className="card">
-        <div className="eyebrow">Service Operations Dashboard</div>
-        <div className="header-row">
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h1>{data.title || 'Bob Rohrman Hyundai Daily Summary'}</h1>
-            <div className="sub">Samsung TV browser fit version</div>
+      <div className="card hero-main">
+        {/* Top line: title left, clock right. Second line: every nav button in
+            one even pill — one height, never wrapping. */}
+        <div className="hero-top">
+          <div style={{ minWidth: 0 }}>
+            <div className="hero-eyebrow">Service Operations Dashboard</div>
+            <h1 className="hero-title">{data.title || 'Bob Rohrman Hyundai Daily Summary'}</h1>
           </div>
-          <div className="rightHeader">
-            <div className="login">
+            <div className="clock">
+              <div className="date">
+                {clock.date}
+                {isLoggedIn && currentUser && (
+                  <span className="clock-user"> &nbsp;·&nbsp; {currentUserDisplay || currentUser}</span>
+                )}
+              </div>
+              <div className="time">{clock.time}</div>
+            </div>
+        </div>
+            <div className="login nav-pill">
               {!isLoggedIn ? (
                 <>
                   <span>LOGIN</span>
@@ -111,17 +121,6 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
                 </>
               )}
             </div>
-            <div className="clock">
-              <div className="date">
-                {clock.date}
-                {isLoggedIn && currentUser && (
-                  <span className="clock-user"> &nbsp;·&nbsp; {currentUserDisplay || currentUser}</span>
-                )}
-              </div>
-              <div className="time">{clock.time}</div>
-            </div>
-          </div>
-        </div>
       </div>
       <div className="card">
         <div className="stats">
