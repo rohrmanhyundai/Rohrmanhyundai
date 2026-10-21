@@ -1,24 +1,5 @@
 [
   {
-    "id": "gm-mv87qe6dhefi",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "please call customer wants to prepay for ac compressor",
-    "media": [
-      {
-        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mv87qduy-m5xjmp.png",
-        "name": "Screenshot 2026-10-14 at 10.35.54 AM.png",
-        "type": "image/png"
-      }
-    ],
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791988580677
-  },
-  {
     "id": "gm-mv9h8ghk56ct",
     "from": "SHAWN",
     "to": [
@@ -124,5 +105,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792513700814
+  },
+  {
+    "id": "gm-mvih1wstbyyn",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "1FMJU2A56EEF57337 need a price on the b1 cat. right side",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792608896333
   }
 ]
