@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-10-21T15:28:42.256Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-21T15:28:37.969Z",
+    "type": "page",
+    "label": "parts-hub"
+  },
+  {
+    "at": "2026-10-21T15:28:35.399Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
+    "at": "2026-10-21T15:28:29.180Z",
+    "type": "page",
+    "label": "document-library"
+  },
+  {
+    "at": "2026-10-21T15:27:58.634Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-10-17T16:14:05.614Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -251,47 +276,5 @@
     "at": "2026-09-25T17:54:08.298Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-19T12:02:50.992Z",
-    "type": "page",
-    "label": "big-money-lof"
-  },
-  {
-    "at": "2026-09-19T12:02:50.983Z",
-    "type": "page",
-    "label": "big-money-lof"
-  },
-  {
-    "at": "2026-09-19T11:59:57.758Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780924"
-  },
-  {
-    "at": "2026-09-19T11:59:30.721Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780913"
-  },
-  {
-    "at": "2026-09-19T11:26:37.343Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-18T19:31:58.311Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-09-18T12:09:48.691Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-09-18T12:09:48.688Z",
-    "type": "page",
-    "label": "hot-repairs"
   }
 ]
