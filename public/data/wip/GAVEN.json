@@ -90,7 +90,7 @@
     "etaCompletion": "",
     "partsArrived": true,
     "partsArrivedDate": "10/21/2026",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "DAVID RILEY"
   }
 ]
