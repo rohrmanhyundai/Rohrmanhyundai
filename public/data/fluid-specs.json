@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T14:44:57.880Z",
+  "updatedAt": "2026-10-21T14:45:38.082Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4122,6 +4122,172 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi84fq6qdrt"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ACCENT",
+      "code": "HC",
+      "yearFrom": 2018,
+      "yearTo": 2022,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "2018-2019 MY",
+          "volume": "3.49 US qt. (3.3L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2020-2021MY",
+          "volume": "4.02 US qt. (3.8L)",
+          "spec": "0W-20 Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "",
+          "volume": "1.7-1.8 US qt. (1.6-1.7L)",
+          "spec": "SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Intelligent Variable Transmission Fluid (IVT)",
+          "engine": "",
+          "volume": "6.87 US qt. (6.5L)",
+          "spec": "SP-CVT1",
+          "partNumber": "0023219081",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "7.1 US qt. (7.3L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219052",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "5.6 US qt. (5.3L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "0023219010",
+          "note": "Green Coolant"
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "5.6 US qt. (5.3L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "0023219098",
+          "note": "Pink Coolant"
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "16.9±0.88 oz. (480±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "3.88±0.35 oz. (110±10g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "accent.pdf",
+        "uploadedAt": "2026-10-21T14:45:20.888Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi85aoz2utx"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ACCENT",
+      "code": "RB",
+      "yearFrom": 2012,
+      "yearTo": 2017,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "3.49 US qt. (3.3L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "",
+          "volume": "1.9 US qt. (1.8L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "0895000020B",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "7.71 US qt. (7.3L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "4.7 US qt. (5.3L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": ".07-.08 US qt. (.07-.08L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake / Clutch Fluid",
+          "engine": "",
+          "volume": ".07-.08 US qt. (.07-.08L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "accent.pdf",
+        "uploadedAt": "2026-10-21T14:45:20.888Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi85aozt1ua"
     }
   ]
 }
