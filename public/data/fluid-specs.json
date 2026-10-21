@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T14:34:46.243Z",
+  "updatedAt": "2026-10-21T14:35:33.366Z",
   "vehicles": [
     {
       "id": "fs-sonata-yfa",
@@ -713,6 +713,85 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7rbsxw66l"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "EQUUS",
+      "code": "VI",
+      "yearFrom": 2011,
+      "yearTo": 2016,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "7.61 US qt. (7.2L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023219001",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "10.67 US qt. (10.1L)",
+          "spec": "ATF SP IV RR (2012-2016)",
+          "partNumber": "0023219052",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "10.67 US qt. (10.1L)",
+          "spec": "Shell - ATF M 1375.4 (2011)",
+          "partNumber": "0023219015",
+          "note": ""
+        },
+        {
+          "fluid": "Power Steering Fluid",
+          "engine": "",
+          "volume": "0.95 US qt. (0.9L)",
+          "spec": "Pentosin CHF 202",
+          "partNumber": "0023219017",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "7.45 US qt. (7.05L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": ".07-.08 US qt. (.07-.08L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": ".07-.08 US qt. (.07-.08L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil",
+          "engine": "",
+          "volume": "1.48 US qt. (1.4L)",
+          "spec": "Hypoid Gear Oil GL-5 75W/90",
+          "partNumber": "0023219037",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "equus.pdf",
+        "uploadedAt": "2026-10-21T14:35:30.362Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7sbpuyspt"
     }
   ]
 }
