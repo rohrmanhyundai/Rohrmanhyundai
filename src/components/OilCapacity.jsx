@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import * as github from '../utils/github';
 import { decodeVin, validateVin } from '../utils/vinLookup';
 import { loadPdfJs } from '../utils/pdfText';
+import { printFluidSheet } from '../utils/fluidPrint';
 import { readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
 
 // ── 🛢 Oil Capacity ───────────────────────────────────────────────────────────
@@ -128,7 +129,10 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 18, fontWeight: 900, color: '#f1f5f9' }}>{v.make} {title(v)}</div>
           <span style={{ fontSize: 13, fontWeight: 800, color: '#94a3b8' }}>{years(v)}</span>
-          {top && <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 900, padding: '3px 9px', borderRadius: 999, color: '#052e16', background: '#4ade80' }}>✓ BEST MATCH</span>}
+          {top && <span style={{ fontSize: 11, fontWeight: 900, padding: '3px 9px', borderRadius: 999, color: '#052e16', background: '#4ade80' }}>✓ BEST MATCH</span>}
+          <button onClick={() => printFluidSheet(v, { year: lookupYear, vin: fromVin ? clean : '', decoded: fromVin ? decoded : null, by: currentUser })}
+            title="Print this sheet — or pick “Save as PDF” in the print dialog"
+            style={{ ...btn('148,163,184', false), marginLeft: 'auto', padding: '6px 12px', fontSize: 12.5 }}>🖨 Print / Save PDF</button>
         </div>
         {oil.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 10, marginTop: 14 }}>
