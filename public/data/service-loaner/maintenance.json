@@ -160,6 +160,24 @@
       "status": "open",
       "requestedAt": "2026-10-19T20:43:33.434Z",
       "requestedBy": "SHAWN"
+    },
+    {
+      "id": "lm-mvifrzw97gxb",
+      "loanerNo": "LHY2828",
+      "vin": "5NMP3DGL0TH203665",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "SANTA FE XRT 2.5T AWD",
+      "mileage": "5",
+      "priority": "ready",
+      "services": [
+        "Other"
+      ],
+      "description": "needs battery",
+      "photos": [],
+      "status": "open",
+      "requestedAt": "2026-10-21T18:19:14.169Z",
+      "requestedBy": "SHAWN"
     }
   ],
   "intervals": [
