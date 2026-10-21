@@ -1880,7 +1880,7 @@ export default function App() {
     return (
       <BatteryGuide
         currentUser={currentUser.toUpperCase()}
-        isManager={currentRole === 'admin' || (currentRole || '').includes('manager')}
+        initialTab={launched ? 'settings' : undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'dashboard')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
       />

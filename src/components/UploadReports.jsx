@@ -64,7 +64,7 @@ export const REPORTS = [
     last: 'charge' },
   { key: 'batteryGuide', icon: '🔋', title: 'Hyundai Battery Guide', file: '.pdf', freq: 'asneeded', color: '#86efac',
     desc: 'Factory & replacement battery part numbers by model and year. Feeds the 🔋 Battery page.',
-    where: 'Opens 🔋 Battery — Upload new guide at the bottom, check the changes, Save.' },
+    where: 'Opens 🔋 Battery → ⚙️ Settings — upload the PDF, check the changes, Save.' },
   { key: 'oilCapacity', icon: '🛢', title: 'Oil Capacity Spec Sheet', file: '.pdf', freq: 'asneeded', color: '#fcd34d',
     desc: 'Owner\'s-manual capacity page or HMA fluid-spec article. Read automatically; you check it before it\'s saved.',
     where: 'Opens 🛢 Oil Capacity — go to ⚙️ Settings → Upload PDF.' },

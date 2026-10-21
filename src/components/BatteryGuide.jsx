@@ -8,7 +8,8 @@ import { readBatteryGuidePdf, matchVehicle, yearsIn, modelsFor, coversYear } fro
 // Find the Hyundai battery part number two ways: type a VIN (decoded by
 // NHTSA → year, model, engine size, hybrid/EV) or pick the year and model.
 // Shows the factory battery and the replacement P/N from the Hyundai Battery
-// Guide. Managers upload a newer guide PDF to refresh the list; it's stored in
+// Guide. ⚙️ Settings: upload a newer guide PDF (preview of what changes, then
+// Save) or fix / add / delete single rows by hand. Stored in
 // data/battery-guide.json (utils/batteryGuide reads the PDF).
 
 const GUIDE_PATH = 'data/battery-guide.json';
@@ -19,7 +20,108 @@ const label = { fontSize: 12, fontWeight: 900, letterSpacing: '.07em', textTrans
 const yearRange = (r) => `${r.yearFrom}${r.yearTo == null ? '+' : r.yearTo === r.yearFrom ? '' : `–${r.yearTo}`}`;
 const KIND_LABEL = { ICE: 'Gas', HEV: 'Hybrid', PHEV: 'Plug-in hybrid', EV: 'Electric', FCV: 'Fuel cell' };
 
-export default function BatteryGuide({ currentUser, isManager, onBack, backLabel = '← Back', io }) {
+// ── ⚙️ Settings: fix, add or delete single rows by hand ───────────────────────
+const FIELDS = [
+  ['model', 'Model', 150], ['code', 'Code', 80], ['yearFrom', 'From', 62], ['yearTo', 'To', 62], ['engine', 'Engine', 120],
+  ['type', 'Factory type', 90], ['cca', 'CCA', 56], ['rc', 'RC', 50], ['pn', 'Replacement P/N', 130], ['replCca', 'Repl CCA', 64], ['replRc', 'Repl RC', 60], ['note', 'Note', 170],
+];
+const NUMS = new Set(['yearFrom', 'yearTo', 'cca', 'rc', 'replCca', 'replRc']);
+const cellIn = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 7, color: '#e2e8f0', padding: '6px 7px', fontSize: 12.5, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box' };
+const thS = { textAlign: 'left', padding: '7px 6px', fontSize: 10.5, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em', borderBottom: '1px solid rgba(148,163,184,.25)', whiteSpace: 'nowrap' };
+const tdS = { padding: '6px', fontSize: 12.5, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.1)', verticalAlign: 'middle', overflow: 'visible', textOverflow: 'clip', whiteSpace: 'nowrap' };
+const toDraft = (r) => Object.fromEntries(FIELDS.map(([k]) => [k, r[k] == null ? '' : String(r[k])]));
+function fromDraft(d) {
+  const out = {};
+  for (const [k] of FIELDS) {
+    const v = String(d[k] || '').trim();
+    out[k] = NUMS.has(k) ? (v === '' ? null : Number(v.replace(/[^\d]/g, '')) || null) : (k === 'model' ? v.toUpperCase() : v);
+  }
+  out.yearText = `${out.yearFrom || ''}-${out.yearTo || ''}`;
+  return out;
+}
+
+function GuideEditor({ rows, onSaveRows }) {
+  const [q, setQ] = useState('');
+  const [editing, setEditing] = useState(null);   // { index (-1 = new), draft }
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  const terms = q.trim().toUpperCase().split(/\s+/).filter(Boolean);
+  const list = rows.map((r, i) => ({ r, i }))
+    .filter(({ r }) => !terms.length || terms.every(t => [r.model, r.code, r.engine, r.type, r.pn, r.note, yearRange(r)].join(' ').toUpperCase().includes(t)))
+    .sort((a, b) => a.r.model.localeCompare(b.r.model) || (b.r.yearFrom || 0) - (a.r.yearFrom || 0));
+  const problem = (d) => (!String(d.model).trim() ? 'model' : !String(d.yearFrom).trim() ? 'year from' : (d.yearTo && Number(d.yearTo) < Number(d.yearFrom)) ? 'years (to is before from)' : (!String(d.pn).trim() && !String(d.note).trim()) ? 'a P/N or a note' : '');
+  async function commit(next, what, done) {
+    setBusy(true); setMsg('Saving…');
+    try { await onSaveRows(next, what); setEditing(null); setMsg(done); } catch (e) { setMsg(`❌ ${e.message || 'Save failed.'}`); }
+    setBusy(false);
+  }
+  function saveRow() {
+    const d = editing.draft;
+    const bad = problem(d); if (bad) { setMsg(`❌ Needs ${bad}.`); return; }
+    const row = fromDraft(d);
+    const next = editing.index < 0 ? [...rows, row] : rows.map((r, i) => (i === editing.index ? { ...r, ...row } : r));
+    commit(next, `${editing.index < 0 ? 'add' : 'edit'} ${row.model} ${yearRange(row)}`, `✅ ${editing.index < 0 ? 'Added' : 'Saved'} ${row.model} ${yearRange(row)}.`);
+  }
+  function remove(i) {
+    const r = rows[i];
+    if (!window.confirm(`Delete ${r.model} ${yearRange(r)}${r.engine ? ` (${r.engine})` : ''}?`)) return;
+    commit(rows.filter((_, n) => n !== i), `delete ${r.model} ${yearRange(r)}`, `✓ Deleted ${r.model} ${yearRange(r)}.`);
+  }
+  const editRow = (key) => (
+    <tr key={key} style={{ background: 'rgba(196,181,253,.08)' }}>
+      {FIELDS.map(([k, l, w]) => (
+        <td key={k} style={{ ...tdS, minWidth: w }}>
+          <input value={editing.draft[k]} disabled={busy} inputMode={NUMS.has(k) ? 'numeric' : undefined}
+            placeholder={k === 'yearTo' ? '+ (now)' : k === 'engine' ? 'All' : l}
+            onChange={e => { const v = e.target.value; setEditing(ed => ({ ...ed, draft: { ...ed.draft, [k]: v } })); }} style={cellIn} />
+        </td>
+      ))}
+      <td style={{ ...tdS, textAlign: 'right' }}>
+        <div style={{ display: 'inline-flex', gap: 5 }}>
+          <button disabled={busy} onClick={saveRow} style={{ ...btn('74,222,128'), padding: '5px 10px', fontSize: 12 }}>✓ Save</button>
+          <button disabled={busy} onClick={() => { setEditing(null); setMsg(''); }} style={{ ...btn('148,163,184', false), padding: '5px 9px', fontSize: 12 }}>✕</button>
+        </div>
+      </td>
+    </tr>
+  );
+  return (
+    <div style={card}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+        <div style={{ fontSize: 15, fontWeight: 900, color: '#e2e8f0', flex: 1 }}>✏️ Models &amp; years <span style={{ color: '#94a3b8', fontSize: 12.5 }}>· {rows.length} rows · edit any one by hand</span></div>
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search model, year, P/N…" style={{ ...cellIn, width: 240, fontSize: 13.5, padding: '8px 10px' }} />
+        <button disabled={busy || !!editing} onClick={() => { setMsg(''); setEditing({ index: -1, draft: toDraft({ model: '', yearFrom: '', yearTo: '' }) }); }} style={btn('96,165,250')}>＋ Add a row</button>
+      </div>
+      {msg && <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 8, color: msg.startsWith('❌') ? '#fca5a5' : msg.startsWith('✅') || msg.startsWith('✓') ? '#86efac' : '#fde68a' }}>{msg}</div>}
+      <div style={{ fontSize: 11.5, color: '#64748b', marginBottom: 8 }}>"To" left blank = still current (shows as 2021+). No P/N? Put the note instead (e.g. Integrated 12V Lithium Battery. Order through WebDCS.).</div>
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
+          <thead><tr>{FIELDS.map(([k, l]) => <th key={k} style={thS}>{l}</th>)}<th style={thS} /></tr></thead>
+          <tbody>
+            {editing && editing.index < 0 && editRow('new')}
+            {list.map(({ r, i }) => (editing && editing.index === i ? editRow(i) : (
+              <tr key={i}>
+                {FIELDS.map(([k]) => (
+                  <td key={k} style={{ ...tdS, color: k === 'pn' ? '#86efac' : k === 'model' ? '#f1f5f9' : '#cbd5e1', fontWeight: k === 'model' || k === 'pn' ? 800 : 600, fontFamily: k === 'pn' ? 'ui-monospace, Menlo, monospace' : 'inherit', whiteSpace: k === 'note' ? 'normal' : 'nowrap', maxWidth: k === 'note' ? 220 : undefined }}>
+                    {k === 'yearTo' ? (r.yearTo == null ? '+' : r.yearTo) : (r[k] == null || r[k] === '' ? <span style={{ color: '#475569' }}>—</span> : String(r[k]))}
+                  </td>
+                ))}
+                <td style={{ ...tdS, textAlign: 'right' }}>
+                  <div style={{ display: 'inline-flex', gap: 5 }}>
+                    <button disabled={busy || !!editing} onClick={() => { setMsg(''); setEditing({ index: i, draft: toDraft(r) }); }} style={{ ...btn('96,165,250'), padding: '4px 10px', fontSize: 12 }}>✏️ Edit</button>
+                    <button disabled={busy || !!editing} onClick={() => remove(i)} style={{ ...btn('248,113,113', false), padding: '4px 8px', fontSize: 12 }}>🗑</button>
+                  </div>
+                </td>
+              </tr>
+            )))}
+          </tbody>
+        </table>
+        {!list.length && <div style={{ color: '#94a3b8', fontSize: 13, padding: 10 }}>Nothing matches “{q}”.</div>}
+      </div>
+    </div>
+  );
+}
+
+export default function BatteryGuide({ currentUser, onBack, backLabel = '← Back', initialTab, io }) {
   const load = io?.loadGithubFile || github.loadGithubFile;
   const save = io?.saveGithubFile || github.saveGithubFile;
   const [guide, setGuide] = useState(null);      // { updatedAt, by, fileName, rows }
@@ -33,6 +135,7 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
   const [upload, setUpload] = useState(null);    // { fileName, rows, added, removed } awaiting Save
   const [upBusy, setUpBusy] = useState(false);
   const [upMsg, setUpMsg] = useState('');
+  const [tab, setTab] = useState(initialTab === 'settings' ? 'settings' : 'lookup');   // lookup | settings
 
   useEffect(() => {
     load(GUIDE_PATH).then(d => setGuide(d && Array.isArray(d.rows) ? d : { rows: [] })).catch(() => setErr('Could not load the battery guide.'));
@@ -87,12 +190,29 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
       const next = await readBatteryGuidePdf(f, loadPdfJs);
       const key = (r) => `${r.model}|${r.code}|${r.yearText}|${r.engine}`;
       const old = new Set(rows.map(key)), now = new Set(next.map(key));
-      setUpload({ fileName: f.name, rows: next, added: next.filter(r => !old.has(key(r))), removed: rows.filter(r => !now.has(key(r))) });
-      setUpMsg('');
+      const added = next.filter(r => !old.has(key(r))), removed = rows.filter(r => !now.has(key(r)));
+      // Whole-row signatures, counted — the guide can list the same model / code /
+      // years / engine twice (2017-18 Santa Fe Sport), so match row for row.
+      const sig = (r) => [key(r), ...['type', 'cca', 'rc', 'pn', 'replCca', 'replRc', 'note'].map(k => String(r[k] ?? ''))].join('|');
+      const pool = new Map(); rows.forEach(r => pool.set(sig(r), (pool.get(sig(r)) || 0) + 1));
+      const changed = next.filter(r => {
+        if (!old.has(key(r))) return false;               // counted as added
+        const n = pool.get(sig(r)) || 0;
+        if (n) { pool.set(sig(r), n - 1); return false; }
+        return true;
+      }).length;
+      if (!added.length && !removed.length && !changed) { setUpload(null); setUpMsg(`✅ No changes needed — every row in ${f.name} already matches the guide on file.`); }
+      else { setUpload({ fileName: f.name, rows: next, added, removed, changed }); setUpMsg(''); }
     } catch (e2) {
       setUpMsg(`❌ ${e2.message || 'Could not read that PDF.'}`);
     }
     setUpBusy(false);
+  }
+  // Hand edits from Settings: the whole list, saved like an upload.
+  async function saveRows(nextRows, what) {
+    const data = { ...(guide || {}), updatedAt: new Date().toISOString(), by: currentUser, rows: nextRows };
+    await save(GUIDE_PATH, data, `Battery guide: ${what}`);
+    setGuide(data);
   }
   async function saveUpload() {
     setUpBusy(true); setUpMsg('Saving…');
@@ -154,10 +274,15 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
         <div style={{ flex: 1 }} />
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
+      <div style={{ display: 'flex', gap: 8, padding: '12px 24px 0', flexShrink: 0 }}>
+        <button onClick={() => setTab('lookup')} style={{ ...btn('74,222,128', tab === 'lookup'), fontSize: 14, padding: '9px 18px' }}>🔎 Look up</button>
+        <button onClick={() => setTab('settings')} style={{ ...btn('196,181,253', tab === 'settings'), fontSize: 14, padding: '9px 18px' }}>⚙️ Settings</button>
+      </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '28px 24px 50px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gap: 18 }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 50px' }}>
+        <div style={{ maxWidth: tab === 'settings' ? 1150 : 900, margin: '0 auto', display: 'grid', gap: 18 }}>
           {err && <div style={{ color: '#fca5a5', fontWeight: 800 }}>{err}</div>}
+          {tab === 'lookup' ? (<>
 
           {/* Find it */}
           <div style={{ ...card, display: 'grid', gap: 18 }}>
@@ -215,8 +340,9 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
             Since 8/15/2020, 00275-20001 / 24001 / 28001 supersede 00275-20000 / 24000 / 28000. Check WebDCS for the latest ordering notes.
           </div>
 
+          </>) : (<>
           {/* Update the guide */}
-          <div style={{ ...card, borderStyle: 'dashed' }}>
+          <div style={card}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 220 }}>
                 <div style={{ fontSize: 15, fontWeight: 900, color: '#e2e8f0' }}>📄 Battery guide</div>
@@ -224,18 +350,17 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
                   {guide ? `${rows.length} rows${guide.fileName ? ` · ${guide.fileName}` : ''}${guide.updatedAt ? ` · updated ${new Date(guide.updatedAt).toLocaleDateString()}${guide.by ? ` by ${guide.by}` : ''}` : ''}` : 'Loading…'}
                 </div>
               </div>
-              {isManager
-                ? <label style={{ ...btn('251,191,36'), opacity: upBusy ? 0.6 : 1 }}>
-                    📤 Upload new guide (.pdf)
-                    <input type="file" accept="application/pdf,.pdf" onChange={pickPdf} disabled={upBusy} style={{ display: 'none' }} />
-                  </label>
-                : <span style={{ fontSize: 12, color: '#64748b' }}>A manager uploads new guides.</span>}
+              <label style={{ ...btn('251,191,36'), opacity: upBusy ? 0.6 : 1 }}>
+                📤 Upload new guide (.pdf)
+                <input type="file" accept="application/pdf,.pdf" onChange={pickPdf} disabled={upBusy} style={{ display: 'none' }} />
+              </label>
             </div>
             {upMsg && <div style={{ marginTop: 10, fontSize: 13, fontWeight: 800, color: upMsg.startsWith('❌') ? '#fca5a5' : upMsg.startsWith('✅') ? '#86efac' : '#fde68a' }}>{upMsg}</div>}
             {upload && (
               <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 12, background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.4)' }}>
                 <div style={{ fontWeight: 900, color: '#fde68a' }}>Read {upload.rows.length} rows from {upload.fileName}</div>
                 <div style={{ fontSize: 13, color: '#cbd5e1', marginTop: 6, lineHeight: 1.5 }}>
+                  {upload.changed > 0 && <div>✏️ {upload.changed} row{upload.changed === 1 ? '' : 's'} with a different battery / P/N / CCA.</div>}
                   {upload.added.length ? <div>➕ New / changed: {upload.added.slice(0, 8).map(r => `${r.model} ${yearRange(r)}${r.engine && r.engine !== 'All' ? ` ${r.engine}` : ''}`).join(' · ')}{upload.added.length > 8 ? ` +${upload.added.length - 8} more` : ''}</div> : <div>No new rows.</div>}
                   {upload.removed.length > 0 && <div style={{ color: '#fca5a5' }}>➖ No longer in the guide: {upload.removed.slice(0, 8).map(r => `${r.model} ${yearRange(r)}`).join(' · ')}{upload.removed.length > 8 ? ` +${upload.removed.length - 8} more` : ''}</div>}
                 </div>
@@ -243,9 +368,12 @@ export default function BatteryGuide({ currentUser, isManager, onBack, backLabel
                   <button disabled={upBusy} onClick={saveUpload} style={btn('74,222,128')}>✓ Save — replace the guide</button>
                   <button disabled={upBusy} onClick={() => setUpload(null)} style={btn('148,163,184', false)}>Cancel</button>
                 </div>
+                <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 8 }}>Saving replaces every row — hand edits made below are replaced by what this PDF says.</div>
               </div>
             )}
           </div>
+          {guide && <GuideEditor rows={rows} onSaveRows={saveRows} />}
+          </>)}
         </div>
       </div>
     </div>
