@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T14:41:40.988Z",
+  "updatedAt": "2026-10-21T14:42:03.665Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -2648,6 +2648,77 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi807s4zij0"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "NEXO",
+      "code": "FE",
+      "yearFrom": 2019,
+      "yearTo": 2023,
+      "fluids": [
+        {
+          "fluid": "Reduction Gear Fluid",
+          "engine": "",
+          "volume": "1.06 US qt. (1L)",
+          "spec": "GL4 75W/85",
+          "partNumber": "0023219067",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Fuel Cell Stack",
+          "volume": "Refer to Article 1270 for Coolant Part Number and Specifications",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Traction Motor",
+          "volume": "Refer to Article 1270 for Coolant Part Number and Specifications",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "Amount Required",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "Amount Required",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "20.28±0.88 oz. (575±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "4.59±0.35 oz. (130±10g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "nexo.pdf",
+        "uploadedAt": "2026-10-21T14:42:00.817Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi80p7wzsnt"
     }
   ]
 }
