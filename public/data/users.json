@@ -260,7 +260,7 @@
     {
       "username": "Devin",
       "role": "parts",
-      "canEditDashboard": true,
+      "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
         "surveyReports": false,
