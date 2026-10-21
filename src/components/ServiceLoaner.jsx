@@ -7,6 +7,7 @@ import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
 import BulkContractUpload from './BulkContractUpload';
 import LoanerBlacklist from './LoanerBlacklist';
+import { dueByMileage } from '../utils/loanerIntervals';
 
 // ── Service Loaner ────────────────────────────────────────────────────────────
 // Signed loaner contracts (Vehicle Use Agreement face page). Upload Contract:
@@ -112,6 +113,17 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   // Loaner Inventory — a scanned contract's VIN is checked against it (fixWithFleet).
   const [fleet, setFleet] = useState([]);
   useEffect(() => { ((io || github).loadLoanerInventory)().then(d => setFleet(d.vehicles || [])).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // Badge on the Loaner Maintenance tab: loaners with an open request or due by
+  // mileage. Re-read on every tab switch so it follows what was just done there.
+  const [maint, setMaint] = useState(null);
+  useEffect(() => { ((io || github).loadLoanerMaintenance)().then(setMaint).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  const maintCount = useMemo(() => {
+    if (!maint) return 0;
+    const reqs = maint.requests || [];
+    const keys = new Set(reqs.filter(r => r.status !== 'done').map(r => String(r.vin || r.loanerNo || r.id).toUpperCase()));
+    for (const d of dueByMileage(maint.intervals || [], fleet, reqs)) keys.add(String(d.vehicle.vin || d.vehicle.stockNo || d.vehicle.id).toUpperCase());
+    return keys.size;
+  }, [maint, fleet]);
   const [autoRead, setAutoRead] = useState('');     // '' | 'reading' | message after filling an opened contract
   const autoReadDone = useRef(new Set());           // contract ids already read this visit
   const fileRef = useRef(null);
@@ -469,8 +481,15 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
 
   const editWarnings = editDraft ? fieldWarnings(editDraft) : [];
 
-  const tabBtn = (k, label) => (
-    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : k === 'blacklist' ? '248,113,113' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
+  const tabBtn = (k, label, badge = 0) => (
+    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ position: 'relative', ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : k === 'blacklist' ? '248,113,113' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}
+      {badge > 0 && (
+        <span title={`${badge} loaner${badge === 1 ? '' : 's'} need maintenance`} className="sl-tab-badge"
+          style={{ position: 'absolute', top: -8, right: -8, minWidth: 22, height: 22, padding: '0 6px', boxSizing: 'border-box', borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 12, fontWeight: 900, lineHeight: '22px', textAlign: 'center', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(239,68,68,.7)', animation: 'slBadgePulse 2s ease-in-out infinite' }}>
+          {badge}
+        </span>
+      )}
+    </button>
   );
 
   return (
@@ -486,7 +505,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         {tabBtn('requests', '🙋 Loaner Request')}
         {tabBtn('list', `📋 Contracts (${contracts.length})`)}
         {tabBtn('inventory', '🚙 Loaner Inventory')}
-        {tabBtn('maintenance', '🔧 Loaner Maintenance')}
+        <style>{'@keyframes slBadgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}@media (prefers-reduced-motion: reduce){.sl-tab-badge{animation:none!important}}'}</style>
+        {tabBtn('maintenance', '🔧 Loaner Maintenance', maintCount)}
         {tabBtn('blacklist', `⛔ Black List (${blacklist.length})`)}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
