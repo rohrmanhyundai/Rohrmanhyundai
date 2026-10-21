@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:18:34.425Z",
+  "updatedAt": "2026-10-21T15:19:01.335Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -1451,149 +1451,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7yza46u5s"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "IONIQ 6",
-      "code": "CE EV",
-      "yearFrom": 2023,
-      "yearTo": 2024,
-      "fluids": [
-        {
-          "fluid": "Reduction gear fluid",
-          "engine": "2WD Rear",
-          "volume": "3.6~3.7 US qt. (3.4~3.5L)",
-          "spec": "ATF 65 SP4M-1",
-          "partNumber": "*",
-          "note": ""
-        },
-        {
-          "fluid": "Reduction gear fluid",
-          "engine": "4WD Front",
-          "volume": "3.4~3.5 US qt. (3.2~3.3L)",
-          "spec": "ATF 65 SP4M-1",
-          "partNumber": "*",
-          "note": ""
-        },
-        {
-          "fluid": "Reduction gear fluid",
-          "engine": "4WD Rear",
-          "volume": "3.6~3.7 US qt. (3.4~3.5L)",
-          "spec": "ATF 65 SP4M-1",
-          "partNumber": "*",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Standard Type 2WD With Heat Pump",
-          "volume": "18.51 US qt. (17.52 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Standard Type AWD With Heat Pump",
-          "volume": "18.74 US qt. (17.73 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Standard Type 2WD Without Heat Pump",
-          "volume": "17.85 US qt. (16.89 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Standard Type AWD Without Heat Pump",
-          "volume": "18.20 US qt. (17.22 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Extended Type 2WD With Heat Pump",
-          "volume": "20.63 US qt. (19.52 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Extended Type AWD With Heat Pump",
-          "volume": "20.90 US qt. (19.78 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Extended Type 2WD Without Heat Pump",
-          "volume": "19.96 US qt. (18.89 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "Extended Type AWD Without Heat Pump",
-          "volume": "20.36 US qt. (19.27 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "about 24 oz. (700 cc)",
-          "spec": "DOT-4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "With Heat Pump",
-          "volume": "900±25g (32±0.9 oz.)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "Without Heat Pump",
-          "volume": "700±25g (25±0.9 oz.)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "With Heat Pump",
-          "volume": "190±10g (6.11±0.35 oz.)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "Without Heat Pump",
-          "volume": "150±10g (5.29±0.35 oz.)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "ioniq 6.pdf",
-        "uploadedAt": "2026-10-21T14:43:02.434Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi820eeeieh"
     },
     {
       "make": "HYUNDAI",
@@ -4272,6 +4129,149 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi81fqyxman"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "IONIQ 6",
+      "code": "CE EV",
+      "yearFrom": 2023,
+      "yearTo": 2024,
+      "fluids": [
+        {
+          "fluid": "Reduction gear fluid",
+          "engine": "2WD Rear",
+          "volume": "3.6~3.7 US qt. (3.4~3.5L)",
+          "spec": "ATF 65 SP4M-1",
+          "partNumber": "*",
+          "note": ""
+        },
+        {
+          "fluid": "Reduction gear fluid",
+          "engine": "4WD Front",
+          "volume": "3.4~3.5 US qt. (3.2~3.3L)",
+          "spec": "ATF 65 SP4M-1",
+          "partNumber": "*",
+          "note": ""
+        },
+        {
+          "fluid": "Reduction gear fluid",
+          "engine": "4WD Rear",
+          "volume": "3.6~3.7 US qt. (3.4~3.5L)",
+          "spec": "ATF 65 SP4M-1",
+          "partNumber": "*",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant — Standard Type",
+          "engine": "With Heat Pump 2WD",
+          "volume": "18.51 US qt. (17.52 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Standard Type",
+          "engine": "With Heat Pump AWD",
+          "volume": "18.74 US qt. (17.73 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Standard Type",
+          "engine": "Without Heat Pump 2WD",
+          "volume": "17.85 US qt. (16.89 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Standard Type",
+          "engine": "Without Heat Pump AWD",
+          "volume": "18.20 US qt. (17.22 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Extended Type",
+          "engine": "With Heat Pump 2WD",
+          "volume": "20.63 US qt. (19.52 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Extended Type",
+          "engine": "With Heat Pump AWD",
+          "volume": "20.90 US qt. (19.78 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Extended Type",
+          "engine": "Without Heat Pump 2WD",
+          "volume": "19.96 US qt. (18.89 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Coolant — Extended Type",
+          "engine": "Without Heat Pump AWD",
+          "volume": "20.36 US qt. (19.27 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "Designated coolant water for electric vehicles. If you are unsure please contact Techline 800-325-6604."
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "about 24 oz. (700 cc)",
+          "spec": "DOT-4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "With Heat Pump",
+          "volume": "900±25g (32±0.9 oz.)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "Without Heat Pump",
+          "volume": "700±25g (25±0.9 oz.)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "With Heat Pump",
+          "volume": "190±10g (6.11±0.35 oz.)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "Without Heat Pump",
+          "volume": "150±10g (5.29±0.35 oz.)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "ioniq 6.pdf",
+        "uploadedAt": "2026-10-21T15:18:57.419Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi820eeeieh"
     }
   ]
 }
