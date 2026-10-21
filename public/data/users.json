@@ -770,7 +770,7 @@
       "email": "matthew.clark@rohrmanauto.com",
       "pwSalt": "6a68642366e6588fcac2fd574dd6eec1",
       "role": "advisor",
-      "canEditDashboard": true,
+      "canEditDashboard": false,
       "managementAccess": false,
       "pages": {
         "advisorCalendar": true,
