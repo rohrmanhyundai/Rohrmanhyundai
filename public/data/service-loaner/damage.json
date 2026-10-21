@@ -28,5 +28,27 @@
       "reportedAt": "2026-10-21T00:44:24.117Z",
       "reportedBy": "SHAWN"
     }
+  ],
+  "pending": [
+    {
+      "id": "mvhf7mxj7a4p",
+      "note": "Bumper",
+      "by": "SHAWN",
+      "at": "2026-10-21T01:15:38.888Z",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-damage/LHY2517/mvhf7mxj7a4p/mvhf7lzihwug.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2667092
+        }
+      ],
+      "vehicleId": "li-mvbdf7tb8cef",
+      "vin": "5NTJCDDE8TH161729",
+      "stockNo": "LHY2517",
+      "kind": "out",
+      "customer": "TEST TEST"
+    }
   ]
 }
