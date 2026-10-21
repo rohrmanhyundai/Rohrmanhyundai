@@ -3,6 +3,7 @@ import * as github from '../utils/github';
 import { uploadWarrantyMediaToS3, ensureAwsCreds } from '../utils/s3';
 import VinScanner from './VinScanner';
 import { blacklistHit } from '../utils/serviceLoaner';
+import QuickMediaSend from './QuickMediaSend';
 
 // ── 🚙 Rental (phone) ─────────────────────────────────────────────────────────
 // Check-in / check-out pictures and videos of a loaner. Stock # — or 📋 Select
@@ -55,6 +56,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [pickQ, setPickQ] = useState('');
   const camRef = useRef(null);
   const libraryRef = useRef(null);
+  const [quick, setQuick] = useState(false);       // 📤 Add media screen (not tied to a loaner)
 
   useEffect(() => {
     loadLoanerInventory().then(d => setFleet(d.vehicles || [])).catch(() => setFleet([]));
@@ -146,6 +148,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
     setSaving(false);
   }
 
+  if (quick) return <QuickMediaSend currentUser={currentUser} io={io} onBack={() => setQuick(false)} />;
+
   if (done) {
     const k = KIND[done.kind];
     return (
@@ -204,7 +208,11 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           <div style={{ color: '#93c5fd', fontWeight: 800, fontSize: 18 }}>🚙 Rental</div>
           <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 2 }}>Loaner check-in / check-out pictures &amp; videos</div>
         </div>
-        <button onClick={onBack} disabled={saving} style={{ ...SMALL_BTN, padding: '8px 12px', fontWeight: 700, flexShrink: 0 }}>← Back</button>
+        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+          <button onClick={() => setQuick(true)} disabled={saving}
+            style={{ ...SMALL_BTN, padding: '8px 12px', fontWeight: 800, color: '#bbf7d0', background: 'rgba(74,222,128,.14)', border: '1px solid rgba(74,222,128,.5)' }}>📤 Add media</button>
+          <button onClick={onBack} disabled={saving} style={{ ...SMALL_BTN, padding: '8px 12px', fontWeight: 700 }}>← Back</button>
+        </div>
       </div>
 
       {/* Step 1: stock # */}

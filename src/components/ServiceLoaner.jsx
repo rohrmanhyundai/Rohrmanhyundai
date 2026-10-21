@@ -7,6 +7,8 @@ import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
 import BulkContractUpload from './BulkContractUpload';
 import LoanerBlacklist from './LoanerBlacklist';
+import QuickMediaPanel from './QuickMediaPanel';
+import { isExpired } from '../utils/quickMedia';
 import { dueByMileage } from '../utils/loanerIntervals';
 
 // ── Service Loaner ────────────────────────────────────────────────────────────
@@ -52,7 +54,7 @@ const fmtTime = (t) => {
 export default function ServiceLoaner({ currentUser, currentRole, advisors = [], rentalUsers = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory', 'blacklist'].includes(initialTab) ? initialTab : 'requests');
+  const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory', 'blacklist', 'media'].includes(initialTab) ? initialTab : 'requests');
   const [maintPrefill, setMaintPrefill] = useState(null);
   const [bulkOpen, setBulkOpen] = useState(false);
   // ⛔ Black List — shared by its tab, the contract button and the ⛔ flags.
@@ -131,6 +133,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     const to = new Date(c.completedAt || 0).getTime() + 3 * 86400000;
     return onCar.filter(r => { const t = new Date(r.reportedAt).getTime(); return t >= from && t <= to; });
   };
+  // Badge on 📸 Media: uploads from the phone still inside their 72 hours.
+  const [mediaCount, setMediaCount] = useState(0);
+  useEffect(() => { ((io || github).loadQuickMedia)().then(d => setMediaCount((d.items || []).filter(i => !isExpired(i)).length)).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
   // Badge on Loaner Request: requests for today or later (same re-read rule).
   const [loanerReqs, setLoanerReqs] = useState([]);
   useEffect(() => { ((io || github).loadLoanerRequests)().then(d => setLoanerReqs(d.requests || [])).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -518,9 +523,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const editWarnings = editDraft ? fieldWarnings(editDraft) : [];
 
   const tabBtn = (k, label, badge = 0) => (
-    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ position: 'relative', ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : k === 'blacklist' ? '248,113,113' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}
+    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ position: 'relative', ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : k === 'blacklist' ? '248,113,113' : k === 'media' ? '192,132,252' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}
       {badge > 0 && (
-        <span title={k === 'list' ? `${badge} signed contract${badge === 1 ? '' : 's'} not uploaded` : k === 'requests' ? `${badge} upcoming loaner request${badge === 1 ? '' : 's'}` : `${badge} loaner${badge === 1 ? '' : 's'} need maintenance`} className="sl-tab-badge"
+        <span title={k === 'list' ? `${badge} signed contract${badge === 1 ? '' : 's'} not uploaded` : k === 'media' ? `${badge} media upload${badge === 1 ? '' : 's'} from the phone` : k === 'requests' ? `${badge} upcoming loaner request${badge === 1 ? '' : 's'}` : `${badge} loaner${badge === 1 ? '' : 's'} need maintenance`} className="sl-tab-badge"
           style={{ position: 'absolute', top: -8, right: -8, minWidth: 22, height: 22, padding: '0 6px', boxSizing: 'border-box', borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 12, fontWeight: 900, lineHeight: '22px', textAlign: 'center', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(239,68,68,.7)', animation: 'slBadgePulse 2s ease-in-out infinite' }}>
           {badge}
         </span>
@@ -546,11 +551,15 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         {tabBtn('maintenance', '🔧 Loaner Maintenance', maintCount)}
         {tabBtn('blacklist', `⛔ Black List (${blacklist.length})`)}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
+        <div style={{ flex: 1 }} />
+        {tabBtn('media', '📸 Media', mediaCount)}
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 40px' }}>
         <div style={{ maxWidth: 1800, margin: '0 auto' }}>
-          {tab === 'blacklist' ? (
+          {tab === 'media' ? (
+            <QuickMediaPanel io={io} onCount={setMediaCount} />
+          ) : tab === 'blacklist' ? (
             <LoanerBlacklist entries={blacklist} loading={blLoading} busy={busy} onAdd={addBlacklist} onRemove={removeBlacklist} onSaveNotes={saveBlacklistNotes}
               onOpenContract={(id) => { const c = contracts.find(x => x.id === id); if (c) { setTab('list'); startEdit(c); } else setStatus('⚠ That contract is no longer on file.'); }} />
           ) : tab === 'inventory' ? (

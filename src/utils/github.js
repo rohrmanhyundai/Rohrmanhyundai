@@ -2541,6 +2541,19 @@ export async function updateLoanerMaintenance(mutate, what = 'update') {
     `Loaner maintenance ${what} ${new Date().toISOString()}`);
 }
 
+// ── Loaner quick media (phone 📤 Add media → Service Loaner 📸 Media) ─────────
+// public/data/service-loaner/quick-media.json → { items: [{ id, note, by, at,
+//   files: [{ url, name, type, kind, size }] }] } — kept 72 hours (utils/quickMedia).
+export async function loadQuickMedia() {
+  try { const d = await loadGithubFile('data/service-loaner/quick-media.json'); if (d && Array.isArray(d.items)) return d; } catch {}
+  return { items: [] };
+}
+export async function updateQuickMedia(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/quick-media.json',
+    (cur) => mutate(cur && Array.isArray(cur.items) ? cur : { items: [] }),
+    `Loaner quick media ${what} ${new Date().toISOString()}`);
+}
+
 // ── Loaner damage (3D Report Damage page) ─────────────────────────────────────
 // public/data/service-loaner/damage.json → { reports: [{ id, vehicleId, vin, stockNo, part, partLabel,
 //   type, description, photos: [{ url, name, type }], status: 'open'|'repaired',
