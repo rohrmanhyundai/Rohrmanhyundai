@@ -94,10 +94,39 @@ const NAV_BUTTONS = [
     color: '#fde68a',
     prop: 'onCashDash',
   },
+  // Parts-desk tools, for parts users (Kai) who work from this page. App.jsx
+  // only passes these handlers when the viewer's job role is parts.
+  {
+    key: 'chargeAccountList',
+    label: '💳 Charge List',
+    desc: 'Approved charge accounts and tax-exempt status',
+    bg: 'linear-gradient(135deg,rgba(99,102,241,.28),rgba(79,70,229,.18))',
+    border: 'rgba(99,102,241,.5)',
+    color: '#a5b4fc',
+    prop: 'onChargeList',
+  },
+  {
+    key: 'batteryGuide',
+    label: '🔋 Battery',
+    desc: 'Battery part number by VIN or year and model — from the Hyundai Battery Guide',
+    bg: 'linear-gradient(135deg,rgba(74,222,128,.25),rgba(34,197,94,.15))',
+    border: 'rgba(74,222,128,.5)',
+    color: '#86efac',
+    prop: 'onBattery',
+  },
+  {
+    key: 'oilCapacity',
+    label: '🛢 Oil Capacity',
+    desc: 'Engine oil and fluid capacities, specs and part numbers by VIN or year and model',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.25),rgba(217,119,6,.15))',
+    border: 'rgba(251,191,36,.5)',
+    color: '#fcd34d',
+    prop: 'onOilCapacity',
+  },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onLivePay, onShopAppointments, onBack }) {
-  const handlers = { onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview, onLivePay, onShopAppointments };
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onLivePay, onShopAppointments, onChargeList, onBattery, onOilCapacity, onBack }) {
+  const handlers = { onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview, onLivePay, onShopAppointments, onChargeList, onBattery, onOilCapacity };
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b) && handlers[b.prop]);
 

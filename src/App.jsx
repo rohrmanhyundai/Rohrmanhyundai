@@ -1316,6 +1316,9 @@ export default function App() {
         onAdditionalTimeReview={() => goTo('additional-time-review', 'tech-resources')}
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'tech-resources') : undefined}
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'tech-resources') : undefined}
+        onChargeList={/parts/.test(jobRole) && canAccess('chargeAccountList') ? () => goTo('charge-account-list', 'tech-resources') : undefined}
+        onBattery={/parts/.test(jobRole) && canAccess('batteryGuide') ? () => goTo('battery-guide', 'tech-resources') : undefined}
+        onOilCapacity={/parts/.test(jobRole) && canAccess('oilCapacity') ? () => goTo('oil-capacity', 'tech-resources') : undefined}
         onBack={() => setPage('dashboard')}
       />
     );
