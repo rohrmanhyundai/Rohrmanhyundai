@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T14:40:43.311Z",
+  "updatedAt": "2026-10-21T14:41:14.705Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -2426,6 +2426,125 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7yza46u5s"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "SANTA CRUZ",
+      "code": "NX4A OB",
+      "yearFrom": 2022,
+      "yearTo": 2024,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.5L",
+          "volume": "6.13 US qt. (5.8L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.5 T-GDI",
+          "volume": "6.13 US qt. (5.8L)",
+          "spec": "0W-30 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program Information Page",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.87 US qt. (6.5L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219052",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "2.5 T-GDI",
+          "volume": "Gear Oil 3.49-3.59 US qt. (3.3-3.4L)",
+          "spec": "WDCTF HD G",
+          "partNumber": "0023219100",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "2.5 T-GDI",
+          "volume": "Control Oil 2.59-2.64 US qt. (2.45-2.5L)",
+          "spec": "WDCTF HD H",
+          "partNumber": "0023219101",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.5L",
+          "volume": "10 US qt. (9.4L)",
+          "spec": "Green Coolant or Pink Coolant",
+          "partNumber": "0023219010 or 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.5 T-GDI",
+          "volume": "9.12 US qt. (8.63L)",
+          "spec": "Green Coolant or Pink Coolant",
+          "partNumber": "0023219010 or 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "As Required",
+          "spec": "DOT-4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (AWD)",
+          "engine": "",
+          "volume": "0.56-0.67 US qt. (0.53-0.63L)",
+          "spec": "",
+          "partNumber": "Part no. 0023219075, this is applicable to vehicles with LSD. The other part no. 0023219097, this is applicable to non-LSD vehicles.",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "2.5L",
+          "volume": "0.66-0.72 US qt. (0.62-0.68L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "2.5 T-GDI",
+          "volume": "0.51-0.55 US qt. (0.48-0.52L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "21.16±0.88 oz. (600±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "3.5273±0.35 oz. (100±10g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "santa cruz.pdf",
+        "uploadedAt": "2026-10-21T14:41:10.345Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7znfmm62r"
     }
   ]
 }
