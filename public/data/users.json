@@ -817,7 +817,7 @@
       "email": "hilli.lybrook@rohrmanauto.com",
       "pwSalt": "00d644374b23b740f9e8f3eddb411661",
       "role": "rentals",
-      "canEditDashboard": true,
+      "canEditDashboard": false,
       "managementAccess": false,
       "pages": {
         "advisorCalendar": false,
