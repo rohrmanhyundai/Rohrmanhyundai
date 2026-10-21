@@ -260,7 +260,7 @@
     {
       "username": "Devin",
       "role": "parts",
-      "canEditDashboard": false,
+      "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
         "surveyReports": false,
@@ -293,16 +293,17 @@
       "email": "devin.drake@rohrmanauto.com",
       "managementAccess": false,
       "pageOverrides": {},
-      "pwSalt": "375b7e7c25d7483dcb66a09b4c6d04ac",
+      "pwSalt": "554b39ef5a76de16d017d0b55364d516",
       "hidden": false,
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
-        "data": "gZZJzc8Fceip4bhOgAEsWQ71VW2+ET6oi+sGqy3Lad4uQg0vnpDjJ7X/PpxofJxNwR98q7EdAbA5SR1Dx/CXqyZUHGp90UlgjD106WLny9sqqfghl4uD8TfWD8vwG8xWcPFIXGKCSK5oWXY9aFrnGNN52NEpuYh3l0m5L3nWULHBb05AoU95ZviDKNFWQdjMTtIHbMQLRxFHs8jm7xEAFp6BunzindIyQHykTcFh3gjICoaXqWwEbycF6J2uXacVujdoTh99VZIujeDLXb4caqkyo5oHyQ3Nkn/KfuUtiQZheys6Ow00l2vYkcVqqyRWFIyFlxpkCkF9KQAH9LPMvg=="
+        "data": "bgrHyydFZQxMnzF2KgITcEDUkMsNjp097dcF8/Sbvh2r9jg9UY2uQvVgHfmzAgZJjgSlkvZJQEdqXHzhzJZJSTkN/3QN2Z/CAUJ8n3M0+aJT6by+YDWobMxJ5UOhhlxoCcPyiPLsvkDLkf7zSgcKWNYSUFbH6hCoMwEiLdke6JQnZZ51Fi6liE0WZV8fWlfEa9/D1XgsmM8oh7OYlg8TYZ6sbCjr9nhDG4p728jgU9LSGtLmosPx2MmHEjP3SXfHmzMr9vItgtU7X1229hYuJrxHe17U0KOEdfjsS922MK/k/1SSXP/gGrrg4qimed3F0fwBfqapJF83F5PJnt0Abw=="
       },
-      "passwordReset": {
-        "hash": "a1c4e943ba7d9d2eb3b3249c27345bd0bd28f13daed896a0fa6f740a1a08ed87",
-        "expires": "2026-10-21T16:40:36.588Z",
-        "requestedAt": "2026-10-21T15:40:36.589Z"
+      "applicantCode": {
+        "salt": "96d774cd286b8ab8a4e400059e6e2d88",
+        "hash": "1aa44247c02605d4db53e0a03d0eb4da9332b5df4e5d23711343c5c54ae5f4dc",
+        "iterations": 150000,
+        "setAt": "2026-10-21T15:40:58.184Z"
       }
     },
     {
