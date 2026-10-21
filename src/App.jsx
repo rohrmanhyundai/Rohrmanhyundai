@@ -1477,6 +1477,7 @@ export default function App() {
         onGoalForecast={() => goTo('parts-goal-forecast', 'parts-hub')}
         onGlobalMessage={() => goTo('global-message', 'parts-hub')}
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'parts-hub') : undefined}
+        onChargeList={canAccess('chargeAccountList') ? () => goTo('charge-account-list', 'parts-hub') : undefined}
       />
     );
   }

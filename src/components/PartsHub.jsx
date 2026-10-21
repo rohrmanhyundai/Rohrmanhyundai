@@ -96,6 +96,15 @@ const NAV_BUTTONS = [
     prop: 'onTireQuote',
   },
   {
+    key: 'chargeAccountList',
+    label: '💳 Charge List',
+    desc: 'Approved charge accounts and tax-exempt status',
+    bg: 'linear-gradient(135deg,rgba(99,102,241,.28),rgba(79,70,229,.18))',
+    border: 'rgba(99,102,241,.5)',
+    color: '#a5b4fc',
+    prop: 'onChargeList',
+  },
+  {
     key: 'globalMessage',
     adminOnly: true,
     label: '📣 Global Message',
@@ -111,12 +120,13 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments,
+  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b)
+    && (!b.prop || handlers[b.prop])            // no handler (no page access) → no tile
     && (!b.managerOnly || isMgr)
     && (!b.adminOnly || currentRole === 'admin'));
 
