@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-21T13:23:30.267Z",
+    "type": "page",
+    "label": "charge-account-list"
+  },
+  {
+    "at": "2026-10-21T13:23:26.454Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-21T13:23:20.227Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-21T11:51:54.061Z",
     "type": "action",
     "label": "parts-received-mark",
