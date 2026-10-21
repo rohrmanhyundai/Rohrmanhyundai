@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-20T20:05:53.382Z",
+  "updatedAt": "2026-10-21T11:33:06.351Z",
   "days": {
     "2026-09-22": {
       "generatedAt": "2026-09-22T20:23:12.638Z",
@@ -275,6 +275,17 @@
     },
     "2026-10-20": {
       "generatedAt": "2026-10-20T20:05:06.194Z",
+      "by": "SHAWN",
+      "trigger": "manual",
+      "advisors": [
+        "DAVID",
+        "JORDAN",
+        "MATTHEW"
+      ],
+      "hasManager": true
+    },
+    "2026-10-21": {
+      "generatedAt": "2026-10-21T11:32:07.803Z",
       "by": "SHAWN",
       "trigger": "manual",
       "advisors": [
