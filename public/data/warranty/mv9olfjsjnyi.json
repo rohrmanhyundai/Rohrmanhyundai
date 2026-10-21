@@ -1,7 +1,7 @@
 {
   "id": "mv9olfjsjnyi",
   "createdAt": "2026-10-15T15:16:08.824Z",
-  "updatedAt": "2026-10-21T12:46:44.956Z",
+  "updatedAt": "2026-10-21T16:43:45.610Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Michael Daugherty",
   "customerPhone": "765) 585 - 5369",
@@ -51,5 +51,10 @@
   "readySubmission": false,
   "readySubmissionDate": "",
   "inspectorDispatched": true,
-  "inspectorDispatchedDate": "2026-10-15"
+  "inspectorDispatchedDate": "2026-10-15",
+  "inspected": true,
+  "inspectedDate": "2026-10-16",
+  "teardown": true,
+  "teardownDate": "2026-10-21",
+  "teardownLabor": "5.5"
 }
