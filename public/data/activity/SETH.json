@@ -1,5 +1,45 @@
 [
   {
+    "at": "2026-10-21T15:29:50.853Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
+    "at": "2026-10-21T15:29:44.387Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-10-21T15:29:28.075Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-21T15:29:28.073Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-10-21T15:29:23.523Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-21T15:29:23.520Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-10-21T15:29:17.068Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
+    "at": "2026-10-21T15:29:09.260Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-10-21T15:28:42.256Z",
     "type": "page",
     "label": "advisor-calendar"
