@@ -25,22 +25,6 @@
     "partsArrivedDate": ""
   },
   {
-    "id": "mvfk01jpxuyh",
-    "ro": "781657",
-    "roDate": "2026-10-19",
-    "vehicle": "2022 Hyundai Palisade",
-    "jobDesc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "MATTHEW CLARK"
-  },
-  {
     "id": "mvfk01jpi3dj",
     "ro": "781654",
     "roDate": "2026-10-19",
