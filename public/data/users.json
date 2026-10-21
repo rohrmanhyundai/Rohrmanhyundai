@@ -293,12 +293,12 @@
       "email": "devin.drake@rohrmanauto.com",
       "managementAccess": false,
       "pageOverrides": {},
-      "pwSalt": "4d7408e391142bbc42edd45adc17bf5f",
+      "pwSalt": "375b7e7c25d7483dcb66a09b4c6d04ac",
+      "hidden": false,
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
-        "data": "DMT5uZru+Kzjq25MJbCW1opYHqDdkq6CiBYprTrV9KLxVmCqh+BC0eUbBXJuR/cu5oZYfaJIHrxyclV0lYJ8n1UzgVLscBU71h8gDKHEnM1vILjTYw04wgpBsMRm7t2i/2KGBHAod5+o4m1I2CZKx0dXiJkfKXigTrPGRtoy17u4mo+nsGdS0eoQtbdlcZ6iP/hdYin+YYD6aqQVAFclHcjPO1qDVwVS358FhL1uZCCiFQa8JLB9vhfatFvMf2xuFaItO7+c+18/gmrUcQUQJT78DZmTu1NJyiMqkb6SOA7fLpsMoWRccPmbikmYdwNpkxN+QsRCPr0LS5dEpbQJNg=="
-      },
-      "hidden": false
+        "data": "gZZJzc8Fceip4bhOgAEsWQ71VW2+ET6oi+sGqy3Lad4uQg0vnpDjJ7X/PpxofJxNwR98q7EdAbA5SR1Dx/CXqyZUHGp90UlgjD106WLny9sqqfghl4uD8TfWD8vwG8xWcPFIXGKCSK5oWXY9aFrnGNN52NEpuYh3l0m5L3nWULHBb05AoU95ZviDKNFWQdjMTtIHbMQLRxFHs8jm7xEAFp6BunzindIyQHykTcFh3gjICoaXqWwEbycF6J2uXacVujdoTh99VZIujeDLXb4caqkyo5oHyQ3Nkn/KfuUtiQZheys6Ow00l2vYkcVqqyRWFIyFlxpkCkF9KQAH9LPMvg=="
+      }
     },
     {
       "username": "Cory",
