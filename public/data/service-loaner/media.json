@@ -186,6 +186,35 @@
           "size": 3766449
         }
       ]
+    },
+    {
+      "id": "mvjkishj40g9",
+      "vehicleId": "li-mvbd9atwntoj",
+      "stockNo": "LHY2595",
+      "vin": "KMHL64JA2TA540230",
+      "kind": "out",
+      "customerFirst": "TEST",
+      "customerLast": "",
+      "customerName": "TEST",
+      "at": "2026-10-22T13:19:50.233Z",
+      "by": "SHAWN",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/LHY2595/mvjkishj40g9/mvjki4qbt28j.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2212354,
+          "mileage": true
+        },
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/LHY2595/mvjkishj40g9/mvjkifhobgpa.mov",
+          "name": "81436796919__00BB220B-EBD5-4CF1-A775-D125860065ED.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 337709
+        }
+      ]
     }
   ]
 }
