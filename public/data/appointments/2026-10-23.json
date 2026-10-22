@@ -1,6 +1,6 @@
 {
   "date": "2026-10-23",
-  "uploadedAt": "2026-10-21T11:05:01.901Z",
+  "uploadedAt": "2026-10-22T11:08:07.267Z",
   "uploadedBy": "Shawn",
   "appts": [
     {
@@ -122,6 +122,24 @@
       }
     },
     {
+      "apptNo": "43876",
+      "time": "7:20 AM",
+      "customer": "Jennifer Mullett",
+      "vehicle": "2019 Hyundai Santa Fe",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape",
+        "CUSTOMER STATES- Tires seasonally low",
+        "CUSTOMER STATES- Pass wiper needs replaced",
+        "CUSTOMER STATES- Will drop off night before"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 21 2026 11:39 AM"
+    },
+    {
       "apptNo": "43815",
       "time": "7:20 AM",
       "customer": "Tonya Gudell",
@@ -137,66 +155,19 @@
       "createdAt": "Mon Oct 19 2026 5:24 PM"
     },
     {
-      "apptNo": "43848",
+      "apptNo": "43868",
       "time": "7:40 AM",
-      "customer": "John Copas",
-      "vehicle": "2022 Hyundai Palisade",
+      "customer": "Leslie Robbins",
+      "vehicle": "2025 Hyundai Tucson Hybrid",
       "services": [
-        "OIL GUARD REDEMPTION - OIL CHANGE 3 OF 3",
-        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)",
-        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
-        "TIRE ROTATION"
+        "PERFORM LOF ROTATION"
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "DAVID RILEY",
-      "advisor": "DAVID",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
       "source": "BDC Scheduling",
-      "createdAt": "Tue Oct 20 2026 3:04 PM",
-      "deferred": {
-        "ro": "776273",
-        "date": "2026-03-31",
-        "advisorFull": "DAVID RILEY",
-        "advisor": "DAVID",
-        "amount": 401.92,
-        "hours": 1.8,
-        "phone": "7652060831",
-        "vin": "KM8R7DHE0NU421450",
-        "items": [
-          {
-            "code": "VVIFL",
-            "desc": "FUEL INJECTION SERVICE",
-            "count": 1,
-            "h": 0.8,
-            "price": 184.81,
-            "priceEst": false
-          },
-          {
-            "code": "CABIN",
-            "desc": "REPLACE CABIN AIR FILTER",
-            "count": 1,
-            "h": 0.2,
-            "price": 85.94,
-            "priceEst": false
-          },
-          {
-            "code": "ROTATE",
-            "desc": "TIRE ROTATION",
-            "count": 1,
-            "h": 0.4,
-            "price": 32.3,
-            "priceEst": false
-          },
-          {
-            "code": "VVACLEAN",
-            "desc": "AC EVAP SERVICE",
-            "count": 1,
-            "h": 0.3,
-            "price": 98.87,
-            "priceEst": false
-          }
-        ]
-      }
+      "createdAt": "Wed Oct 21 2026 9:43 AM"
     },
     {
       "apptNo": "43717",
@@ -268,6 +239,68 @@
       "createdAt": "Tue Oct 20 2026 4:58 PM"
     },
     {
+      "apptNo": "43848",
+      "time": "8:20 AM",
+      "customer": "John Copas",
+      "vehicle": "2022 Hyundai Palisade",
+      "services": [
+        "OIL GUARD REDEMPTION - OIL CHANGE 3 OF 3",
+        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)",
+        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
+        "TIRE ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Tue Oct 20 2026 3:04 PM",
+      "deferred": {
+        "ro": "776273",
+        "date": "2026-03-31",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 401.92,
+        "hours": 1.8,
+        "phone": "7652060831",
+        "vin": "KM8R7DHE0NU421450",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 184.81,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 85.94,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 32.3,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 98.87,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
       "apptNo": "43721",
       "time": "8:40 AM",
       "customer": "Nicholas Harrison",
@@ -281,6 +314,65 @@
       "advisor": "",
       "source": "BDC Scheduling",
       "createdAt": "Fri Oct 16 2026 11:09 AM"
+    },
+    {
+      "apptNo": "43873",
+      "time": "10:00 AM",
+      "customer": "Jacob Espy",
+      "vehicle": "2021 Kia Sorento",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 21 2026 10:38 AM",
+      "deferred": {
+        "ro": "777302",
+        "date": "2026-05-06",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1061,
+        "hours": 4.6,
+        "phone": "7654794128",
+        "vin": "5XYRLDLC5MG038299",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 446.53,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 90.28,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 135.87,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 2,
+            "h": 0.8,
+            "price": 388.32,
+            "priceEst": false
+          }
+        ]
+      }
     },
     {
       "apptNo": "43860",
@@ -574,6 +666,117 @@
           }
         ]
       }
+    },
+    {
+      "apptNo": "43888",
+      "time": "4:00 PM",
+      "customer": "Daniel Blakes",
+      "vehicle": "2020 Hyundai Sonata",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 21 2026 3:20 PM",
+      "deferred": {
+        "ro": "778460",
+        "date": "2026-06-16",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 812.91,
+        "hours": 3.1,
+        "phone": "7739569026",
+        "vin": "5NPEG4JA0LH056981",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 47.87,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.54,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 199.49,
+            "priceEst": false
+          },
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1,
+            "h": 1,
+            "price": 293.25,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.76,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43894",
+      "time": "4:20 PM",
+      "customer": "Roberto Gaspar Miguel",
+      "vehicle": "2025 Hyundai Santa Cruz",
+      "services": [
+        "COOLANT FLUID EXCHANGE",
+        "BRAKE FLUID EXCHANGE"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 21 2026 3:55 PM",
+      "deferred": {
+        "ro": "781369",
+        "date": "2026-10-06",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 402.97,
+        "hours": 1.6,
+        "phone": "5747219668",
+        "vin": "5NTJBDDE3SH130048",
+        "items": [
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 187.91,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 215.06,
+            "priceEst": false
+          }
+        ]
+      }
     }
   ],
   "claims": {
@@ -588,6 +791,24 @@
       "by": "AUTO",
       "reason": "deferred",
       "at": "2026-10-21T11:05:01.901Z"
+    },
+    "43873": {
+      "advisor": "JORDAN",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T11:08:07.267Z"
+    },
+    "43888": {
+      "advisor": "JORDAN",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T11:08:07.267Z"
+    },
+    "43894": {
+      "advisor": "DAVID",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T11:08:07.267Z"
     }
   }
 }
