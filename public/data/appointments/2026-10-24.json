@@ -1,6 +1,6 @@
 {
   "date": "2026-10-24",
-  "uploadedAt": "2026-10-21T11:05:04.021Z",
+  "uploadedAt": "2026-10-22T11:08:08.964Z",
   "uploadedBy": "Shawn",
   "appts": [
     {
@@ -321,6 +321,57 @@
       }
     },
     {
+      "apptNo": "43861",
+      "time": "1:20 PM",
+      "customer": "Christie Brown",
+      "vehicle": "2025 Hyundai Tucson",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Wed Oct 21 2026 7:56 AM",
+      "deferred": {
+        "ro": "777410",
+        "date": "2026-05-11",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 442.93,
+        "hours": 2.1,
+        "phone": "5745167669",
+        "vin": "3KMJCCDE6SE007531",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 143.18,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 95.14,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 204.61,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
       "apptNo": "43811",
       "time": "2:00 PM",
       "customer": "Daina Smith",
@@ -335,6 +386,66 @@
       "advisor": "",
       "source": "Integration",
       "createdAt": "Mon Oct 19 2026 4:16 PM"
+    },
+    {
+      "apptNo": "43893",
+      "time": "2:20 PM",
+      "customer": "Keehong Kim",
+      "vehicle": "2020 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Wed Oct 21 2026 3:54 PM",
+      "deferred": {
+        "ro": "778471",
+        "date": "2026-06-17",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 834.93,
+        "hours": 3.4,
+        "phone": "7654917247",
+        "vin": "5NMS5CAA9LH202634",
+        "items": [
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 120,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 0.5,
+            "est": true,
+            "price": 394.99,
+            "priceEst": true
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
     }
   ],
   "claims": {
@@ -355,6 +466,18 @@
       "by": "AUTO",
       "reason": "deferred",
       "at": "2026-10-21T11:05:04.021Z"
+    },
+    "43861": {
+      "advisor": "DAVID",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T11:08:08.964Z"
+    },
+    "43893": {
+      "advisor": "DAVID",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T11:08:08.964Z"
     }
   }
 }
