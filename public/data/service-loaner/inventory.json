@@ -13,7 +13,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TU032648",
       "serviceStart": "2026-01-02",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbcxm0tpg2i",
@@ -28,7 +28,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TH114746",
       "serviceStart": "2026-10-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbcydqo75r6",
@@ -43,7 +43,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TH203665",
       "serviceStart": "2026-10-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbczco95qd5",
@@ -58,7 +58,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TH159469",
       "serviceStart": "2026-03-02",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z",
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z",
       "notesAt": "2026-10-18T17:09:15.206Z",
       "notesBy": "SHAWN"
     },
@@ -75,7 +75,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TA540737",
       "serviceStart": "2026-07-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbd9atwntoj",
@@ -84,13 +84,13 @@
       "year": "2026",
       "make": "HYUNDAI",
       "model": "SONATA SEL SPORT FWD",
-      "mileage": "5443",
+      "mileage": "5713",
       "notes": "car has a chip in the windshield",
       "addedAt": "2026-10-16T19:34:19.413Z",
       "addedBy": "SHAWN",
       "unitNo": "TA540230",
       "serviceStart": "2026-05-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z",
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z",
       "notesAt": "2026-10-19T21:52:41.882Z",
       "notesBy": "SHAWN"
     },
@@ -101,13 +101,13 @@
       "year": "2026",
       "make": "HYUNDAI",
       "model": "SANTA FE HYBRID SE AWD",
-      "mileage": "5639",
+      "mileage": "5911",
       "notes": "",
       "addedAt": "2026-10-16T19:35:20.193Z",
       "addedBy": "SHAWN",
       "unitNo": "TH095479",
       "serviceStart": "2026-04-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdcis5m49g",
@@ -122,7 +122,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TH166861",
       "serviceStart": "2026-10-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbddmwhj1xe",
@@ -137,7 +137,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TU393247",
       "serviceStart": "2026-07-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdeh0v6oy2",
@@ -152,7 +152,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TA540808",
       "serviceStart": "2026-07-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdf7tb8cef",
@@ -167,7 +167,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TH161729",
       "serviceStart": "2026-03-03",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdfxrcmzyk",
@@ -182,7 +182,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TA551715",
       "serviceStart": "2026-10-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdgt6hpbez",
@@ -197,7 +197,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TA540913",
       "serviceStart": "2026-05-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdhlibfmql",
@@ -206,13 +206,13 @@
       "year": "2026",
       "make": "HYUNDAI",
       "model": "SONATA SEL SPORT AWD",
-      "mileage": "3455",
+      "mileage": "4665",
       "notes": "",
       "addedAt": "2026-10-16T19:40:46.499Z",
       "addedBy": "SHAWN",
       "unitNo": "TA540488",
       "serviceStart": "2026-07-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdigrk6cvq",
@@ -227,7 +227,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TU107418",
       "serviceStart": "2026-10-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     },
     {
       "id": "li-mvbdo36foh48",
@@ -242,7 +242,7 @@
       "addedBy": "SHAWN",
       "unitNo": "TH164629",
       "serviceStart": "2026-05-01",
-      "fleetSyncedAt": "2026-10-21T12:10:32.017Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
     }
   ]
 }
