@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-26",
+  "uploadedAt": "2026-10-22T11:08:10.329Z",
+  "uploadedBy": "Shawn",
+  "appts": [
+    {
+      "apptNo": "43627",
+      "time": "8:00 AM",
+      "customer": "Jennifer Love",
+      "vehicle": "2027 Hyundai Palisade Hybrid",
+      "services": [
+        "CUSTOMER STATES SMALL CRACK IN SCREEN (SOP)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Tue Oct 13 2026 11:39 AM"
+    },
+    {
+      "apptNo": "43453",
+      "time": "8:40 AM",
+      "customer": "Richard Mason",
+      "vehicle": "2025 Hyundai Santa Fe Hybrid",
+      "services": [
+        "Oil & Filter change with Tire Rotation",
+        "Have a recall that needs done. Fingerprint scanner is not working."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Mon Oct 5 2026 5:10 PM"
+    },
+    {
+      "apptNo": "43803",
+      "time": "10:00 AM",
+      "customer": "Yvetta Sims",
+      "vehicle": "2025 Hyundai Tucson",
+      "services": [
+        "PERFORM LOF ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Oct 19 2026 2:41 PM"
+    },
+    {
+      "apptNo": "43680",
+      "time": "11:00 AM",
+      "customer": "Melinda Carson",
+      "vehicle": "2026 Hyundai Santa Fe",
+      "services": [
+        "1st Service"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 14 2026 5:37 PM"
+    },
+    {
+      "apptNo": "43829",
+      "time": "11:40 AM",
+      "customer": "Christine Pangle",
+      "vehicle": "2023 Hyundai Palisade",
+      "services": [
+        "REAR RIGHT LOWER CONTROL ARM AND SPRING",
+        "GPS SOFTWARE UPDATE",
+        "REPLACE TWO TIRES"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Tue Oct 20 2026 11:11 AM",
+      "deferred": {
+        "ro": "780069",
+        "date": "2026-08-17",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1546.26,
+        "hours": 5.5,
+        "phone": "7654907472",
+        "vin": "KM8R7DGE1PU545635",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 53.44,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 322.57,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 229.38,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUPV6",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+            "count": 1,
+            "h": 3.5,
+            "price": 940.87,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43887",
+      "time": "1:00 PM",
+      "customer": "Angelica Heavilon",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES- Gas door will not open"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 21 2026 3:20 PM",
+      "deferred": {
+        "ro": "781057",
+        "date": "2026-09-23",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 214.94,
+        "hours": 1.1,
+        "phone": "7656506659",
+        "vin": "5NMJBCAE1NH160308",
+        "items": [
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 34.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43043",
+      "time": "4:20 PM",
+      "customer": "Timothy Doty",
+      "vehicle": "2023 Hyundai Sonata Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Sun Sep 20 2026 12:42 PM",
+      "deferred": {
+        "ro": "776418",
+        "date": "2026-04-03",
+        "advisorFull": "NEVEN CHASTEEN",
+        "advisor": "NEVEN",
+        "amount": 369.98,
+        "hours": 1.5,
+        "phone": "6163344599",
+        "vin": "KMHL24JJ7PA071895",
+        "items": [
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "VIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 189.99,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "claims": {}
+}
