@@ -1963,7 +1963,7 @@ export default function App() {
 
   if (page === 'charge-account-list') {
     if (!canAccess('chargeAccountList')) { setPage('dashboard'); return null; }
-    return <ChargeAccountList onBack={launched ? backToUploads : () => setPage(prevPage || 'manager-hub')} backLabel={launched ? UP : undefined} />;
+    return <ChargeAccountList currentRole={currentRole} initialTab={launched ? 'setup' : undefined} onBack={launched ? backToUploads : () => setPage(prevPage || 'manager-hub')} backLabel={launched ? UP : undefined} />;
   }
 
   if (page === 'employee-review') {

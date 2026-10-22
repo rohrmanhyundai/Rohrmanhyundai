@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { loadChargeAccounts, saveChargeAccounts } from '../utils/github';
+import * as github from '../utils/github';
 
 // ── PDF.js – loaded from CDN on first use ─────────────────────────────────────
 let pdfjsPromise = null;
@@ -108,18 +108,19 @@ function parseAccounts(lines) {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub' }) {
+// 📋 List: everyone with the page. ⚙️ Setup (admin / managers only): update
+// from the DMS PDF — every change is shown before it's saved — and edit any
+// account by hand.
+export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub', currentRole = '', initialTab, io }) {
+  const { loadChargeAccounts, saveChargeAccounts } = io || github;
+  const isManager = currentRole === 'admin' || /manager/i.test(currentRole || '');
+  const [tab, setTab]             = useState(isManager && initialTab === 'setup' ? 'setup' : 'list');
   const [accounts, setAccounts]   = useState([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState('');
   const [copiedId, setCopiedId]   = useState(null);
-  const [dragOver, setDragOver]   = useState(false);
   const [uploadedAt, setUploadedAt] = useState('');
-  const [rawLines, setRawLines]   = useState(null);   // null = hide, array = show
-  const [error, setError]         = useState('');
   const [approvedOnly, setApprovedOnly] = useState(true); // filter to Charge Acct = Yes
-  const [saving, setSaving]       = useState(false);
-  const fileRef = useRef();
 
   useEffect(() => {
     loadChargeAccounts()
@@ -133,39 +134,6 @@ export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub' 
       .finally(() => setLoading(false));
   }, []);
 
-  // ── Process uploaded file ──────────────────────────────────────────────────
-  async function processFile(file) {
-    if (!file?.name?.toLowerCase().endsWith('.pdf')) {
-      setError('Please upload a PDF file.'); return;
-    }
-    setError('');
-    setLoading(true);
-    setRawLines(null);
-    try {
-      const lines = await extractLines(file);
-      const parsed = parseAccounts(lines);
-
-      if (parsed.length === 0) {
-        setRawLines(lines); // show raw so user can debug
-        setError(`Auto-parse found 0 accounts from ${lines.length} lines. Raw text is shown below — use it to identify the format.`);
-        setLoading(false);
-        return;
-      }
-
-      const ts = new Date().toLocaleString();
-      setSaving(true);
-      await saveChargeAccounts(parsed, ts);
-      setAccounts(parsed);
-      setUploadedAt(ts);
-    } catch (err) {
-      setError('Error: ' + err.message);
-      console.error(err);
-    } finally {
-      setLoading(false);
-      setSaving(false);
-    }
-  }
-
   // ── Clipboard ─────────────────────────────────────────────────────────────
   function copyId(id) {
     navigator.clipboard?.writeText(id).catch(() => {
@@ -178,20 +146,6 @@ export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub' 
     });
     setCopiedId(id);
     setTimeout(() => setCopiedId(c => c === id ? null : c), 1800);
-  }
-
-  // ── Clear ─────────────────────────────────────────────────────────────────
-  async function clearList() {
-    if (!window.confirm('Remove all charge account data?')) return;
-    try {
-      await saveChargeAccounts([], '');
-    } catch (err) {
-      setError('Clear failed: ' + err.message); return;
-    }
-    setAccounts([]);
-    setUploadedAt('');
-    setRawLines(null);
-    setError('');
   }
 
   // ── Filtered list ─────────────────────────────────────────────────────────
@@ -216,18 +170,24 @@ export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub' 
           <div className="adv-sub">Approved Charge Accounts</div>
         </div>
         <div style={{ flex: 1 }} />
-        {accounts.length > 0 && (
-          <button
-            onClick={clearList}
-            style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.3)', color: '#fca5a5', borderRadius: 8, padding: '6px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
-          >
-            🗑 Clear List
-          </button>
-        )}
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
+      {isManager && (
+        <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0 }}>
+          {[['list', '📋 List'], ['setup', '⚙️ Setup']].map(([k, label]) => (
+            <button key={k} onClick={() => setTab(k)}
+              style={{ background: tab === k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${tab === k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: tab === k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>
+        {isManager && tab === 'setup' ? (
+          <ChargeSetup accounts={accounts} uploadedAt={uploadedAt} save={saveChargeAccounts}
+            onSaved={(list, at) => { setAccounts(list); setUploadedAt(at); }} />
+        ) : (
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
 
           {/* ── Stats + controls ── */}
@@ -396,71 +356,231 @@ export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub' 
           )}
 
           {/* Empty state */}
-          {accounts.length === 0 && !loading && !error && (
+          {accounts.length === 0 && !loading && (
             <div style={{ textAlign: 'center', padding: '64px 0', color: '#475569' }}>
               <div style={{ fontSize: 52, marginBottom: 14 }}>📋</div>
               <div style={{ fontSize: 16, color: '#64748b', marginBottom: 6 }}>No charge accounts loaded yet</div>
-              <div style={{ fontSize: 13, color: '#334155' }}>Upload your charge account PDF below to populate the list</div>
+              <div style={{ fontSize: 13, color: '#334155' }}>{isManager ? 'Upload the charge account PDF on ⚙️ Setup.' : 'A manager uploads the list.'}</div>
             </div>
           )}
+          {uploadedAt && accounts.length > 0 && <div style={{ marginTop: 14, fontSize: 12, color: '#475569', textAlign: 'right' }}>List updated {uploadedAt}</div>}
 
-          {/* ── Upload zone (bottom) ── */}
-          <div style={{ marginTop: 32 }}>
-            <div
-              onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) processFile(f); }}
-              onClick={() => fileRef.current?.click()}
-              style={{
-                border: `2px dashed ${dragOver ? 'rgba(61,214,195,.75)' : 'rgba(255,255,255,.10)'}`,
-                borderRadius: 12, padding: '18px 24px', textAlign: 'center',
-                cursor: loading ? 'default' : 'pointer',
-                background: dragOver ? 'rgba(61,214,195,.06)' : 'transparent',
-                transition: 'all .2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14,
-              }}
-            >
-              <input ref={fileRef} type="file" accept=".pdf" style={{ display: 'none' }}
-                onChange={e => { if (e.target.files[0]) processFile(e.target.files[0]); e.target.value = ''; }} />
-              {saving ? (
-                <div style={{ color: '#6ee7f9', fontSize: 14 }}>⏳ Saving to GitHub…</div>
-              ) : loading ? (
-                <div style={{ color: '#6ee7f9', fontSize: 14 }}>⏳ {accounts.length === 0 ? 'Loading…' : 'Reading PDF and parsing accounts…'}</div>
-              ) : (
-                <>
-                  <span style={{ fontSize: 22 }}>📄</span>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: 700, color: '#64748b', fontSize: 13 }}>
-                      {accounts.length > 0 ? 'Re-upload Charge Account PDF' : 'Upload Charge Account PDF'}
-                    </div>
-                    <div style={{ color: '#334155', fontSize: 12 }}>
-                      Drag & drop or click · PDF only
-                      {uploadedAt && <span style={{ marginLeft: 10 }}>· Last uploaded: {uploadedAt}</span>}
-                    </div>
-                  </div>
-                </>
-              )}
+        </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── ⚙️ Setup (admin / managers) ───────────────────────────────────────────────
+const FIELDS = [['name', 'Customer name'], ['id', 'Customer ID'], ['chargeAcct', 'Charge acct'], ['taxExempt', 'Tax exempt on file']];
+const sInput = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.28)', borderRadius: 7, color: '#e2e8f0', padding: '6px 9px', fontSize: 13, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
+const sBtn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(255,255,255,.04)', border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 8, padding: '7px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' });
+const sCard = { background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.09)', borderRadius: 14, padding: '18px 20px', marginBottom: 22 };
+const yn = (v) => (v === 'Yes' ? '✓ Yes' : v === 'No' ? '✗ No' : '—');
+
+// Old list vs a freshly read PDF, matched by customer ID.
+function diffLists(oldList, newList) {
+  const oldBy = new Map(oldList.map(a => [a.id, a]));
+  const newBy = new Map(newList.map(a => [a.id, a]));
+  const out = [];
+  for (const n of newList) {
+    const o = oldBy.get(n.id);
+    if (!o) { out.push({ key: `add:${n.id}`, type: 'add', acct: n }); continue; }
+    const fields = ['name', 'chargeAcct', 'taxExempt'].filter(k => String(o[k] || '') !== String(n[k] || ''));
+    if (fields.length) out.push({ key: `chg:${n.id}`, type: 'change', acct: n, old: o, fields });
+  }
+  for (const o of oldList) if (!newBy.has(o.id)) out.push({ key: `del:${o.id}`, type: 'remove', acct: o });
+  return out;
+}
+
+function ChargeSetup({ accounts, uploadedAt, onSaved, save: saveChargeAccounts }) {
+  // ── Update from PDF ──
+  const fileRef = useRef();
+  const [dragOver, setDragOver] = useState(false);
+  const [reading, setReading] = useState(false);
+  const [review, setReview] = useState(null);       // { fileName, parsed, changes }
+  const [skip, setSkip] = useState({});             // change key → leave as it is
+  const [msg, setMsg] = useState('');
+  const [rawLines, setRawLines] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  async function readPdf(file) {
+    if (!file?.name?.toLowerCase().endsWith('.pdf')) { setMsg('❌ Please choose the charge account PDF.'); return; }
+    setReading(true); setMsg(''); setReview(null); setSkip({}); setRawLines(null);
+    try {
+      const lines = await extractLines(file);
+      const parsed = parseAccounts(lines);
+      if (!parsed.length) {
+        setRawLines(lines);
+        setMsg(`❌ Found 0 accounts in ${lines.length} lines — is this the charge account report? The raw text is below.`);
+      } else {
+        setReview({ fileName: file.name, parsed, changes: diffLists(accounts, parsed) });
+      }
+    } catch (e) { setMsg('❌ ' + (e.message || e)); }
+    setReading(false);
+  }
+
+  async function saveReview() {
+    if (!review) return;
+    // Start from the list on file and apply only the ticked changes, so any
+    // left unticked (e.g. a hand fix the PDF would undo) stay as they are.
+    const on = (c) => !skip[c.key];
+    const byId = new Map(accounts.map(a => [a.id, a]));
+    for (const c of review.changes.filter(on)) {
+      if (c.type === 'remove') byId.delete(c.acct.id);
+      else byId.set(c.acct.id, { ...(byId.get(c.acct.id) || {}), ...c.acct });
+    }
+    // Keep the PDF's order; accounts it doesn't have (kept) go at the end.
+    const order = review.parsed.map(a => a.id);
+    const list = [...order.filter(id => byId.has(id)).map(id => byId.get(id)), ...[...byId.values()].filter(a => !order.includes(a.id))];
+    const at = new Date().toLocaleString();
+    setSaving(true);
+    try {
+      await saveChargeAccounts(list, at);
+      onSaved(list, at);
+      const n = review.changes.filter(on).length;
+      setMsg(`✅ Saved — ${n} change${n === 1 ? '' : 's'} applied from ${review.fileName}.`);
+      setReview(null);
+    } catch (e) { setMsg('❌ Save failed: ' + (e.message || e)); }
+    setSaving(false);
+  }
+
+  // ── Edit accounts ──
+  const [draft, setDraft] = useState(() => accounts.map((a, i) => ({ ...a, _k: `k${i}` })));
+  const [q, setQ] = useState('');
+  const [editMsg, setEditMsg] = useState('');
+  useEffect(() => { setDraft(accounts.map((a, i) => ({ ...a, _k: `k${i}` }))); }, [accounts]);
+  const clean = (list) => list.map(({ _k, ...a }) => ({ ...a, name: String(a.name || '').trim().toUpperCase(), id: String(a.id || '').trim() }));
+  const edits = JSON.stringify(clean(draft)) !== JSON.stringify(accounts.map(a => ({ ...a, name: String(a.name || '').trim().toUpperCase(), id: String(a.id || '').trim() })));
+  const setRow = (k, field, v) => { setDraft(d => d.map(r => (r._k === k ? { ...r, [field]: v } : r))); setEditMsg(''); };
+  const terms = q.trim().toLowerCase();
+  const shown = draft.filter(r => r._new || !terms || `${r.name} ${r.id}`.toLowerCase().includes(terms));
+  const dupIds = (() => { const seen = {}, d = new Set(); draft.forEach(r => { const id = String(r.id || '').trim(); if (id && seen[id]) d.add(id); seen[id] = 1; }); return d; })();
+
+  async function saveEdits() {
+    const list = clean(draft);
+    if (list.some(a => !a.name || !a.id)) { setEditMsg('❌ Every account needs a name and a customer ID.'); return; }
+    if (dupIds.size) { setEditMsg(`❌ Customer ID ${[...dupIds][0]} is on the list twice.`); return; }
+    setSaving(true); setEditMsg('💾 Saving…');
+    try {
+      await saveChargeAccounts(list, uploadedAt);
+      onSaved(list, uploadedAt);
+      setEditMsg('✅ Saved.');
+    } catch (e) { setEditMsg('❌ Save failed: ' + (e.message || e)); }
+    setSaving(false);
+  }
+
+  const tag = (type) => {
+    const [txt, rgb] = type === 'add' ? ['NEW', '74,222,128'] : type === 'remove' ? ['REMOVED', '248,113,113'] : ['CHANGED', '251,191,36'];
+    return <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 11, fontWeight: 900, color: `rgb(${rgb})`, background: `rgba(${rgb},.14)`, border: `1px solid rgba(${rgb},.45)` }}>{txt}</span>;
+  };
+  const counts = review ? { add: review.changes.filter(c => c.type === 'add').length, change: review.changes.filter(c => c.type === 'change').length, remove: review.changes.filter(c => c.type === 'remove').length } : null;
+  const ticked = review ? review.changes.filter(c => !skip[c.key]).length : 0;
+
+  return (
+    <div style={{ maxWidth: 1060, margin: '0 auto' }}>
+      {/* Update from the DMS PDF */}
+      <div style={sCard}>
+        <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9' }}>📄 Update from the charge account PDF</div>
+        <div style={{ fontSize: 13, color: '#94a3b8', margin: '4px 0 12px' }}>
+          Nothing changes until you look over what's different and click Save.{uploadedAt && <> Last updated <b style={{ color: '#cbd5e1' }}>{uploadedAt}</b>.</>}
+        </div>
+        <div
+          onDragOver={e => { e.preventDefault(); setDragOver(true); }} onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) readPdf(f); }}
+          onClick={() => !reading && fileRef.current?.click()}
+          style={{ border: `2px dashed ${dragOver ? 'rgba(61,214,195,.75)' : 'rgba(255,255,255,.14)'}`, borderRadius: 12, padding: '18px 24px', textAlign: 'center', cursor: reading ? 'wait' : 'pointer', background: dragOver ? 'rgba(61,214,195,.06)' : 'transparent', color: '#cbd5e1', fontWeight: 800, fontSize: 14 }}>
+          <input ref={fileRef} type="file" accept=".pdf" style={{ display: 'none' }} onChange={e => { if (e.target.files[0]) readPdf(e.target.files[0]); e.target.value = ''; }} />
+          {reading ? '⏳ Reading the PDF…' : '📤 Drop the charge account PDF here, or click to choose'}
+        </div>
+        {review && (
+          <div style={{ marginTop: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <div style={{ fontWeight: 900, color: '#6ee7f9' }}>
+                {review.fileName}: {review.parsed.length} accounts ·{' '}
+                {review.changes.length ? `${counts.add} new · ${counts.change} changed · ${counts.remove} removed` : 'no changes — the list already matches'}
+              </div>
+              <div style={{ flex: 1 }} />
+              <button disabled={saving} style={{ ...sBtn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={saveReview}>
+                {saving ? '⏳ Saving…' : review.changes.length ? `💾 Save ${ticked} change${ticked === 1 ? '' : 's'}` : '💾 Save (stamp today’s date)'}
+              </button>
+              <button disabled={saving} style={sBtn('148,163,184', false)} onClick={() => setReview(null)}>Cancel</button>
             </div>
-
-            {/* Error / debug banner */}
-            {error && (
-              <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '12px 18px', marginTop: 12, color: '#fca5a5', fontSize: 13 }}>
-                ⚠ {error}
-              </div>
-            )}
-
-            {/* Raw text debug */}
-            {rawLines && (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontWeight: 700, color: '#94a3b8', fontSize: 13, marginBottom: 8 }}>
-                  Raw extracted lines from PDF ({rawLines.length}):
+            {review.changes.length > 0 && (
+              <>
+                <div style={{ fontSize: 12.5, color: '#94a3b8', margin: '8px 0' }}>Untick anything you don't want — e.g. a fix you made by hand that the PDF would undo.</div>
+                <div style={{ maxHeight: 420, overflowY: 'auto', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, tableLayout: 'auto' }}>
+                    <thead><tr style={{ background: 'rgba(255,255,255,.05)' }}>
+                      <th style={TH} /><th style={TH}>Change</th><th style={TH}>Customer</th><th style={TH}>ID</th><th style={TH}>What's different</th>
+                    </tr></thead>
+                    <tbody>
+                      {review.changes.map(c => (
+                        <tr key={c.key} style={{ borderTop: '1px solid rgba(255,255,255,.05)', opacity: skip[c.key] ? 0.45 : 1 }}>
+                          <td style={{ padding: '8px 12px', width: 30 }}><input type="checkbox" checked={!skip[c.key]} onChange={e => setSkip(s => ({ ...s, [c.key]: !e.target.checked }))} /></td>
+                          <td style={{ padding: '8px 12px' }}>{tag(c.type)}</td>
+                          <td style={{ padding: '8px 12px', color: '#e2e8f0', fontWeight: 700, whiteSpace: 'normal', overflow: 'visible' }}>{c.acct.name}</td>
+                          <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#6ee7f9' }}>{c.acct.id}</td>
+                          <td style={{ padding: '8px 12px', color: '#cbd5e1', whiteSpace: 'normal', overflow: 'visible' }}>
+                            {c.type === 'add' ? `Charge ${yn(c.acct.chargeAcct)} · Tax exempt ${yn(c.acct.taxExempt)}`
+                              : c.type === 'remove' ? 'Not in the new PDF — comes off the list'
+                              : c.fields.map(f => (
+                                <div key={f}>{(FIELDS.find(x => x[0] === f) || [f, f])[1]}: <span style={{ color: '#fca5a5', textDecoration: 'line-through' }}>{f === 'name' ? c.old[f] : yn(c.old[f])}</span> → <b style={{ color: '#86efac' }}>{f === 'name' ? c.acct[f] : yn(c.acct[f])}</b></div>
+                              ))}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.1)', borderRadius: 10, padding: 16, maxHeight: 320, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
-                  {rawLines.map((l, i) => `${String(i + 1).padStart(4, ' ')}  ${l}`).join('\n')}
-                </div>
-              </div>
+              </>
             )}
           </div>
+        )}
+        {msg && <div style={{ marginTop: 10, fontSize: 13.5, fontWeight: 800, color: msg.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{msg}</div>}
+        {rawLines && (
+          <div style={{ marginTop: 12, background: '#0f172a', border: '1px solid rgba(255,255,255,.1)', borderRadius: 10, padding: 14, maxHeight: 280, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', whiteSpace: 'pre-wrap' }}>
+            {rawLines.map((l, i) => `${String(i + 1).padStart(4, ' ')}  ${l}`).join('\n')}
+          </div>
+        )}
+      </div>
 
+      {/* Edit any account */}
+      <div style={sCard}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+          <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9' }}>✏️ Edit accounts</div>
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search name or ID…" style={{ ...sInput, maxWidth: 260 }} />
+          <div style={{ flex: 1 }} />
+          <button style={sBtn('110,231,249')} onClick={() => { setDraft(d => [{ _k: `n${Date.now()}`, _new: true, name: '', id: '', chargeAcct: 'Yes', taxExempt: 'No' }, ...d]); setEditMsg(''); }}>➕ Add account</button>
+          {edits && <button disabled={saving} style={sBtn('148,163,184', false)} onClick={() => { setDraft(accounts.map((a, i) => ({ ...a, _k: `k${i}` }))); setEditMsg(''); }}>Undo changes</button>}
+          <button disabled={saving || !edits} style={{ ...sBtn('74,222,128', edits), opacity: edits ? 1 : 0.5 }} onClick={saveEdits}>💾 Save changes</button>
+        </div>
+        {editMsg && <div style={{ marginBottom: 10, fontSize: 13.5, fontWeight: 800, color: editMsg.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{editMsg}</div>}
+        <div style={{ maxHeight: 560, overflowY: 'auto', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, tableLayout: 'auto' }}>
+            <thead><tr style={{ background: 'rgba(255,255,255,.05)', position: 'sticky', top: 0, zIndex: 1 }}>
+              <th style={TH}>Customer name</th><th style={TH}>Customer ID</th><th style={TH}>Charge acct</th><th style={TH}>Tax exempt on file</th><th style={TH} />
+            </tr></thead>
+            <tbody>
+              {shown.map(r => (
+                <tr key={r._k} style={{ borderTop: '1px solid rgba(255,255,255,.05)', background: r._new ? 'rgba(110,231,249,.06)' : undefined }}>
+                  <td style={{ padding: '5px 8px', minWidth: 260 }}><input value={r.name} onChange={e => setRow(r._k, 'name', e.target.value)} style={sInput} placeholder="Customer name" /></td>
+                  <td style={{ padding: '5px 8px', width: 150 }}><input value={r.id} onChange={e => setRow(r._k, 'id', e.target.value)} placeholder="ID" style={{ ...sInput, fontFamily: 'monospace', ...(dupIds.has(String(r.id).trim()) ? { borderColor: 'rgba(248,113,113,.8)' } : null) }} /></td>
+                  <td style={{ padding: '5px 8px', width: 120 }}>
+                    <select value={r.chargeAcct} onChange={e => setRow(r._k, 'chargeAcct', e.target.value)} style={sInput}><option>Yes</option><option>No</option></select>
+                  </td>
+                  <td style={{ padding: '5px 8px', width: 150 }}>
+                    <select value={r.taxExempt} onChange={e => setRow(r._k, 'taxExempt', e.target.value)} style={sInput}><option>Yes</option><option>No</option><option value="—">— (not shown)</option></select>
+                  </td>
+                  <td style={{ padding: '5px 8px', width: 40 }}>
+                    <button title="Remove this account" onClick={() => { setDraft(d => d.filter(x => x._k !== r._k)); setEditMsg(''); }} style={{ ...sBtn('248,113,113', false), padding: '4px 9px' }}>✕</button>
+                  </td>
+                </tr>
+              ))}
+              {!shown.length && <tr><td colSpan={5} style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>{draft.length ? 'No accounts match.' : 'No accounts yet — upload the PDF above or add one.'}</td></tr>}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
