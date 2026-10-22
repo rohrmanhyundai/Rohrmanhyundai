@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T11:52:07.396Z",
+  "updatedAt": "2026-10-22T12:00:21.254Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4395,6 +4395,87 @@
         "by": "KAI"
       },
       "id": "fs-mvjhe0gcrlp3"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "SANTA CRUZ",
+      "code": "",
+      "yearFrom": 2026,
+      "yearTo": 2026,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "Smartstream G2.5 GDI",
+          "volume": "6.13 US qt. (5.8 ℓ)",
+          "spec": "SAE 0W-20, API SN PLUS/SP or ILSAC GF-6",
+          "partNumber": "881494",
+          "note": "Requires <API SN PLUS (or above) Full synthetic> grade engine oil.",
+          "filter": "26350-2S001"
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "Smartstream G2.5 t-GDI",
+          "volume": "6.13 US qt. (5.8 ℓ)",
+          "spec": "SAE 0W-30, API SN PLUS/SP or ILSAC GF-6",
+          "partNumber": "00232-FSYN0-30WAR",
+          "note": "Requires <API SN PLUS (or above) Full synthetic> grade engine oil.",
+          "filter": "26350-2S001"
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.87 US qt. (6.5 ℓ)",
+          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1, Hyundai Genuine ATF SP4-M1",
+          "partNumber": "00232-19107",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Smartstream G2.5 GDI",
+          "volume": "10 US qt. (9.5 ℓ)",
+          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Smartstream G2.5 T-GDI",
+          "volume": "9.09 US qt. (8.6 ℓ)",
+          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.87±0.02 US qt. (0.82±0.02 ℓ)",
+          "spec": "SAE J1704 DOT-4 LV, ISO4925 CLASS-6, FMVSS 116 DOT-4",
+          "partNumber": "",
+          "note": "To maintain the best braking performance and ABS/ESC performance, use genuine brake fluid."
+        },
+        {
+          "fluid": "Rear Differential Oil (4WD)",
+          "engine": "",
+          "volume": "0.56-0.67 US qt. (0.53~0.63 ℓ)",
+          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
+          "partNumber": "",
+          "note": "If submerged, visit an authorized HYUNDAI genuine products to replace the differential oil."
+        },
+        {
+          "fluid": "Transfer Case Oil (4WD)",
+          "engine": "AT",
+          "volume": "0.65-0.71 US qt. (0.62-0.68 ℓ)",
+          "spec": "Refer to the “Fuel requirements” section in chapter 9.",
+          "partNumber": "",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2026 HYUNDAI SANTA CRUZ.pdf",
+        "uploadedAt": "2026-10-22T11:57:56.213Z",
+        "by": "KAI"
+      },
+      "id": "fs-mvjholhle7fp"
     }
   ]
 }
