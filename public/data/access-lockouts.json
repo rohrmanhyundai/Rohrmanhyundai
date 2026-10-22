@@ -1,11 +1,4 @@
 {
-  "updatedAt": "2026-10-22T18:53:03.639Z",
-  "users": {
-    "DEVIN": {
-      "fails": 1,
-      "strikes": 0,
-      "lastFailAt": 1792695183639,
-      "page": "charge-account-list"
-    }
-  }
+  "updatedAt": "2026-10-22T18:53:08.900Z",
+  "users": {}
 }
