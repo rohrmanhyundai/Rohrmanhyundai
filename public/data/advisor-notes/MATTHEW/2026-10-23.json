@@ -1,0 +1,91 @@
+{
+  "advisorName": "MATTHEW",
+  "date": "2026-10-23",
+  "rows": [
+    {
+      "id": "rmvk3d4lanlrt",
+      "customerName": "Tonya Gudell",
+      "appointmentTime": "7:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43815",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4lao7so",
+      "customerName": "Hannah Whitaker",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43805",
+      "vehicle": "2015 Hyundai Sonata",
+      "services": [
+        "9C2 C ECU S/W UPDATE THETA II (26-01-013H-2)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4lapjbp",
+      "customerName": "Kevin Carmany",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43855",
+      "vehicle": "2021 Hyundai Kona",
+      "services": [
+        "9D1 C ECM S/W UD T-GDI EMISSIONS (26-01-027H)",
+        "DUEL CLUTCH TRANSMISSION SERVICE",
+        "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+        "TIRE ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4lah1ts",
+      "customerName": "David Payton",
+      "appointmentTime": "1:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43235",
+      "vehicle": "2016 Hyundai Sonata",
+      "services": [
+        "210 R SMART JUNCTION BOX(SJB) UPD (21-01-071H)",
+        "993 C INSP.,ANTI-THEFT S/W&DECAL(24-01-009H-1)",
+        "9C2 C ECU S/W UPDATE THETA II (26-01-013H-2)",
+        "P33 C CUST REQ ONLY ANTITHEFT PROT. 25-BE-016H",
+        "CUSTOMER STATES CHECK ENGINE LIGHT IS ON AND FLASHING"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-22T22:07:25.413Z"
+}
