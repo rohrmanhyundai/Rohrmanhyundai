@@ -5,12 +5,12 @@
     "oilCapacity",
     "hotRepairs",
     "batteryGuide",
+    "workInProgress",
     "shopAppointments",
     "aftermarketWarranty",
     "documentLibrary",
     "advisorCalendar",
     "workSchedule",
-    "workInProgress",
     "tireQuote"
   ]
 }
