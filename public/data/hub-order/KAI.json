@@ -1,6 +1,7 @@
 {
   "partsHub": [
     "shopAppointments",
+    "oilCapacity",
     "hotRepairs",
     "aftermarketWarranty",
     "documentLibrary",
@@ -10,7 +11,6 @@
     "partsGoalForecast",
     "tireQuote",
     "chargeAccountList",
-    "batteryGuide",
-    "oilCapacity"
+    "batteryGuide"
   ]
 }
