@@ -1,67 +1,8 @@
 {
   "date": "2026-10-23",
-  "uploadedAt": "2026-10-22T11:08:07.267Z",
-  "uploadedBy": "Shawn",
+  "uploadedAt": "2026-10-22T22:07:00.556Z",
+  "uploadedBy": "SHAWN",
   "appts": [
-    {
-      "apptNo": "43809",
-      "time": "7:00 AM",
-      "customer": "Timothy Reed",
-      "vehicle": "2023 Hyundai Tucson",
-      "services": [
-        "CUSTOMER STATES- SOR 4 Tires  SOR #C13104",
-        "WHEEL ALIGNMENT"
-      ],
-      "comments": "",
-      "transport": "SELF",
-      "advisorRaw": "DAVID RILEY",
-      "advisor": "DAVID",
-      "source": "BDC Scheduling",
-      "createdAt": "Mon Oct 19 2026 3:50 PM",
-      "deferred": {
-        "ro": "781633",
-        "date": "2026-10-19",
-        "advisorFull": "DAVID RILEY",
-        "advisor": "DAVID",
-        "amount": 334.93,
-        "hours": 2.3,
-        "phone": "7654148414",
-        "vin": "5NMJFCAE5PH281625",
-        "items": [
-          {
-            "code": "WIPERAFTERMARKET",
-            "desc": "",
-            "count": 1,
-            "price": 36.15,
-            "priceEst": true
-          },
-          {
-            "code": "RWIPER",
-            "desc": "INSTALL NEW REAR WIPER BLADE",
-            "count": 1,
-            "h": 0.1,
-            "price": 38.83,
-            "priceEst": false
-          },
-          {
-            "code": "ALIGN",
-            "desc": "WHEEL ALIGNMENT",
-            "count": 1,
-            "h": 1,
-            "price": 139.95,
-            "priceEst": false
-          },
-          {
-            "code": "TIRE4",
-            "desc": "REPLACE FOUR TIRES",
-            "count": 1,
-            "h": 1.2,
-            "price": 120,
-            "priceEst": false
-          }
-        ]
-      }
-    },
     {
       "apptNo": "43808",
       "time": "7:00 AM",
@@ -73,8 +14,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Mon Oct 19 2026 3:46 PM",
       "deferred": {
@@ -88,21 +29,6 @@
         "vin": "5NMJFCAE5PH281625",
         "items": [
           {
-            "code": "WIPERAFTERMARKET",
-            "desc": "",
-            "count": 1,
-            "price": 36.15,
-            "priceEst": true
-          },
-          {
-            "code": "RWIPER",
-            "desc": "INSTALL NEW REAR WIPER BLADE",
-            "count": 1,
-            "h": 0.1,
-            "price": 38.83,
-            "priceEst": false
-          },
-          {
             "code": "ALIGN",
             "desc": "WHEEL ALIGNMENT",
             "count": 1,
@@ -111,11 +37,26 @@
             "priceEst": false
           },
           {
+            "code": "WIPERAFTERMARKET",
+            "desc": "",
+            "count": 1,
+            "price": 36.15,
+            "priceEst": true
+          },
+          {
             "code": "TIRE4",
             "desc": "REPLACE FOUR TIRES",
             "count": 1,
             "h": 1.2,
             "price": 120,
+            "priceEst": false
+          },
+          {
+            "code": "RWIPER",
+            "desc": "INSTALL NEW REAR WIPER BLADE",
+            "count": 1,
+            "h": 0.1,
+            "price": 38.83,
             "priceEst": false
           }
         ]
@@ -149,8 +90,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "MATTHEW CLARK",
+      "advisor": "MATTHEW",
       "source": "Consumer Scheduling",
       "createdAt": "Mon Oct 19 2026 5:24 PM"
     },
@@ -164,46 +105,26 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Wed Oct 21 2026 9:43 AM"
     },
     {
-      "apptNo": "43717",
+      "apptNo": "43922",
       "time": "8:00 AM",
-      "customer": "Jayson Laas",
-      "vehicle": "2024 Hyundai Kona",
+      "customer": "Yong-ha Kim",
+      "vehicle": "2023 Hyundai Santa Fe",
       "services": [
-        "CUSTOMER STATES WINDOW WASHER NOT OPERATING PROPERLY. check AND ADVISE",
-        "CUSTOMER STATES DRIVER CV AX STILL PULLING TO LEFT. CHECK AND ADVISE"
+        "$50 Oil Change (any make/model) — Coolant and brake fluid replacement.",
+        "Routine Maintenance (e.g. Oil Change, etc) — Coolant and brake fluid replacement."
       ],
-      "comments": "",
-      "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
-      "source": "BDC Scheduling",
-      "createdAt": "Fri Oct 16 2026 9:56 AM",
-      "deferred": {
-        "ro": "779329",
-        "date": "2026-07-27",
-        "advisorFull": "DAVID RILEY",
-        "advisor": "DAVID",
-        "amount": 139.95,
-        "hours": 1,
-        "phone": "7087432065",
-        "vin": "KM8HBCAB2RU118079",
-        "items": [
-          {
-            "code": "ALIGN",
-            "desc": "WHEEL ALIGNMENT",
-            "count": 1,
-            "h": 1,
-            "price": 139.95,
-            "priceEst": false
-          }
-        ]
-      }
+      "comments": "Coolant and brake fluid replacement.",
+      "transport": "WAIT",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "Integration",
+      "createdAt": "Thu Oct 22 2026 5:40 PM"
     },
     {
       "apptNo": "43805",
@@ -215,8 +136,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "MATTHEW CLARK",
+      "advisor": "MATTHEW",
       "source": "BDC Scheduling",
       "createdAt": "Mon Oct 19 2026 2:56 PM"
     },
@@ -233,8 +154,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "MATTHEW CLARK",
+      "advisor": "MATTHEW",
       "source": "BDC Scheduling",
       "createdAt": "Tue Oct 20 2026 4:58 PM"
     },
@@ -310,10 +231,140 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Fri Oct 16 2026 11:09 AM"
+    },
+    {
+      "apptNo": "43910",
+      "time": "9:00 AM",
+      "customer": "Princeton Collains",
+      "vehicle": "2023 Hyundai Elantra",
+      "services": [
+        "CUSTOMER STATES ENGINE MAKING A KNOKING NOISE WHEN STARTING THE CAR. CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 22 2026 11:12 AM",
+      "deferred": {
+        "ro": "776628",
+        "date": "2026-04-09",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 2474.68,
+        "hours": 9.9,
+        "phone": "2299290735",
+        "vin": "KMHLS4AG2PU558800",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 117.05,
+            "priceEst": false
+          },
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1,
+            "h": 1,
+            "price": 321.66,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 225.37,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 153.12,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 196.93,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 218.81,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 131.29,
+            "priceEst": false
+          },
+          {
+            "code": "PADRESURF",
+            "desc": "Replace Front Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 483.56,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 472.64,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 52.51,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 101.74,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43902",
+      "time": "9:40 AM",
+      "customer": "Greg Carlson",
+      "vehicle": "2027 Hyundai Palisade",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 22 2026 9:57 AM"
     },
     {
       "apptNo": "43873",
@@ -325,8 +376,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Wed Oct 21 2026 10:38 AM",
       "deferred": {
@@ -378,17 +429,59 @@
       "apptNo": "43860",
       "time": "10:00 AM",
       "customer": "Christoper Odell",
-      "vehicle": "2023 OTHER OTHER",
+      "vehicle": "2023 Genesis G70",
       "services": [
-        "$50 Oil Change (any make/model) — Tire rotation",
-        "Other (Please use comment box below) — Tire rotation"
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
       ],
       "comments": "Tire rotation",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Integration",
-      "createdAt": "Tue Oct 20 2026 10:16 PM"
+      "createdAt": "Tue Oct 20 2026 10:16 PM",
+      "deferred": {
+        "ro": "780213",
+        "date": "2026-08-21",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 282.97,
+        "hours": 1,
+        "phone": "7659183941",
+        "vin": "KMTG54TE9PU135450",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 105.49,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 177.48,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43911",
+      "time": "11:00 AM",
+      "customer": "David Byse",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "CUSTOMER STATES- tailgate will not open"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 22 2026 11:13 AM"
     },
     {
       "apptNo": "43742",
@@ -486,8 +579,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Mon Oct 19 2026 11:02 AM"
     },
@@ -609,8 +702,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "MATTHEW CLARK",
+      "advisor": "MATTHEW",
       "source": "BDC Scheduling",
       "createdAt": "Mon Sep 28 2026 9:12 AM"
     },
@@ -639,15 +732,6 @@
         "vin": "5NMJFCAE9NH011567",
         "items": [
           {
-            "code": "VBCLEAN",
-            "desc": "BATTERY SERVICE",
-            "count": 1,
-            "h": 0.4,
-            "est": true,
-            "price": 219.96,
-            "priceEst": true
-          },
-          {
             "code": "REC",
             "desc": "",
             "count": 1,
@@ -663,6 +747,15 @@
             "h": 0.7,
             "price": 179.99,
             "priceEst": false
+          },
+          {
+            "code": "VBCLEAN",
+            "desc": "BATTERY SERVICE",
+            "count": 1,
+            "h": 0.4,
+            "est": true,
+            "price": 219.96,
+            "priceEst": true
           }
         ]
       }
@@ -677,8 +770,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Wed Oct 21 2026 3:20 PM",
       "deferred": {
@@ -745,8 +838,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Wed Oct 21 2026 3:55 PM",
       "deferred": {
@@ -760,19 +853,19 @@
         "vin": "5NTJBDDE3SH130048",
         "items": [
           {
-            "code": "VVBFL",
-            "desc": "BRAKE FLUID EXCHANGE",
-            "count": 1,
-            "h": 0.7,
-            "price": 187.91,
-            "priceEst": false
-          },
-          {
             "code": "VVCFL",
             "desc": "COOLANT FLUID EXCHANGE",
             "count": 1,
             "h": 0.9,
             "price": 215.06,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 187.91,
             "priceEst": false
           }
         ]
@@ -780,12 +873,6 @@
     }
   ],
   "claims": {
-    "43717": {
-      "advisor": "DAVID",
-      "by": "AUTO",
-      "reason": "deferred",
-      "at": "2026-10-21T11:05:01.901Z"
-    },
     "43808": {
       "advisor": "DAVID",
       "by": "AUTO",
