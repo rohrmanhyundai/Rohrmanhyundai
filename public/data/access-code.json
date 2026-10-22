@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:41:30.684Z",
+  "updatedAt": "2026-10-22T12:07:55.000Z",
   "by": "SHAWN",
   "locked": {
     "service-loaner": true,
@@ -130,6 +130,9 @@
       "service-loaner": true
     },
     "DERRICK": {
+      "charge-account-list": true
+    },
+    "SETH": {
       "charge-account-list": true
     }
   },
