@@ -1,0 +1,223 @@
+{
+  "date": "2026-10-28",
+  "uploadedAt": "2026-10-22T22:07:08.561Z",
+  "uploadedBy": "SHAWN",
+  "appts": [
+    {
+      "apptNo": "43909",
+      "time": "10:00 AM",
+      "customer": "Joyce Rater",
+      "vehicle": "2024 Hyundai Santa Cruz",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 22 2026 11:06 AM",
+      "deferred": {
+        "ro": "778440",
+        "date": "2026-06-16",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 177.99,
+        "hours": 0.8,
+        "phone": "7655856260",
+        "vin": "5NTJBDAE2RH079222",
+        "items": [
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 48.62,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 129.37,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43840",
+      "time": "1:00 PM",
+      "customer": "Wilma Stump",
+      "vehicle": "2024 Hyundai Sonata",
+      "services": [
+        "PERFORM LOF ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Tue Oct 20 2026 1:58 PM",
+      "deferred": {
+        "ro": "775869",
+        "date": "2026-03-12",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 232.94,
+        "hours": 1.3,
+        "phone": "7652994501",
+        "vin": "KMHL64JA5RA410516",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43869",
+      "time": "1:00 PM",
+      "customer": "Rachel Kocher",
+      "vehicle": "2025 Hyundai Palisade",
+      "services": [
+        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)",
+        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
+        "9C8 C ABS SOFTWARE UPDATE (25-01-070H-1)",
+        "9C9 C ECU SW UPDATE EMISSIONS IMPRV 26-01-010H"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Oct 21 2026 9:55 AM"
+    },
+    {
+      "apptNo": "43892",
+      "time": "1:40 PM",
+      "customer": "Andrew Elsner",
+      "vehicle": "2021 Hyundai Elantra",
+      "services": [
+        "PERFORM RECALL. VERIFIED OPEN RECALL:"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Wed Oct 21 2026 3:53 PM"
+    },
+    {
+      "apptNo": "43444",
+      "time": "3:00 PM",
+      "customer": "Marilyn Hunphrey",
+      "vehicle": "2015 Hyundai Sonata",
+      "services": [
+        "9C2 C ECU S/W UPDATE THETA II (26-01-013H-2)",
+        "P33 C CUST REQ ONLY ANTITHEFT PROT. 25-BE-016H"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Oct 5 2026 2:08 PM"
+    },
+    {
+      "apptNo": "43898",
+      "time": "3:00 PM",
+      "customer": "Rachael Welch",
+      "vehicle": "2025 Hyundai Elantra",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 22 2026 7:37 AM",
+      "deferred": {
+        "ro": "781651",
+        "date": "2026-10-20",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 790.95,
+        "hours": 3.4,
+        "phone": "7654299089",
+        "vin": "KMHLS4DG9SU986674",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 203.59,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 94.67,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 209.71,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 173.05,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE2",
+            "desc": "REPLACE TWO TIRES",
+            "count": 1,
+            "h": 0.6,
+            "price": 61.08,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 48.85,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "claims": {
+    "43840": {
+      "advisor": "DAVID",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T22:07:08.561Z"
+    }
+  }
+}
