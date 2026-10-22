@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T12:00:51.176Z",
+  "updatedAt": "2026-10-22T12:06:16.908Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4398,6 +4398,102 @@
         "by": "KAI"
       },
       "id": "fs-mvjholhle7fp"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "TUCSON HYBRID",
+      "code": "NX4 HEV",
+      "yearFrom": 2026,
+      "yearTo": 2026,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "5.07 US qt. (4.8 ℓ)",
+          "spec": "SAE 0W-20, API SN PLUS/SP or ILSAC GF-6",
+          "partNumber": "881494",
+          "note": "00232-FSYN0-20WAR",
+          "filter": "26350-2M000"
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.34 US qt. (6 ℓ)",
+          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1, Hyundai Genuine ATF SP4-M1",
+          "partNumber": "00232-19107",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "8.18 US qt. (7.70 ℓ)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Inverter Coolant",
+          "engine": "HEV",
+          "volume": "1.75 US qt. (1.66 ℓ)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Inverter Coolant",
+          "engine": "PHEV",
+          "volume": "6.76 US qt. (6.4 ℓ)",
+          "spec": "Contact an authorized HYUNDAI dealer/service partner",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.87±0.02 US qt. (0.82±0.02 ℓ)",
+          "spec": "SAE J1704 DOT-4 LV, ISO4925 CLASS-6, FMVSS 116 DOT-4",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (4WD)",
+          "engine": "",
+          "volume": "0.56-0.67 US qt. (0.53~0.63 ℓ)",
+          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (4WD)",
+          "engine": "",
+          "volume": "0.65-0.71 US qt. (0.62-0.68 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Fuel",
+          "engine": "HEV",
+          "volume": "13.7 US gal (52 ℓ)",
+          "spec": "Refer to the “Fuel requirements” section in chapter 9.",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Fuel",
+          "engine": "PHEV",
+          "volume": "11 US gal (42 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2026 HYUNDAI TUCSON HYBRID (NX4 HEV) .pdf",
+        "uploadedAt": "2026-10-22T12:04:53.034Z",
+        "by": "KAI"
+      },
+      "id": "fs-mvjhw7x53uyi"
     }
   ]
 }
