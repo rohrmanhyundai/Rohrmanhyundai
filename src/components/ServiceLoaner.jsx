@@ -520,7 +520,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                     <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
                       <thead><tr>
                         <th style={th}>Customer</th><th style={th}>RO #</th><th style={th}>Loaner VIN</th><th style={th}>Year</th>
-                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Media</th><th style={th}>Status</th><th style={th}>Uploaded</th><th style={th}></th>
+                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Media</th><th style={th}>Status</th><th style={th}></th>
                       </tr></thead>
                       <tbody>
                         {list.map(c => (
@@ -553,7 +553,6 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                                 </div>
                               )}
                             </td>
-                            <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
                                 {(() => {
