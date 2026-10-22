@@ -266,6 +266,17 @@ export default function VinScanner({ onScan, onCancel }) {
           {photoBusy ? '⏳ Reading the photo…'
             : error || (ready ? 'Fit the VIN barcode inside the green box — any way up. Hold the phone about 8 inches back so it stays sharp.' : 'Opening the camera…')}
         </div>
+        {/* The iPhone's own Allow / Cancel box has no "always" button — a site
+            can't add one. Safari remembers it only if it's set per site, so show
+            how while the question is up. */}
+        {!ready && !error && /iPhone|iPad|iPod/i.test(navigator.userAgent) && (
+          <div style={{ position: 'absolute', left: 14, right: 14, bottom: 14, padding: '12px 14px', borderRadius: 12, background: 'rgba(15,23,42,.92)', border: '1px solid rgba(96,165,250,.5)', color: '#e2e8f0', fontSize: 13.5, lineHeight: 1.45 }}>
+            <div style={{ fontWeight: 900, color: '#93c5fd', marginBottom: 4 }}>Tired of the camera question?</div>
+            {/CriOS/i.test(navigator.userAgent)
+              ? <>Chrome on iPhone asks every time. Open this site in <b>Safari</b> instead, then set it to always allow.</>
+              : <>In Safari tap <b>≡</b> (or <b>aA</b>) next to the address → <b>Website Settings</b> → <b>Camera</b> → <b>Allow</b>. It won't ask again on this phone.</>}
+          </div>
+        )}
       </div>
       <input ref={photoRef} type="file" accept="image/*" capture="environment" onChange={onPhoto} style={{ display: 'none' }} />
       <div style={{ display: 'flex', flexDirection: landscape ? 'column' : 'row', flexWrap: 'wrap', gap: 8, padding: landscape ? '12px' : '12px 12px 24px', background: '#0d1627', width: landscape ? 170 : 'auto', boxSizing: 'border-box' }}>
