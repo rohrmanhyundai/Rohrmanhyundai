@@ -40,20 +40,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mvjovtuyppoh",
-    "ro": "781747",
-    "roDate": "2026-10-22",
-    "vehicle": "2012 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES- tow in, limp mode, struggles to start",
-    "notes": "WAITING ON CUSTOMER TO APPROVE US TO LOOK AT THE CAR",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
