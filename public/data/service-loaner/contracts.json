@@ -447,7 +447,13 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvjkz9s8-xbxelxrf.pdf",
       "completedFileName": "6115ff41-9d02-4c62-a47c-e6a8f6802900.pdf",
       "completedAt": "2026-10-22T13:32:38.198Z",
-      "completedBy": "SHAWN"
+      "completedBy": "SHAWN",
+      "warranty": {
+        "amount": 225,
+        "at": "2026-10-22T13:32:39.742Z",
+        "by": "SHAWN",
+        "fromContract": true
+      }
     },
     {
       "id": "sl-mvb7k8p7fa1k",
