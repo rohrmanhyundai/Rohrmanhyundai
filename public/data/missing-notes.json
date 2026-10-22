@@ -1,15 +1,31 @@
 {
-  "updatedAt": "2026-10-21T20:56:29.891Z",
+  "updatedAt": "2026-10-22T15:21:58.594Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "781740",
-        "vehicle": "2023 Hyundai Elantra"
+        "ro": "781762",
+        "vehicle": "2020 Hyundai Kona"
       },
       {
-        "ro": "781736",
-        "vehicle": "2026 Hyundai Elantra"
+        "ro": "781760",
+        "vehicle": "2023 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "781759",
+        "vehicle": "2014 Hyundai Accent"
+      },
+      {
+        "ro": "781758",
+        "vehicle": "2017 Honda CR-V"
+      },
+      {
+        "ro": "781756",
+        "vehicle": "2018 Hyundai Elantra GT"
+      },
+      {
+        "ro": "781751",
+        "vehicle": "2022 Hyundai Santa Fe"
       },
       {
         "ro": "781176",
@@ -18,30 +34,26 @@
     ],
     "DAVID": [
       {
-        "ro": "781734",
-        "vehicle": "2026 Hyundai Sonata"
+        "ro": "781753",
+        "vehicle": "2024 Hyundai Elantra"
       },
       {
-        "ro": "781733",
-        "vehicle": "2026 Hyundai Santa Cruz"
+        "ro": "781750",
+        "vehicle": "2027 Hyundai IONIQ 5"
       },
       {
-        "ro": "781726",
-        "vehicle": "2020 Hyundai Elantra"
-      },
-      {
-        "ro": "781709",
-        "vehicle": "2026 Hyundai Santa Cruz"
+        "ro": "781743",
+        "vehicle": "2022 Hyundai Palisade"
       }
     ],
     "MATTHEW": [
       {
-        "ro": "781731",
-        "vehicle": "2025 Hyundai Kona"
+        "ro": "781741",
+        "vehicle": "2022 Hyundai Palisade"
       },
       {
-        "ro": "781729",
-        "vehicle": "2026 Hyundai Sonata"
+        "ro": "781731",
+        "vehicle": "2025 Hyundai Kona"
       }
     ],
     "CORY": [
