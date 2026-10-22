@@ -1,16 +1,16 @@
 {
   "partsHub": [
-    "partsGoalForecast",
-    "chargeAccountList",
-    "oilCapacity",
-    "batteryGuide",
-    "hotRepairs",
-    "workInProgress",
     "shopAppointments",
+    "hotRepairs",
     "aftermarketWarranty",
     "documentLibrary",
     "advisorCalendar",
     "workSchedule",
-    "tireQuote"
+    "workInProgress",
+    "partsGoalForecast",
+    "tireQuote",
+    "chargeAccountList",
+    "batteryGuide",
+    "oilCapacity"
   ]
 }
