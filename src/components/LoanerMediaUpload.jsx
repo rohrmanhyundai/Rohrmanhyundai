@@ -17,7 +17,8 @@ import QuickMediaSend from './QuickMediaSend';
 // the session lands in data/service-loaner/media.json and shows on that
 // loaner's card under 📸 Media.
 // Damage: picking a loaner with open damage (🚨 Report damage on the website)
-// pops a warning listing it. After Send (check-in or out) it asks "Was any damage found?" — Yes
+// pops a warning listing it. In step 4, "I'm Done" on the take-more pop-up asks
+// "Was any damage found?" (once per check-in / out, before Send) — Yes
 // opens a camera screen whose files land on that loaner's damage page as media
 // to sort (damage.json `pending`), where they're matched to the damaged part.
 // Open contract: a loaner whose contract is still out (Service Loaner, no
@@ -72,8 +73,10 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [quick, setQuick] = useState(false);       // 📤 Add media screen (not tied to a loaner)
   const [damage, setDamage] = useState([]);        // open damage reports (damage.json)
   const [dmgSeen, setDmgSeen] = useState({});      // vehicle id → damage warning dismissed
-  const [askDamage, setAskDamage] = useState(null); // after Send: { vehicle, kind, customer, done } — "Was any damage found?"
+  const [askDamage, setAskDamage] = useState(null); // step 4 "I'm Done": { vehicle, kind, customer, count } — "Was any damage found?"
   const [damageCap, setDamageCap] = useState(null); // same, while the damage camera screen is open
+  const [damageAsked, setDamageAsked] = useState(false); // answered for this check-in / out
+  const [damageSent, setDamageSent] = useState(0);       // damage files sent from that screen
   const [contracts, setContracts] = useState([]);   // Service Loaner contracts (open ones pop the check-in question)
   const [openAsked, setOpenAsked] = useState({});  // contract id → check-in question answered
   const [mileAsk, setMileAsk] = useState(false);   // "take a picture of the mileage" pop-up
@@ -143,9 +146,15 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
       return next;
     });
   }
+  const toSend = () => setTimeout(() => sendRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
   function imDone() {
     setAdded(null);
-    setTimeout(() => sendRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    // Asked once the car's own pictures / videos are in (not after just the mileage one).
+    if (!damageAsked && vehicle && files.some(f => !f.mileage)) {
+      setAskDamage({ vehicle, kind, customer: name.trim().toUpperCase(), count: files.length });
+      return;
+    }
+    toSend();
   }
   function removeFile(id) {
     setFiles(prev => {
@@ -222,8 +231,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         } catch { /* the pictures are saved; the contract can still be added on the website */ }
       }
       files.forEach(f => URL.revokeObjectURL(f.preview));
-      setAskDamage({ vehicle, kind, customer: `${rec.customerFirst} ${rec.customerLast}`.trim(), done: { stockNo: rec.stockNo, kind, count: uploaded.length } });
-      setFiles([]); setStock(''); setKind(''); setName('');
+      setDone({ stockNo: rec.stockNo, kind, count: uploaded.length, damage: damageSent });
+      setFiles([]); setStock(''); setKind(''); setName(''); setDamageAsked(false); setDamageSent(0);
     } catch (err) {
       setError(`${err.message || 'Save failed.'} Tap Send again.`);
     }
@@ -233,7 +242,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   if (quick) return <QuickMediaSend currentUser={currentUser} io={io} onBack={() => setQuick(false)} />;
   if (damageCap) {
     const v = damageCap.vehicle;
-    const finish = (n) => { setDone({ ...damageCap.done, damage: n }); setDamageCap(null); };
+    // Back to step 4 with the pictures still there — Send is next.
+    const finish = (n) => { setDamageSent(c => c + (n || 0)); setDamageCap(null); toSend(); };
     return (
       <QuickMediaSend currentUser={currentUser} io={io} accent="248,113,113"
         title={`🚨 Damage · ${v.stockNo ? `#${v.stockNo}` : v.vin}`}
@@ -505,16 +515,16 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
       {askDamage && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 2100, background: 'rgba(2,6,23,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
           <div style={{ ...CARD, background: '#0f1b30', borderColor: 'rgba(248,113,113,.55)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
-            <div style={{ fontSize: 40 }}>✅</div>
-            <div style={{ fontWeight: 900, fontSize: 16, color: '#4ade80' }}>{askDamage.done.count} file{askDamage.done.count === 1 ? '' : 's'} sent</div>
+            <div style={{ fontSize: 40 }}>🔍</div>
+            <div style={{ fontWeight: 900, fontSize: 16, color: '#4ade80' }}>{askDamage.count} file{askDamage.count === 1 ? '' : 's'} ready to send</div>
             <div style={{ fontWeight: 900, fontSize: 21, color: '#f8fafc', marginTop: 14 }}>Was any damage found?</div>
             <div style={{ color: '#94a3b8', fontSize: 13.5, marginTop: 4 }}>{askDamage.vehicle.stockNo ? `Stock #${askDamage.vehicle.stockNo}` : askDamage.vehicle.vin} · {KIND[askDamage.kind].label.toLowerCase()}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 18 }}>
-              <button type="button" onClick={() => { setDamageCap(askDamage); setAskDamage(null); }}
+              <button type="button" onClick={() => { setDamageAsked(true); setDamageCap(askDamage); setAskDamage(null); }}
                 style={{ borderRadius: 10, padding: '17px 8px', fontSize: 17, fontWeight: 900, background: 'rgba(248,113,113,.2)', color: '#fecaca', border: '1px solid rgba(248,113,113,.7)', cursor: 'pointer' }}>
                 🚨 Yes
               </button>
-              <button type="button" onClick={() => { setDone(askDamage.done); setAskDamage(null); }}
+              <button type="button" onClick={() => { setDamageAsked(true); setAskDamage(null); toSend(); }}
                 style={{ borderRadius: 10, padding: '17px 8px', fontSize: 17, fontWeight: 900, background: 'rgba(74,222,128,.15)', color: '#86efac', border: '1px solid rgba(74,222,128,.55)', cursor: 'pointer' }}>
                 No
               </button>
