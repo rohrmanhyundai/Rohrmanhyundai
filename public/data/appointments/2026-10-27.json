@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-27",
+  "uploadedAt": "2026-10-22T11:08:12.147Z",
+  "uploadedBy": "Shawn",
+  "appts": [
+    {
+      "apptNo": "43866",
+      "time": "7:00 AM",
+      "customer": "Victoria Dahlberg",
+      "vehicle": "2022 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Wed Oct 21 2026 9:26 AM"
+    },
+    {
+      "apptNo": "43779",
+      "time": "8:20 AM",
+      "customer": "TERESA Largent",
+      "vehicle": "2026 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "REPLACE FOUR TIRES"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Sun Oct 18 2026 10:39 PM"
+    },
+    {
+      "apptNo": "43837",
+      "time": "9:00 AM",
+      "customer": "HEATHER Coons",
+      "vehicle": "2024 Hyundai Kona",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Tue Oct 20 2026 12:28 PM",
+      "deferred": {
+        "ro": "779371",
+        "date": "2026-07-20",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 336.46,
+        "hours": 1.2,
+        "phone": "7654135044",
+        "vin": "KM8HBCAB4RU121453",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 50.31,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 97.48,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 188.67,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43813",
+      "time": "9:40 AM",
+      "customer": "Chelsea Flores",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Oct 19 2026 4:25 PM"
+    },
+    {
+      "apptNo": "43718",
+      "time": "10:00 AM",
+      "customer": "Kim Armes",
+      "vehicle": "2017 Hyundai Sonata",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Fri Oct 16 2026 10:32 AM"
+    }
+  ],
+  "claims": {}
+}
