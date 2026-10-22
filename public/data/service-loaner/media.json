@@ -244,6 +244,35 @@
           "size": 376083
         }
       ]
+    },
+    {
+      "id": "mvjww04yia2r",
+      "vehicleId": "li-mvbdcis5m49g",
+      "stockNo": "LHY2665",
+      "vin": "5NTJBDDE7TH166861",
+      "kind": "out",
+      "customerFirst": "LAHA",
+      "customerLast": "",
+      "customerName": "LAHA",
+      "at": "2026-10-22T19:06:03.008Z",
+      "by": "SHAWN",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE7TH166861/mvjww04yia2r/mvjwv15zkb84.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2305733,
+          "mileage": true
+        },
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE7TH166861/mvjww04yia2r/mvjwvt0wa915.mov",
+          "name": "81438872751__119DF640-261D-4BE1-9623-05AF4063280E.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 3712227
+        }
+      ]
     }
   ]
 }
