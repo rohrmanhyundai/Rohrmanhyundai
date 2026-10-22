@@ -1,5 +1,6 @@
 {
   "partsHub": [
+    "chargeAccountList",
     "shopAppointments",
     "oilCapacity",
     "hotRepairs",
@@ -10,7 +11,6 @@
     "workInProgress",
     "partsGoalForecast",
     "tireQuote",
-    "chargeAccountList",
     "batteryGuide"
   ]
 }
