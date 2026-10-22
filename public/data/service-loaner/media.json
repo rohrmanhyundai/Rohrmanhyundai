@@ -166,6 +166,26 @@
           "size": 5534871
         }
       ]
+    },
+    {
+      "id": "mvjh46asg743",
+      "vehicleId": "li-mvbdalq9z5hm",
+      "stockNo": "LHY2603",
+      "vin": "5NMP1DG13TH095479",
+      "kind": "in",
+      "customerFirst": "RACHAEL",
+      "customerLast": "WELCH",
+      "at": "2026-10-22T11:44:29.014Z",
+      "by": "SHAWN",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NMP1DG13TH095479/mvjh46asg743/mvjh43gpwu07.mov",
+          "name": "81436223964__84B51CD2-07EE-407C-AE4F-476B8E07620B.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 3766449
+        }
+      ]
     }
   ]
 }
