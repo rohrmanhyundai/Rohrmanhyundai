@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T15:38:22.650Z",
+  "updatedAt": "2026-10-22T20:33:06.974Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4639,6 +4639,87 @@
         "by": "KAI"
       },
       "id": "fs-mvjpgz59n1er"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ELANTRA",
+      "code": "CN7",
+      "yearFrom": 2025,
+      "yearTo": 2025,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "Smartstream G 2.0",
+          "volume": "4.54 US qt. (4.3 ℓ)",
+          "spec": "Full synthetic, API SN PLUS/SP or ILSAC GF-6 SAE: 0W-20",
+          "partNumber": "881494",
+          "note": "00232-FSYN0-20WAR",
+          "filter": "26350-2J001"
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "Smartstream G1.6 T-GDi",
+          "volume": "5.07 US qt. (4.8 ℓ)",
+          "spec": "Full synthetic, API SN PLUS/SP or ILSAC GF-6 SAE: 0W-20",
+          "partNumber": "881494",
+          "note": "00232-FSYN0-20WAR",
+          "filter": "26350-2J001"
+        },
+        {
+          "fluid": "Intelligent Variable Transmission Fluid",
+          "engine": "",
+          "volume": "6.87 US qt. (6.5 ℓ)",
+          "spec": "Hyundai genuine SP-CVT1",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "",
+          "volume": "1.7-1.8 US qt. (1.6-1.7 ℓ)",
+          "spec": "SAE 70W, API GL-4, HK D DCTF TGO-10 PLUS (SK), SPIRAX S6 GHDE 70W DCTF PLUS (H.K.SHELL)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Smartstream G 2.0",
+          "volume": "7.82 US qt. (7.4 ℓ)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "Smartstream G 1.6 T-GDi",
+          "volume": "7.19 US qt. (6.8 ℓ)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt. (0.7-0.8 ℓ)",
+          "spec": "DOT-4",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Fuel",
+          "engine": "",
+          "volume": "12.4 US gal. (47 ℓ)",
+          "spec": "Refer to the \"Fuel requirements\" section in chapter 9.",
+          "partNumber": "",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2025 HYUNDAI ELANTRA CN7 CN7A.pdf",
+        "uploadedAt": "2026-10-22T20:30:39.883Z",
+        "by": "KAI"
+      },
+      "id": "fs-mvjzzzxno9wm"
     }
   ]
 }
