@@ -1,8 +1,23 @@
 {
   "date": "2026-10-26",
-  "uploadedAt": "2026-10-22T11:08:10.329Z",
-  "uploadedBy": "Shawn",
+  "uploadedAt": "2026-10-22T22:07:04.306Z",
+  "uploadedBy": "SHAWN",
   "appts": [
+    {
+      "apptNo": "43923",
+      "time": "7:40 AM",
+      "customer": "Kelley Farrell",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "CUSTOMER STATES- Failed actuators SOR #C13061"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 22 2026 5:43 PM"
+    },
     {
       "apptNo": "43627",
       "time": "8:00 AM",
