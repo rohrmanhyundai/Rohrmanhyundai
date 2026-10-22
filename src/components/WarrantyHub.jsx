@@ -108,6 +108,15 @@ const NAV_BUTTONS = [
     prop: 'onRegistrationUploads',
   },
   {
+    key: 'rentalClaimForm',
+    label: '📄 Rental Claim Form',
+    desc: 'Create, save, edit and print Hyundai rental claim forms',
+    bg: 'linear-gradient(135deg,rgba(96,165,250,.28),rgba(37,99,235,.18))',
+    border: 'rgba(96,165,250,.5)',
+    color: '#93c5fd',
+    prop: 'onRentalClaimForm',
+  },
+  {
     key: 'oilGuard',
     label: '🛢 Oil Guard',
     desc: 'Prepaid oil changes left — look up by VIN',
@@ -121,9 +130,9 @@ const NAV_BUTTONS = [
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs,
-  onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint, onOilGuard,
+  onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint, onOilGuard, onRentalClaimForm,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint, onOilGuard };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint, onOilGuard, onRentalClaimForm };
   // A tile needs page access AND a handler from App (App leaves one out when it's off).
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 

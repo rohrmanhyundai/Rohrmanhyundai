@@ -2465,6 +2465,19 @@ export async function updateServiceLoaners(mutate, what = 'update') {
     `Service loaner ${what} ${new Date().toISOString()}`);
 }
 
+// ── Rental Claim Forms (Warranty Hub) ─────────────────────────────────────────
+// public/data/rental-claims/claims.json → { claims: [{ id, ro, customer, arrived, …, createdAt, createdBy,
+//   updatedAt, updatedBy }] } — the answers only; the form itself is drawn by utils/rentalClaimPdf.
+export async function loadRentalClaims() {
+  try { const d = await loadGithubFile('data/rental-claims/claims.json'); if (d && Array.isArray(d.claims)) return d; } catch {}
+  return { claims: [] };
+}
+export async function updateRentalClaims(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/rental-claims/claims.json',
+    (cur) => mutate(cur && Array.isArray(cur.claims) ? cur : { claims: [] }),
+    `Rental claim ${what} ${new Date().toISOString()}`);
+}
+
 // ── VMPI report detail ────────────────────────────────────────────────────────
 // public/data/vmpi/report.json → { savedAt, by, fileName, stamp, store, techs: [{ name, first, pct, ros, withVideo, videos, lines: [...] }] }
 // Written when a VMPI .csv is applied; read by the View VMPI Report page.

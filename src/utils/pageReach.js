@@ -27,7 +27,7 @@ const LINKS = {
   'rentals-hub': ['service-loaner', 'loaner-media', 'shop-appointments', 'work-schedule', 'work-in-progress', 'white-paint', 'aftermarket-warranty',
     'document-library', 'tire-quote'],
   'warranty-hub': ['aftermarket-warranty', 'at-diag-worksheet', 'document-library', 'hot-repairs', 'ntt-att-worksheet',
-    'original-owner', 'registration-uploads', 'service-loaner', 'white-paint', 'oil-guard', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
+    'original-owner', 'registration-uploads', 'service-loaner', 'white-paint', 'oil-guard', 'rental-claim-form', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
 };
 
 // Pages behind a page-access box (Role Setup / User Management).
@@ -36,7 +36,7 @@ const ACCESS_KEY = {
   'survey-reports': 'surveyReports', 'work-in-progress': 'workInProgress', 'shop-appointments': 'shopAppointments',
   'used-car-hub': 'usedCarHub', 'media-upload': 'mobileMediaUpload', 'registration-upload': 'mobileRegistrationUpload',
   'tire-warranty': 'mobileTireWarranty', 'additional-time-menu': 'mobileAdditionalTime',
-  'service-loaner': 'serviceLoaner', 'white-paint': 'whitePaint', 'document-library': 'documentLibrary', 'tire-quote': 'tireQuote', 'loaner-media': 'mobileLoanerMedia', 'battery-guide': 'batteryGuide', 'oil-capacity': 'oilCapacity',
+  'service-loaner': 'serviceLoaner', 'rental-claim-form': 'rentalClaimForm', 'white-paint': 'whitePaint', 'document-library': 'documentLibrary', 'tire-quote': 'tireQuote', 'loaner-media': 'mobileLoanerMedia', 'battery-guide': 'batteryGuide', 'oil-capacity': 'oilCapacity',
 };
 const DEFAULT_OFF = new Set(['surveyReports']);
 

@@ -45,6 +45,7 @@ import DeferredService from './components/DeferredService';
 import OilGuard from './components/OilGuard';
 import ServiceLoaner from './components/ServiceLoaner';
 import WhitePaint from './components/WhitePaint';
+import RentalClaimForm from './components/RentalClaimForm';
 import DailyWrench from './components/DailyWrench';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
@@ -1593,6 +1594,7 @@ export default function App() {
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'warranty-hub') : undefined}
         onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'warranty-hub') : undefined}
         onOilGuard={() => goTo('oil-guard', 'warranty-hub')}
+        onRentalClaimForm={canAccess('rentalClaimForm') ? () => goTo('rental-claim-form', 'warranty-hub') : undefined}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
         onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
@@ -1808,6 +1810,17 @@ export default function App() {
         initialTab={launched ? uploadLaunch.tab : (prevPage === 'advisor-calendar' && loanerTab) || undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
+      />
+    );
+  }
+
+  if (page === 'rental-claim-form') {
+    if (!canAccess('rentalClaimForm')) { setPage(prevPage || 'dashboard'); return null; }
+    return (
+      <RentalClaimForm
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage(prevPage || 'warranty-hub')}
+        backLabel={BACK_LABELS[prevPage] || '← Warranty Hub'}
       />
     );
   }
