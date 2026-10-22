@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
-  "uploadedAt": "2026-10-22T11:08:12.147Z",
-  "uploadedBy": "Shawn",
+  "uploadedAt": "2026-10-22T22:07:06.436Z",
+  "uploadedBy": "SHAWN",
   "appts": [
     {
       "apptNo": "43866",
@@ -116,7 +116,50 @@
       "advisor": "",
       "source": "BDC Scheduling",
       "createdAt": "Fri Oct 16 2026 10:32 AM"
+    },
+    {
+      "apptNo": "43717",
+      "time": "3:40 PM",
+      "customer": "Jayson Laas",
+      "vehicle": "2024 Hyundai Kona",
+      "services": [
+        "CUSTOMER STATES WINDOW WASHER NOT OPERATING PROPERLY. check AND ADVISE",
+        "CUSTOMER STATES DRIVER CV AX STILL PULLING TO LEFT. CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Fri Oct 16 2026 9:56 AM",
+      "deferred": {
+        "ro": "779329",
+        "date": "2026-07-27",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 139.95,
+        "hours": 1,
+        "phone": "7087432065",
+        "vin": "KM8HBCAB2RU118079",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
     }
   ],
-  "claims": {}
+  "claims": {
+    "43717": {
+      "advisor": "DAVID",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-22T22:07:06.436Z"
+    }
+  }
 }
