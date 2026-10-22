@@ -11,6 +11,7 @@
 // doesn't have yet (no scanned contract — that can be attached later).
 
 import { loadPdfJs } from './pdfText';
+import { phonePlaceholder } from './serviceLoaner';
 
 const up = (s) => String(s || '').trim().toUpperCase();
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
@@ -155,7 +156,8 @@ export function planReport(rows, contracts, fleet = []) {
     if (veh && veh.year) r.year = veh.year;
     const target = contracts.find(c => !used.has(c.id) && r.raNo && same(c.raNo, r.raNo))
       || contracts.find(c => !used.has(c.id) && !c.raNo && c.dateOut && c.dateOut === r.dateOut
-        && ((c.vin && r.vin && c.vin === r.vin) || (same(c.lastName, r.lastName) && c.lastName)));
+        && ((c.vin && r.vin && c.vin === r.vin) || (same(c.lastName, r.lastName) && c.lastName)))
+      || phonePlaceholder(contracts.filter(c => !used.has(c.id)), r);
     if (!target) { plan.push({ r, action: 'new', changes: [] }); continue; }
     used.add(target.id);
     const changes = REPORT_FIELDS.filter(([k]) => r[k] && !same(target[k], r[k]))

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadServiceLoanerToS3, deleteS3ObjectByUrl } from '../utils/s3';
-import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet, blacklistHit, readTotalDue } from '../utils/serviceLoaner';
+import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet, blacklistHit, readTotalDue, phonePlaceholder } from '../utils/serviceLoaner';
 import LoanerRequests from './LoanerRequests';
 import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
@@ -67,7 +67,8 @@ function contractMedia(c, sessions) {
     if (String(m.vin || '').toUpperCase() !== vin) return false;
     const t = new Date(m.at).getTime();
     if (t < from || t > to) return false;
-    if (m.id === c.checkInMediaId) return true;
+    if (m.id === c.checkInMediaId || (c.mediaIds || []).includes(m.id)) return true;
+    if (c.phoneName && `${m.customerFirst || ''} ${m.customerLast || ''}`.trim().toUpperCase() === String(c.phoneName).toUpperCase()) return true;
     const ml = String(m.customerLast || '').trim().toUpperCase(), mf = String(m.customerFirst || '').trim().toUpperCase();
     return (last && ml === last) || (first && mf === first);
   }).sort((a, b) => String(a.at).localeCompare(String(b.at)));
@@ -292,11 +293,20 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         fileUrl: url, fileName: file.name || 'contract.pdf',
         uploadedAt: new Date().toISOString(), by: currentUser,
       };
-      const next = await updateServiceLoaners(cur => ({ ...cur, contracts: [rec, ...cur.contracts] }),
-        `upload RO ${rec.ro || '(none)'}`);
+      // Started on the phone (🚙 Rental check-out)? This contract takes that one
+      // over — same record, so its media and check-in stay with it.
+      let took = null;
+      const next = await updateServiceLoaners(cur => {
+        const ph = phonePlaceholder(cur.contracts, rec);
+        took = ph;
+        if (!ph) return { ...cur, contracts: [rec, ...cur.contracts] };
+        return { ...cur, contracts: cur.contracts.map(c => c.id === ph.id ? { ...c, ...rec, id: c.id, fromPhone: false } : c) };
+      }, `upload RO ${rec.ro || '(none)'}`);
       setContracts(next.contracts);
       cancelUpload();
-      setStatus(`✓ Saved ${rec.firstName} ${rec.lastName}'s contract.`);
+      setStatus(took
+        ? `✓ Saved ${rec.firstName} ${rec.lastName}'s contract — it replaced the one started on the phone (“${took.phoneName || `${took.firstName} ${took.lastName}`}”).`
+        : `✓ Saved ${rec.firstName} ${rec.lastName}'s contract.`);
       setTab('list');
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
@@ -367,6 +377,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     try {
       const { warrantyAmount, ...fields } = editDraft;
       const changes = { ...fields, vin: editDraft.vin.trim().toUpperCase(), warranty: warrantyFromDraft(warrantyAmount, editing.warranty), editedAt: new Date().toISOString(), editedBy: currentUser };
+      // A phone-started name fixed by hand counts as confirmed.
+      if (editing.fromPhone && (fields.firstName !== editing.firstName || fields.lastName !== editing.lastName)) changes.fromPhone = false;
       const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
         `edit RO ${changes.ro || '(none)'}`);
       setContracts(next.contracts);
@@ -388,6 +400,17 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     try {
       const url = await uploadServiceLoanerToS3(f);
       const changes = { fileUrl: url, fileName: f.name || 'contract.pdf', scanAttachedAt: new Date().toISOString(), scanAttachedBy: currentUser };
+      // Started on the phone: the name there is only a reference — the signed
+      // contract's boxes replace it.
+      if (editing.fromPhone) {
+        setStatus('Uploading the signed contract · reading the name off it…');
+        try {
+          const { fields } = fixWithFleet(await readLoanerContract(f), fleet);
+          for (const k of AUTO_KEYS) if (String(fields[k] || '').trim()) changes[k] = fields[k];
+          changes.fromPhone = false;
+          setEditDraft(d => (d ? { ...d, ...Object.fromEntries(AUTO_KEYS.filter(k => k in changes).map(k => [k, changes[k]])) } : d));
+        } catch { /* keep the phone name — fix it by hand */ }
+      }
       const old = editing.fileUrl;
       const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
         `attach contract RA ${editing.raNo || editing.ro || '(none)'}`);
@@ -529,6 +552,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(110,231,249,.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = ''; }}>
                             <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
                               {c.firstName} {c.lastName}
+                              {c.fromPhone && <div title="Typed on the phone at check-out. It's fixed automatically when the signed contract (or a bulk PDF / agreement report) is uploaded." style={{ marginTop: 3, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 11, fontWeight: 900, color: '#bfdbfe', background: 'rgba(96,165,250,.15)', border: '1px solid rgba(96,165,250,.5)' }}>📱 Name from phone — not confirmed</div>}
                               {blacklistHit(blacklist, c) && <div title={blacklistHit(blacklist, c).notes} style={{ marginTop: 3, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#fff', background: '#dc2626' }}>⛔ BLACK LISTED</div>}
                               {c.raNo && <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>RA {c.raNo}{c.advisor ? ` · ${c.advisor}` : ''}</div>}
                               {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}

@@ -23,6 +23,9 @@ import QuickMediaSend from './QuickMediaSend';
 // Open contract: a loaner whose contract is still out (Service Loaner, no
 // completed copy, not checked in yet) pops "Are you checking in this loaner for
 // <customer>?" — Yes fills the name and picks Checking In.
+// Customer: one name box. A check-out with no contract on file starts one on
+// the website (fromPhone) with this name as a reference — the signed contract,
+// bulk PDF or agreement report takes it over and fixes the name.
 // Mileage: picking Checking In / Out pops a "take a picture of the mileage"
 // screen that opens the camera; Send needs that picture. A check-in Send stamps
 // the open contract checkedInAt, so the website shows it Checked in with
@@ -54,8 +57,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [fleet, setFleet] = useState(null);        // null = loading
   const [stock, setStock] = useState('');
   const [kind, setKind] = useState('');            // 'in' | 'out'
-  const [first, setFirst] = useState('');
-  const [last, setLast] = useState('');
+  const [name, setName] = useState('');            // customer, one box — split into first / last on save
   const [files, setFiles] = useState([]);          // { id, file, preview, kind, progress }
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -91,7 +93,9 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const vehicle = useMemo(() => (key && fleet ? fleet.find(v => normStock(v.stockNo) === key) || fleet.find(v => normStock(v.unitNo) === key)
     || fleet.find(v => v.vin && (v.vin === key || (key.length >= 6 && v.vin.endsWith(key)))) : null), [fleet, key]);
   const isVin = key.length === 17;
-  const hasName = !!first.trim() && !!last.trim();
+  const nameWords = name.trim().split(/\s+/).filter(Boolean);
+  const first = nameWords[0] || '', last = nameWords.slice(1).join(' ');
+  const hasName = nameWords.length > 0;
   const blHit = hasName ? blacklistHit(blacklist, { firstName: first, lastName: last }) : null;
   const ready = !!vehicle && hasName && !!kind;
   const vehicleDamage = vehicle ? damage.filter(r => r.vehicleId === vehicle.id || (r.vin && r.vin === vehicle.vin)) : [];
@@ -113,8 +117,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   }
   function confirmCheckIn(c) {
     setOpenAsked(a => ({ ...a, [c.id]: true }));
-    setFirst(String(c.firstName || '').trim());
-    setLast(String(c.lastName || '').trim());
+    setName([c.firstName, c.lastName].map(x => String(x || '').trim()).filter(Boolean).join(' '));
     setError('');
     chooseKind('in');
   }
@@ -153,7 +156,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   }
   function pick(ref) {
     if (!vehicle) { setError('Enter a stock # from the loaner fleet first.'); return; }
-    if (!hasName) { setError("Enter the customer's first and last name first."); return; }
+    if (!hasName) { setError("Enter the customer's name first."); return; }
     if (!kind) { setError('Pick Checking In or Checking Out first.'); return; }
     setError('');
     ref.current?.click();
@@ -183,7 +186,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
     try {
       const rec = {
         id: sessionId, vehicleId: vehicle.id, stockNo: vehicle.stockNo || key, vin: vehicle.vin || '', kind,
-        customerFirst: first.trim().toUpperCase(), customerLast: last.trim().toUpperCase(),
+        customerFirst: first.toUpperCase(), customerLast: last.toUpperCase(), customerName: nameWords.join(' ').toUpperCase(),
         at: new Date().toISOString(), by: String(currentUser || '').toUpperCase(), files: uploaded,
       };
       await updateLoanerMedia(cur => ({ ...cur, sessions: [...cur.sessions, rec] }), `${kind === 'in' ? 'check in' : 'check out'} ${rec.stockNo}`);
@@ -196,9 +199,31 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           setContracts(cs => cs.map(c => c.id === openContract.id ? { ...c, checkedInAt: rec.at } : c));
         } catch { /* the pictures are saved; the contract can still be finished on the website */ }
       }
+      // Out: tie the pictures to this customer's contract — or, with none on
+      // file yet, start one on the website from the phone.
+      if (kind === 'out') {
+        const up = (x) => String(x || '').trim().toUpperCase();
+        const mine = openContract && ((up(openContract.lastName) && up(openContract.lastName) === rec.customerLast)
+          || (up(openContract.firstName) && up(openContract.firstName) === rec.customerFirst)) ? openContract : null;
+        const d = new Date(rec.at);
+        const pad = (n) => String(n).padStart(2, '0');
+        try {
+          await ((io || github).updateServiceLoaners || github.updateServiceLoaners)(cur => (mine
+            ? { ...cur, contracts: cur.contracts.map(c => c.id === mine.id ? { ...c, mediaIds: [...(c.mediaIds || []), rec.id] } : c) }
+            : { ...cur, contracts: [{
+                id: `sl-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+                firstName: rec.customerFirst, lastName: rec.customerLast, phoneName: rec.customerName,
+                ro: '', vin: vehicle.vin || '', year: vehicle.year || '', make: vehicle.make || '', model: vehicle.model || '', unitNo: vehicle.unitNo || '',
+                dateOut: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, timeOut: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+                mileageOutUrl: (uploaded.find(u => u.mileage) || {}).url || '',
+                fileUrl: '', fileName: '', notes: '', uploadedAt: rec.at, by: rec.by, fromPhone: true, mediaIds: [rec.id],
+              }, ...cur.contracts] }),
+            mine ? `check-out media RO ${mine.ro || '(none)'}` : `phone check-out ${rec.stockNo} ${rec.customerName}`);
+        } catch { /* the pictures are saved; the contract can still be added on the website */ }
+      }
       files.forEach(f => URL.revokeObjectURL(f.preview));
       setAskDamage({ vehicle, kind, customer: `${rec.customerFirst} ${rec.customerLast}`.trim(), done: { stockNo: rec.stockNo, kind, count: uploaded.length } });
-      setFiles([]); setStock(''); setKind(''); setFirst(''); setLast('');
+      setFiles([]); setStock(''); setKind(''); setName('');
     } catch (err) {
       setError(`${err.message || 'Save failed.'} Tap Send again.`);
     }
@@ -315,13 +340,10 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
       {/* Step 2: customer */}
       <div style={{ ...CARD, opacity: vehicle ? 1 : 0.5 }}>
         <label style={LABEL}>2 · Customer</label>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <input value={first} onChange={e => { setFirst(e.target.value); setError(''); }} placeholder="First name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
-          <input value={last} onChange={e => { setLast(e.target.value); setError(''); }} placeholder="Last name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
-        </div>
+        <input value={name} onChange={e => { setName(e.target.value); setError(''); }} placeholder="Customer name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
         {blHit && (
           <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(220,38,38,.18)', border: '1px solid rgba(248,113,113,.7)', color: '#fecaca', fontSize: 13.5, lineHeight: 1.45 }}>
-            <b>⛔ {first.trim()} {last.trim()} is on the BLACK LIST</b><br />📝 {blHit.notes}
+            <b>⛔ {name.trim()} is on the BLACK LIST</b><br />📝 {blHit.notes}
           </div>
         )}
       </div>

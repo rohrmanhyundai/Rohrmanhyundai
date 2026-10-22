@@ -297,6 +297,17 @@ function sameContract(a, f) {
     && (!a.vin || !f.vin || a.vin === f.vin));
 }
 
+// A contract the phone started (🚙 Rental check-out with no contract on file):
+// the name is only what was typed on the phone. The first real contract for
+// that loaner (same VIN, out within 3 days) takes it over and fixes the name.
+export function phonePlaceholder(contracts, f, used) {
+  const vin = up(f && f.vin);
+  if (!vin) return null;
+  const day = (d) => new Date(`${d}T00:00:00`).getTime();
+  return (contracts || []).find(c => c.fromPhone && !c.completedUrl && up(c.vin) === vin && !(used && used.has(c.id))
+    && (!f.dateOut || !c.dateOut || Math.abs(day(c.dateOut) - day(f.dateOut)) <= 3 * 86400000)) || null;
+}
+
 // pages (from readLoanerContractPages) + contracts on file → one row per page:
 //   { page, fields, thumb, action: 'new' | 'update' | 'same' | 'skip', why,
 //     target (existing contract) | joinPage (earlier page of this upload),
@@ -315,10 +326,12 @@ export function planBulk(pages, contracts) {
     const f = p.fields;
     if (!p.isFace || (!f.firstName && !f.lastName && !f.vin)) { rows.push({ page: p.page, thumb: p.thumb, fields: f, action: 'skip', why: 'Not a contract face page' }); continue; }
     const returned = !!f.dateIn;
-    const target = contracts.find(c => sameContract(c, f));
+    const target = contracts.find(c => sameContract(c, f)) || phonePlaceholder(contracts, f);
     if (target) {
       const fill = {};
-      for (const k of BULK_FIELDS) if (f[k] && !String(target[k] || '').trim()) fill[k] = f[k];
+      // A phone-started contract is only a reference — the real contract's boxes win.
+      for (const k of BULK_FIELDS) if (f[k] && (target.fromPhone ? up(f[k]) !== up(target[k]) : !String(target[k] || '').trim())) fill[k] = f[k];
+      if (target.fromPhone) fill.fromPhone = false;
       const attach = returned ? (target.completedUrl ? null : 'completed') : (target.fileUrl ? null : 'original');
       const action = Object.keys(fill).length || attach ? 'update' : 'same';
       rows.push({ page: p.page, thumb: p.thumb, fields: f, action, target, fill, attach,

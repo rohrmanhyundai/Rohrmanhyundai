@@ -152,7 +152,7 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
     const now = new Date().toISOString();
     const KEEP = ['raNo', 'firstName', 'lastName', 'ro', 'advisor', 'vin', 'unitNo', 'plate', 'year', 'make', 'model', 'mileageOut', 'dateOut', 'timeOut', 'dueDate', 'dueTime', 'phone'];
     try {
-      const updates = new Map(todo.filter(x => x.action === 'update').map(x => [x.target.id, Object.fromEntries(x.changes.map(c => [c.k, c.to]))]));
+      const updates = new Map(todo.filter(x => x.action === 'update').map(x => [x.target.id, { ...Object.fromEntries(x.changes.map(c => [c.k, c.to])), ...(x.target.fromPhone ? { fromPhone: false } : {}) }]));
       const adds = todo.filter(x => x.action === 'new').map(x => ({
         id: newId(), ...Object.fromEntries(KEEP.map(k => [k, x.r[k] || ''])), notes: '', fileUrl: '', fileName: '',
         uploadedAt: now, by: currentUser, fromReport: true, reportSyncedAt: now,
@@ -188,7 +188,8 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
     if (r.target) {
       if (r.attach === 'completed') bits.push('Adds the returned (completed) copy');
       if (r.attach === 'original') bits.push('Adds the original copy');
-      const f = Object.keys(r.fill || {});
+      if (r.target.fromPhone) bits.push(`Replaces the phone check-out (“${r.target.phoneName || `${r.target.firstName} ${r.target.lastName}`}”) — name fixed`);
+      const f = Object.keys(r.fill || {}).filter(k => k !== 'fromPhone');
       if (f.length) bits.push(`Fills in: ${f.map(k => LABEL[k] || k).join(', ')}`);
     }
     return bits.join(' · ');
