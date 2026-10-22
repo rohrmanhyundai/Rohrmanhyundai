@@ -10,5 +10,50 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
+  },
+  {
+    "id": "mvjovtuy7hgv",
+    "ro": "781761",
+    "roDate": "2026-10-22",
+    "vehicle": "2026 Hyundai Kona",
+    "jobDesc": "REAR CTR SEAT BELT BUCK REP(26-01-062H)",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "SHAWN LAUGHNER",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mvjovtuybshm",
+    "ro": "781750",
+    "roDate": "2026-10-22",
+    "vehicle": "2027 Hyundai IONIQ 5",
+    "jobDesc": "PDI",
+    "notes": "",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mvjovtuyppoh",
+    "ro": "781747",
+    "roDate": "2026-10-22",
+    "vehicle": "2012 Hyundai Sonata",
+    "jobDesc": "CUSTOMER STATES- tow in, limp mode, struggles to start",
+    "notes": "WAITING ON CUSTOMER TO APPROVE US TO LOOK AT THE CAR",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
