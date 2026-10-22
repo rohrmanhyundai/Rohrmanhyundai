@@ -1,0 +1,34 @@
+{
+  "claims": [
+    {
+      "id": "rc-mvk0nenqiglw",
+      "customer": "Joanna Mccormick",
+      "ro": "781087",
+      "arrived": "2026-09-24",
+      "diagFrom": "2026-09-24",
+      "diagTo": "2026-09-25",
+      "partsOrdered": "2026-09-25",
+      "partsArrived": "2026-10-16",
+      "addlOrdered": "",
+      "addlReason": "",
+      "addlArrived": "",
+      "fseFrom": "",
+      "fseTo": "",
+      "bodySent": "",
+      "bodyBack": "",
+      "headSent": "",
+      "headBack": "",
+      "completed": "2026-10-22",
+      "pickedUp": "2026-10-22",
+      "delayReason": "",
+      "notifiedDate": "",
+      "notifiedTime": "",
+      "managerName": "",
+      "managerSign": "",
+      "createdAt": "2026-10-22T20:51:18.134Z",
+      "createdBy": "SHAWN",
+      "updatedAt": "2026-10-22T20:51:18.134Z",
+      "updatedBy": "SHAWN"
+    }
+  ]
+}
