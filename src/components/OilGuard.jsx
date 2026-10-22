@@ -3,7 +3,7 @@
 // Look up (everyone): VIN (or its last 6+ characters) → oil changes left, each
 // package bought and each oil change used, with the RO and date.
 // Settings (managers): upload the DMS "Schedule 3029 — Schedule Summary with
-// Detail" PDF (full history; replaces the last upload) and work the list of
+// Detail" PDF or its .xlsx export (full history; replaces the last upload) and work the list of
 // problems the reader found. Fixes are remembered across uploads.
 // The counting rules live in utils/oilGuard.js.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -33,6 +33,36 @@ export async function pdfToLines(file) {
     }
     rows.sort((a, b) => b.y - a.y);
     for (const r of rows) lines.push(r.items.sort((a, b) => a.x - b.x).map(i => i.s).join(' '));
+  }
+  return lines;
+}
+
+// .xlsx export of the same report → the same text lines: each row's cells
+// left to right, with Excel's money ("($175.00)", "$-175.00") and dates
+// ("5/14/2026") turned back into the report's "-175.00" / "05/14/26".
+export async function xlsxToLines(file) {
+  const XLSX = await import('xlsx');
+  const wb = XLSX.read(await file.arrayBuffer(), { type: 'array', cellDates: true });
+  const pad = (n) => String(n).padStart(2, '0');
+  const cellText = (c) => {
+    if (c instanceof Date) return `${pad(c.getMonth() + 1)}/${pad(c.getDate())}/${String(c.getFullYear()).slice(2)}`;
+    let t = String(c == null ? '' : c).trim();
+    const dt = /^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/.exec(t);
+    if (dt) return `${pad(dt[1])}/${pad(dt[2])}/${dt[3].slice(-2)}`;
+    const m = /^(\()?\s*(-)?\$?\s*(-)?([\d,]+(?:\.\d+)?)\s*\)?$/.exec(t);
+    if (m && /[$(]/.test(t)) {
+      const n = Number(m[4].replace(/,/g, '')) * (m[1] || m[2] || m[3] ? -1 : 1);
+      return n.toFixed(2);
+    }
+    return t;
+  };
+  const lines = [];
+  for (const name of wb.SheetNames) {
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, raw: false, defval: '', dateNF: 'mm/dd/yy' });
+    for (const r of rows) {
+      const line = r.map(cellText).filter(Boolean).join(' ');
+      if (line) lines.push(line);
+    }
   }
   return lines;
 }
@@ -436,10 +466,11 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
 
   async function onPdf(file) {
     if (!file) return;
-    setBusy(true); setStatus('📄 Reading the PDF…'); setPreview(null);
+    const isXlsx = /\.xlsx?$/i.test(file.name || '') || /spreadsheet|excel/i.test(file.type || '');
+    setBusy(true); setStatus(isXlsx ? '📄 Reading the spreadsheet…' : '📄 Reading the PDF…'); setPreview(null);
     try {
-      const lines = await pdfToLines(file);
-      const parsed = parseLines(lines);
+      const lines = isXlsx ? await xlsxToLines(file) : await pdfToLines(file);
+      const parsed = parseLines(lines, { loose: isXlsx });
       if (!parsed.blocks.length) throw new Error('No VINs found — is this the Schedule 3029 Summary with Detail report?');
       const next = { uploadedAt: new Date().toISOString(), by: currentUser, fileName: file.name, reportStamp: parsed.reportStamp, blocks: parsed.blocks, stray: parsed.stray };
       setPreview({ store: next, analysed: analyseAll(next, fixes) });
@@ -544,12 +575,12 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
               <div style={card}>
                 <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>Upload the Oil Guard report</div>
                 <div style={{ fontSize: 13.5, color: '#94a3b8', marginTop: 4, lineHeight: 1.5 }}>
-                  DMS → Schedule <b>3029 OIL GUARD 3X</b> → <b>Schedule Summary with Detail</b>, saved as PDF. Upload the full history each time — it replaces
+                  DMS → Schedule <b>3029 OIL GUARD 3X</b> → <b>Schedule Summary with Detail</b>, saved as PDF or Excel (.xlsx). Upload the full history each time — it replaces
                   the last upload, and every fix below is kept and re-applied.
                 </div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 12, flexWrap: 'wrap' }}>
-                  <input ref={fileRef} type="file" accept="application/pdf,.pdf" style={{ display: 'none' }} onChange={e => onPdf(e.target.files && e.target.files[0])} />
-                  <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14, padding: '9px 18px' }} onClick={() => fileRef.current && fileRef.current.click()}>📤 Choose PDF</button>
+                  <input ref={fileRef} type="file" accept="application/pdf,.pdf,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style={{ display: 'none' }} onChange={e => onPdf(e.target.files && e.target.files[0])} />
+                  <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14, padding: '9px 18px' }} onClick={() => fileRef.current && fileRef.current.click()}>📤 Choose PDF or .xlsx</button>
                   {store && !preview && <span style={{ fontSize: 13, color: '#94a3b8' }}>Last upload: <b style={{ color: '#cbd5e1' }}>{store.fileName}</b> · {store.blocks.length} VINs · {new Date(store.uploadedAt).toLocaleString()} by {store.by}</span>}
                   {status && <span style={{ fontSize: 13.5, fontWeight: 800, color: status.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{status}</span>}
                 </div>

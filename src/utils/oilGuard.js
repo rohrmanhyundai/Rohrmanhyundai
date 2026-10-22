@@ -22,6 +22,10 @@ export const PER_PACKAGE = 3;
 // Last code can be blank on the VIN line ("KM8RMES26TU057366 285 -113.34").
 const VIN_RE = /^([A-HJ-NPR-Z0-9]{17})\s+(\d+)\s+(?:(\S+)\s+)?(-?[\d,]+\.\d\d)\s*$/;
 const DETAIL_RE = /^(\d\d\/\d\d\/\d\d)\s+(\d+)\s+(\S+)\s+(Auto Posting|General|[A-Za-z ]+?)\s+3029\s+(-?[\d,]+\.\d\d)\s*(.*?)\s+(-?\d+)\s*$/;
+// Excel export of the same report: amounts can lose their ".00" (-175) and the
+// schedule # column may be missing, so the .xlsx reader uses looser patterns.
+const VIN_RE_LOOSE = /^([A-HJ-NPR-Z0-9]{17})\s+(\d+)\s+(?:(\S+)\s+)?(-?[\d,]+(?:\.\d+)?)\s*$/;
+const DETAIL_RE_LOOSE = /^(\d\d\/\d\d\/\d\d)\s+(\d+)\s+(\S+)\s+(Auto Posting|General|[A-Za-z ]+?)(?:\s+3029)?\s+(-?[\d,]+(?:\.\d+)?)\s*(.*?)\s+(-?\d+)\s*$/;
 // The code can carry a description after it: "OG1 OIL GUARD 3X", "OG2G GV70".
 const USE_RE = /^OG([123])G?(?:\s|$)/i;
 const money = (s) => Number(String(s).replace(/,/g, '')) || 0;
@@ -32,7 +36,8 @@ export const isoOf = (mmddyy) => { const [m, d, y] = mmddyy.split('/'); return `
 export const prettyDate = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-'); return `${+m}/${+d}/${y.slice(2)}`; };
 
 // ── Text lines → VIN blocks ──────────────────────────────────────────────────
-export function parseLines(lines) {
+export function parseLines(lines, { loose = false } = {}) {
+  const vinRe = loose ? VIN_RE_LOOSE : VIN_RE, detailRe = loose ? DETAIL_RE_LOOSE : DETAIL_RE;
   const blocks = [];
   const stray = [];          // detail lines with no VIN above them
   let reportStamp = '';
@@ -42,13 +47,13 @@ export function parseLines(lines) {
     if (!line) continue;
     if (!reportStamp && /^\d\d\/\d\d\/\d\d \d{1,2}:\d\d [AP]M/.test(line)) { reportStamp = line.replace(/\s+-?[\d,]+\.\d\d$/, ''); continue; }
     if (/^Posting Accounting Date/i.test(line) || /^Control Age Control 2/i.test(line)) continue;
-    const v = VIN_RE.exec(line);
+    const v = vinRe.exec(line);
     if (v) {
       cur = { vin: v[1], age: Number(v[2]), last: v[3] || '', balance: money(v[4]), lines: [] };
       blocks.push(cur);
       continue;
     }
-    const d = DETAIL_RE.exec(line);
+    const d = detailRe.exec(line);
     if (d) {
       const row = {
         date: isoOf(d[1]), journal: d[2], ro: d[3], type: d[4].trim(),
