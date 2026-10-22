@@ -51,6 +51,96 @@ const fmtTime = (t) => {
   return `${h % 12 || 12}:${m[2]} ${h < 12 ? 'AM' : 'PM'}`;
 };
 
+// Phone 🚙 Rental check-out / check-in media (data/service-loaner/media.json)
+// that belongs to one contract: same loaner VIN, the customer's name (or the
+// check-in the phone tied to this contract), taken from the day before it went
+// out until 3 days after it came back.
+function contractMedia(c, sessions) {
+  const vin = String(c.vin || '').trim().toUpperCase();
+  if (!vin) return { outs: [], ins: [] };
+  const last = String(c.lastName || '').trim().toUpperCase();
+  const first = String(c.firstName || '').trim().toUpperCase();
+  const from = c.dateOut ? new Date(`${c.dateOut}T00:00:00`).getTime() - 86400000 : 0;
+  const endAt = c.completedAt || c.checkedInAt;
+  const to = endAt ? new Date(endAt).getTime() + 3 * 86400000 : Infinity;
+  const mine = (sessions || []).filter(m => {
+    if (String(m.vin || '').toUpperCase() !== vin) return false;
+    const t = new Date(m.at).getTime();
+    if (t < from || t > to) return false;
+    if (m.id === c.checkInMediaId) return true;
+    const ml = String(m.customerLast || '').trim().toUpperCase(), mf = String(m.customerFirst || '').trim().toUpperCase();
+    return (last && ml === last) || (first && mf === first);
+  }).sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  return { outs: mine.filter(m => m.kind !== 'in'), ins: mine.filter(m => m.kind === 'in') };
+}
+const fileCount = (list) => list.reduce((n, m) => n + (m.files || []).length, 0);
+const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+function ContractMediaModal({ contract, media, onClose }) {
+  const set = (m) => (
+    <div key={m.id} style={{ marginTop: 8 }}>
+      <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{fmtWhen(m.at)} <span style={{ fontSize: 12.5, color: '#94a3b8', fontWeight: 600 }}>by {m.by} · {(m.files || []).length} file{(m.files || []).length === 1 ? '' : 's'}</span></div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+        {(m.files || []).map((f, i) => (
+          <div key={i} style={{ position: 'relative' }}>
+            {f.kind === 'video'
+              ? <video src={f.url} controls playsInline preload="metadata" style={{ width: 260, maxWidth: '100%', height: 170, background: '#000', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
+              : <a href={f.url} target="_blank" rel="noopener noreferrer" title={f.name}>
+                  <img src={f.url} alt={f.name} style={{ width: 170, height: 170, objectFit: 'cover', borderRadius: 10, border: `1px solid ${f.mileage ? 'rgba(251,191,36,.8)' : 'rgba(148,163,184,.3)'}` }} />
+                </a>}
+            {f.mileage && <span style={{ position: 'absolute', left: 6, top: 6, padding: '2px 8px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#422006', background: '#fde68a' }}>🔢 Mileage</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  const side = (kind, list) => (
+    <div style={{ flex: '1 1 320px', minWidth: 0, background: 'rgba(2,6,23,.35)', border: `1px solid rgba(${kind === 'in' ? '74,222,128' : '251,191,36'},.3)`, borderRadius: 12, padding: '10px 12px' }}>
+      <span style={{ padding: '4px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 900, color: kind === 'in' ? '#052e16' : '#422006', background: kind === 'in' ? '#4ade80' : '#fde68a' }}>
+        {kind === 'in' ? '🅿️ CHECK IN' : '🔑 CHECK OUT'}
+      </span>
+      {list.length ? list.map(set)
+        : <div style={{ fontSize: 13, color: '#64748b', marginTop: 10 }}>{kind === 'in' ? 'No check-in media yet.' : 'No check-out media.'}</div>}
+    </div>
+  );
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 1100, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9' }}>📸 {contract.firstName} {contract.lastName}</div>
+            <div style={{ fontSize: 14, color: '#94a3b8', fontWeight: 700 }}>{[contract.year, contract.make, contract.model].filter(Boolean).join(' ')} · {contract.vin}{contract.ro ? ` · RO ${contract.ro}` : ''}</div>
+          </div>
+          <button style={btn('148,163,184', false)} onClick={onClose}>✕</button>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {side('out', media.outs)}
+          {side('in', media.ins)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Media column / box: 🔑 Out and 🅿️ In, green when that set exists.
+function MediaPills({ media, onOpen }) {
+  const pill = (on, label, n) => (
+    <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, whiteSpace: 'nowrap',
+      color: on ? '#bbf7d0' : '#64748b', background: on ? 'rgba(74,222,128,.14)' : 'rgba(148,163,184,.08)', border: `1px solid ${on ? 'rgba(74,222,128,.55)' : 'rgba(148,163,184,.25)'}` }}>
+      {on ? '✓' : '—'} {label}{on ? ` (${n})` : ''}
+    </span>
+  );
+  const any = media.outs.length || media.ins.length;
+  return (
+    <button type="button" disabled={!any} title={any ? 'See the check-out / check-in pictures and videos' : 'No phone media for this contract yet'}
+      onClick={e => { e.stopPropagation(); if (any) onOpen(); }}
+      style={{ all: 'unset', cursor: any ? 'pointer' : 'default', display: 'inline-flex', flexDirection: 'column', gap: 4 }}>
+      {pill(media.outs.length > 0, '🔑 Out', fileCount(media.outs))}
+      {pill(media.ins.length > 0, '🅿️ In', fileCount(media.ins))}
+    </button>
+  );
+}
+
 export default function ServiceLoaner({ currentUser, currentRole, advisors = [], rentalUsers = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -135,6 +225,10 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   };
   // Badge on 📸 Media: uploads from the phone still inside their 72 hours.
   const [mediaCount, setMediaCount] = useState(0);
+  // Phone check-out / check-in media → the Media column and the contract's box.
+  const [loanerMedia, setLoanerMedia] = useState([]);
+  const [mediaOpen, setMediaOpen] = useState(null);   // contract whose media viewer is open
+  useEffect(() => { ((io || github).loadLoanerMedia)().then(d => setLoanerMedia(d.sessions || [])).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { ((io || github).loadQuickMedia)().then(d => setMediaCount((d.items || []).filter(i => !isExpired(i)).length)).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
   // Badge on Loaner Request: requests for today or later (same re-read rule).
   const [loanerReqs, setLoanerReqs] = useState([]);
@@ -426,7 +520,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                     <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
                       <thead><tr>
                         <th style={th}>Customer</th><th style={th}>RO #</th><th style={th}>Loaner VIN</th><th style={th}>Year</th>
-                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Status</th><th style={th}>Uploaded</th><th style={th}></th>
+                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Media</th><th style={th}>Status</th><th style={th}>Uploaded</th><th style={th}></th>
                       </tr></thead>
                       <tbody>
                         {list.map(c => (
@@ -445,6 +539,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                             <td style={td}>{c.make}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>{c.model}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>{fmtDate(c.dateOut)} {fmtTime(c.timeOut)}</td>
+                            <td style={td}><MediaPills media={contractMedia(c, loanerMedia)} onOpen={() => setMediaOpen(c)} /></td>
                             <td style={{ ...td, whiteSpace: 'nowrap', fontSize: 13, fontWeight: 800 }}>
                               {c.completedUrl
                                 ? <span style={{ color: '#86efac' }}>✓ Returned<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.completedAt).toLocaleDateString()}</span></span>
@@ -547,6 +642,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      {mediaOpen && <ContractMediaModal contract={mediaOpen} media={contractMedia(mediaOpen, loanerMedia)} onClose={() => setMediaOpen(null)} />}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div style={{ flex: 1 }}>
           <div className="adv-title">🚙 Service Loaner</div>
@@ -663,6 +759,23 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                           : <button disabled={busy} style={b('248,113,113')} title="Put this customer on the loaner black list" onClick={() => setBlModal({ notes: '' })}>⛔ Black List</button>}
                         <button disabled={busy} title="Delete this contract" style={b('248,113,113', false)} onClick={() => remove(editing)}>🗑 Delete</button>
                       </div>
+                    </div>
+                  );
+                })()}
+                {(() => {
+                  const m = contractMedia(editing, loanerMedia);
+                  const any = m.outs.length || m.ins.length;
+                  return (
+                    <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
+                      <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>📸 Media</div>
+                      <div style={{ fontSize: 12.5, color: '#94a3b8', margin: '3px 0 10px', lineHeight: 1.45 }}>
+                        🔑 Check-out: {m.outs.length ? <b style={{ color: '#86efac' }}>{fileCount(m.outs)} file{fileCount(m.outs) === 1 ? '' : 's'}</b> : 'none'}
+                        {' · '}🅿️ Check-in: {m.ins.length ? <b style={{ color: '#86efac' }}>{fileCount(m.ins)} file{fileCount(m.ins) === 1 ? '' : 's'}</b> : 'none'}
+                        {!any && <> — taken on a phone with 🚙 Rental.</>}
+                      </div>
+                      <button disabled={!any} style={{ ...btn('192,132,252'), fontSize: 14, padding: '9px 18px', opacity: any ? 1 : 0.5, cursor: any ? 'pointer' : 'default' }} onClick={() => setMediaOpen(editing)}>
+                        📸 View media
+                      </button>
                     </div>
                   );
                 })()}
