@@ -1,0 +1,315 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-23",
+  "rows": [
+    {
+      "id": "rmvk3d4labain",
+      "customerName": "Timothy Reed",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43808",
+      "vehicle": "2023 Hyundai Tucson",
+      "services": [
+        "REPLACE FOUR TIRES",
+        "WHEEL ALIGNMENT"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781633",
+        "date": "2026-10-19",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 334.93,
+        "hours": 2.3,
+        "phone": "7654148414",
+        "vin": "5NMJFCAE5PH281625",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "WIPERAFTERMARKET",
+            "desc": "",
+            "count": 1,
+            "price": 36.15,
+            "priceEst": true
+          },
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 120,
+            "priceEst": false
+          },
+          {
+            "code": "RWIPER",
+            "desc": "INSTALL NEW REAR WIPER BLADE",
+            "count": 1,
+            "h": 0.1,
+            "price": 38.83,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvk3d4la6jvq",
+      "customerName": "Jennifer Mullett",
+      "appointmentTime": "7:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43876",
+      "vehicle": "2019 Hyundai Santa Fe",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape",
+        "CUSTOMER STATES- Tires seasonally low",
+        "CUSTOMER STATES- Pass wiper needs replaced",
+        "CUSTOMER STATES- Will drop off night before"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4la47na",
+      "customerName": "John Copas",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43848",
+      "vehicle": "2022 Hyundai Palisade",
+      "services": [
+        "OIL GUARD REDEMPTION - OIL CHANGE 3 OF 3",
+        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)",
+        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
+        "TIRE ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "776273",
+        "date": "2026-03-31",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 401.92,
+        "hours": 1.8,
+        "phone": "7652060831",
+        "vin": "KM8R7DHE0NU421450",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 184.81,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 85.94,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 32.3,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 98.87,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvk3d4lavnxt",
+      "customerName": "Greg Carlson",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43902",
+      "vehicle": "2027 Hyundai Palisade",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4la4ncc",
+      "customerName": "David Byse",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43911",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "CUSTOMER STATES- tailgate will not open"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4laqlrx",
+      "customerName": "Constance Brown",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43742",
+      "vehicle": "2023 Hyundai Palisade",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "775709",
+        "date": "2026-03-06",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 433.93,
+        "hours": 2.1,
+        "phone": "5743360415",
+        "vin": "KM8R4DGE2PU487785",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 135.88,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 194.18,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 103.87,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvk3d4lajr01",
+      "customerName": "Roberta Stark",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43790",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvk3d4la37wg",
+      "customerName": "Roberto Gaspar Miguel",
+      "appointmentTime": "4:20 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43894",
+      "vehicle": "2025 Hyundai Santa Cruz",
+      "services": [
+        "COOLANT FLUID EXCHANGE",
+        "BRAKE FLUID EXCHANGE"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "781369",
+        "date": "2026-10-06",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 402.97,
+        "hours": 1.6,
+        "phone": "5747219668",
+        "vin": "5NTJBDDE3SH130048",
+        "items": [
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 215.06,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 187.91,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-22T22:07:21.422Z"
+}
