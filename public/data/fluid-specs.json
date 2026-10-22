@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T11:23:56.472Z",
+  "updatedAt": "2026-10-22T11:52:07.396Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4317,6 +4317,84 @@
         "by": "KAI"
       },
       "id": "fs-mvjgdrpvgtmo"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "TUCSON HYBRID",
+      "code": "",
+      "yearFrom": 2026,
+      "yearTo": 2026,
+      "fluids": [
+        {
+          "fluid": "Oil",
+          "engine": "1.6T",
+          "volume": "5.07 US QT.",
+          "spec": "0W-20",
+          "partNumber": "881494",
+          "note": "00232-FSYN0-20WAR",
+          "filter": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "1.6T",
+          "volume": "6.34 US QT.",
+          "spec": "ATF SP4-M1",
+          "partNumber": "00232-19107",
+          "note": "",
+          "filter": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T",
+          "volume": "8.18 US QT.",
+          "spec": "Pink/Green/Blue",
+          "partNumber": "",
+          "note": "",
+          "filter": ""
+        },
+        {
+          "fluid": "Inverter Coolant",
+          "engine": "1.6T",
+          "volume": "1.75 US QT.",
+          "spec": "",
+          "partNumber": "",
+          "note": "HEV",
+          "filter": ""
+        },
+        {
+          "fluid": "Inverter Coolant",
+          "engine": "1.6T",
+          "volume": "6.76 US QT.",
+          "spec": "",
+          "partNumber": "",
+          "note": "PHEV",
+          "filter": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (4WD)",
+          "engine": "1.6T",
+          "volume": "0.56-0.67 US QT.",
+          "spec": "SAE 75W/85",
+          "partNumber": "",
+          "note": "",
+          "filter": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (4WD)",
+          "engine": "1.6T",
+          "volume": "0.65-0.71 US QT.",
+          "spec": "SAE 75W/85",
+          "partNumber": "",
+          "note": "",
+          "filter": ""
+        }
+      ],
+      "source": {
+        "fileName": "",
+        "uploadedAt": "2026-10-22T11:44:36.805Z",
+        "by": "KAI"
+      },
+      "id": "fs-mvjhe0gcrlp3"
     }
   ]
 }
