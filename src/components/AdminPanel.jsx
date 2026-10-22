@@ -31,6 +31,7 @@ import VmpiReportView from './VmpiReportView';
 import { uploadDeferredPdf } from './DeferredService';
 import { uploadAppointmentFile, shortMD } from '../utils/appointmentList';
 import { parseGrossReport, splitGrossRows, gaugePatchFrom, mergeForecastActuals } from './GoalForecast';
+import GrossScreenshotUpload from './GrossScreenshotUpload';
 
 // ── Morning Reporting ─────────────────────────────────────────────────────────
 // The daily uploads in the order they're done, as one checklist. Each step uses
@@ -44,7 +45,7 @@ const MORNING_STEPS = [
   { key: 'addOn',       icon: '📷', title: '$50 Add-on Board',           file: 'screenshot' },
   { key: 'flagged',     icon: '⏱', title: 'Flagged Hours Report',       file: '.html' },
   { key: 'vmpi',        icon: '🎥', title: 'VMPI Report',                file: 'screenshot or .csv' },
-  { key: 'gross',       icon: '🎯', title: 'Gross Report',               file: 'Goal Forecast · .pdf · optional', optional: true },
+  { key: 'gross',       icon: '🎯', title: 'Gross Report',               file: 'Goal Forecast · .pdf or 2 screenshots · optional', optional: true },
   { key: 'save',        icon: '💾', title: 'Review & Save',              file: 'push it live' },
 ];
 const morningKey = () => { const d = new Date(); return `morningReporting-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
@@ -1910,6 +1911,20 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     } catch (e) { setGrossMsg('❌ ' + (e.message || e)); }
     finally { setGrossBusy(false); }
   }
+  // Service + Parts board screenshots → the same two forecasts and gauges.
+  async function applyMorningGrossShots(p) {
+    const saves = [];
+    for (const d of ['service', 'parts']) {
+      if (p.depts[d]) saves.push((await mergeForecastActuals(d, p.mk, p.depts[d].rows, p.depts[d].extra)).saved);
+    }
+    await Promise.all(saves);
+    const now = new Date();
+    const live = p.mk === `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}` && p.depts.service;
+    if (live && Object.keys(p.gaugePatch).length) onDataChange({ ...data, ...p.gaugePatch }, structuredClone(vacations));
+    markMorning('gross');
+    const n = Object.keys(p.depts).map(d => d === 'parts' ? 'Parts' : 'Service').join(' and ');
+    return `✅ Saved to the ${n} Goal Forecast${live ? ' · gauges update on Save' : ''}.`;
+  }
   async function handleMorningDeferred(file) {
     setDeferredBusy(true); setDeferredMsg('📄 Reading the PDF…');
     try {
@@ -3007,7 +3022,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
               <DropZone accept=".pdf" label="📤 Upload Report PDF" hint="Drop the daily gross report (.pdf) · or click to choose" busy={grossBusy && !g} done={morningDone.gross === true} onFile={handleMorningGross} />
             </div>
-            {note('Fills the Goal Forecast daily actuals — Labor → Service, Parts → Parts — and the dashboard Gross / Customer Pay gauges.')}
+            <div style={{ fontSize: 12, fontWeight: 900, color: '#94a3b8', letterSpacing: '.06em', margin: '14px 0 8px' }}>— OR — THE SERVICE + PARTS BOARD SCREENSHOTS</div>
+            <GrossScreenshotUpload onApply={applyMorningGrossShots} />
+            {note('Fills the Goal Forecast daily actuals — Labor → Service, Parts → Parts — and the dashboard Gross / Customer Pay gauges. Screenshots: AI reads LAF Hyundai\'s MTD; the day = MTD minus the days already entered.')}
             {g && (
               <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 12, background: 'rgba(244,114,182,.07)', border: '1px solid rgba(244,114,182,.35)' }}>
                 <div style={{ fontSize: 13.5, fontWeight: 900, color: '#f9a8d4' }}>Read {g.rows.length} day{g.rows.length === 1 ? '' : 's'} for {new Date(g.mk + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' })}</div>

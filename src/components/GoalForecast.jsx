@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { advisorMonthProgress } from '../utils/calculations';
 import { safe } from '../utils/formatters';
 import { loadGoalForecast, saveGoalForecastMonth } from '../utils/github';
+import GrossScreenshotUpload from './GrossScreenshotUpload';
 
 // Full-precision money (to the penny) — used for every actual figure on the report.
 const money = (n) => '$' + safe(n, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -838,6 +839,7 @@ export default function GoalForecast({
   const [parseSummary, setParseSummary] = useState(null); // { cpActual, grossActual, labor } | null — service MTD pacing for the gauges/breakdown
   const [parseErr, setParseErr] = useState('');
   const [parseDept, setParseDept] = useState(dept); // which dept the preview applies to
+  const [uploadOpen, setUploadOpen] = useState(false); // chooser: PDF or the two board screenshots
   const colName = parseDept === 'parts' ? 'Parts' : 'Labor';
 
   // targetDept = which forecast to import into ('service'|'parts'). Defaults to
@@ -897,6 +899,7 @@ export default function GoalForecast({
       setActuals(next);
       if (extra && extra.laborBreakdown) setLaborBreakdown(extra.laborBreakdown);
       if (extra && extra.partsBreakdown) setPartsBreakdown(extra.partsBreakdown);
+      if (extra && extra.lastYear != null) setLastYear(safe(extra.lastYear, 0));
       persist({ actuals: next, ...(extra || {}) });
       setGridOpen(true);
     } else {
@@ -906,6 +909,16 @@ export default function GoalForecast({
       if (targetD === dept) setAllMonths(prev => ({ ...prev, [targetMk]: nextBucket }));       // history month of own dept
       else if (targetMk === mk) setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));        // other dept, current month
     }
+  }
+
+  // Service + Parts board screenshots (AI-read MTD) → both forecasts + gauges.
+  async function applyScreenshots(p) {
+    for (const d of ['service', 'parts']) {
+      if (p.depts[d]) await writeDeptActuals(d, p.depts[d].rows, p.depts[d].extra, p.mk);
+    }
+    if (p.mk === mk && p.depts.service && onGaugeActuals && Object.keys(p.gaugePatch).length) onGaugeActuals(p.gaugePatch);
+    const n = Object.keys(p.depts).map(d => d === 'parts' ? 'Parts' : 'Service').join(' and ');
+    return `✅ Saved to the ${n} Goal Forecast.`;
   }
 
   function applyParsed() {
@@ -1510,6 +1523,21 @@ export default function GoalForecast({
           </div>
         </div>
       )}
+      {uploadOpen && (
+        <div onClick={() => setUploadOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', zIndex: 2000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '8vh 16px', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 760, background: 'linear-gradient(160deg,#0c1322,#0a0f1c)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 18, padding: 24, boxShadow: '0 30px 90px rgba(0,0,0,.65)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0' }}>📤 Upload Gross Report</div>
+              <button onClick={() => setUploadOpen(false)} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 10, width: 38, height: 38, fontSize: 18, cursor: 'pointer' }}>✕</button>
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 900, color: '#94a3b8', letterSpacing: '.06em', marginBottom: 8 }}>OPTION 1 — THE GROSS REPORT PDF</div>
+            <button className="secondary" onClick={() => { setUploadOpen(false); pdfInputRef.current && pdfInputRef.current.click(); }}>📄 Choose gross report .pdf</button>
+            <div style={{ fontSize: 12, fontWeight: 900, color: '#94a3b8', letterSpacing: '.06em', margin: '22px 0 8px' }}>OPTION 2 — SERVICE + PARTS BOARD SCREENSHOTS</div>
+            <GrossScreenshotUpload onApply={applyScreenshots} />
+            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 10 }}>AI reads LAF Hyundai's MTD gross, last year and pay types off each board. The day's number = MTD minus the days already entered.</div>
+          </div>
+        </div>
+      )}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">{title}</div>
@@ -1519,7 +1547,7 @@ export default function GoalForecast({
         {!crossOpen && (
           <>
             <input ref={pdfInputRef} type="file" accept="application/pdf,.pdf" style={{ display: 'none' }} onChange={e => handlePdf(e.target.files && e.target.files[0])} />
-            <button className="secondary" onClick={() => pdfInputRef.current && pdfInputRef.current.click()} disabled={parsing} style={{ marginRight: 10 }}>{parsing ? '⏳ Reading…' : '📤 Upload Report PDF'}</button>
+            <button className="secondary" onClick={() => setUploadOpen(true)} disabled={parsing} style={{ marginRight: 10 }}>{parsing ? '⏳ Reading…' : '📤 Upload Report PDF'}</button>
           </>
         )}
         {!crossOpen && <button className="secondary" onClick={openCross} style={{ marginRight: 10 }}>👁 View {otherDeptLabel} Numbers</button>}
