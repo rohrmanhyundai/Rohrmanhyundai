@@ -1,50 +1,5 @@
 [
   {
-    "id": "gm-mv9h8ghk56ct",
-    "from": "SHAWN",
-    "to": [
-      "KAI"
-    ],
-    "text": "this is the ticket jerry is talking about",
-    "media": [
-      {
-        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mv9h8g9t-5nd442.png",
-        "name": "Screenshot 2026-10-15 at 7.49.34 AM.png",
-        "type": "image/png"
-      }
-    ],
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1792065006200
-  },
-  {
-    "id": "gm-mv9m1f4rnnyx",
-    "from": "SHAWN",
-    "to": [
-      "KAI"
-    ],
-    "text": "You guys have some training sir",
-    "media": [
-      {
-        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mv9m1eu5-run38s.png",
-        "name": "Screenshot 2026-10-15 at 10.04.12 AM.png",
-        "type": "image/png"
-      }
-    ],
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mv9rin671dub",
-        "from": "KAI",
-        "text": "👍",
-        "timestamp": 1792082277584
-      }
-    ],
-    "timestamp": 1792073075931
-  },
-  {
     "id": "gm-mvgtqzcpipsn",
     "from": "SHAWN",
     "to": [
@@ -136,5 +91,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792611024596
+  },
+  {
+    "id": "gm-mvjnp8pjfru9",
+    "from": "SHAWN",
+    "to": [
+      "HOLLI"
+    ],
+    "text": "🚙 Advisor DAVID is setting a rental appointment for Thu 10/22/2026 at 3:30 PM — Vincent Amador (CUSTOMER AGREED $45 PER DAY FOR LOANER).",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792680528727
   }
 ]
