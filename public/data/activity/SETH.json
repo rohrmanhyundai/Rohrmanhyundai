@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-22T12:12:15.216Z",
+    "type": "page",
+    "label": "battery-guide"
+  },
+  {
+    "at": "2026-10-22T12:11:30.301Z",
+    "type": "page",
+    "label": "oil-capacity"
+  },
+  {
+    "at": "2026-10-22T12:11:24.750Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-10-22T11:43:40.224Z",
     "type": "page",
     "label": "oil-capacity"
