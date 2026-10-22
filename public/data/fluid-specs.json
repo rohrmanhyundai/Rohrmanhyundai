@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T12:06:16.908Z",
+  "updatedAt": "2026-10-22T12:15:17.347Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -4494,6 +4494,78 @@
         "by": "KAI"
       },
       "id": "fs-mvjhw7x53uyi"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "ELANTRA HYBRID",
+      "code": "CN7 HEV",
+      "yearFrom": 2026,
+      "yearTo": 2026,
+      "fluids": [
+        {
+          "fluid": "Engine oil",
+          "engine": "",
+          "volume": "4.02 US qt. (3.8 ℓ)",
+          "spec": "0W-20 API SN PLUS",
+          "partNumber": "881494",
+          "note": "00232-FSYN0-20WAR",
+          "filter": "26300-35505"
+        },
+        {
+          "fluid": "Dual clutch transmission fluid",
+          "engine": "",
+          "volume": "1.7~1.8 US qt. (1.6~1.7 ℓ)",
+          "spec": "API GL-4, SAE 70W, HK D DCTF TGO-10 PLUS (SK), SPIRAX S6 GHDE 70W DCTF PLUS (H.K.SHELL)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Engine coolant",
+          "engine": "",
+          "volume": "6.23 US qt. (5.9 ℓ)",
+          "spec": "Mixture of antifreeze and water (Phosphate-based Ethylene glycol coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Inverter coolant",
+          "engine": "",
+          "volume": "2.22 US qt. (2.1 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/clutch fluid",
+          "engine": "",
+          "volume": "As required",
+          "spec": "DOT-4",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Engine clutch actuator fluid",
+          "engine": "",
+          "volume": "As required",
+          "spec": "SAE J1704 DOT-4LV, FMVSS 116 DOT-4, ISO4926 CLASS-6",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Fuel",
+          "engine": "",
+          "volume": "11.09 US gal (42 ℓ)",
+          "spec": "Refer to “Fuel requirements” in the Foreword chapter.",
+          "partNumber": "",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2026 HYUNDAI ELANTRA HYBRID (CN7 HEV).pdf",
+        "uploadedAt": "2026-10-22T12:12:06.311Z",
+        "by": "KAI"
+      },
+      "id": "fs-mvji7sx3lj3w"
     }
   ]
 }
