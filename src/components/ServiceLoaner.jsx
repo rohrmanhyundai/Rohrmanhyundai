@@ -448,7 +448,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                             <td style={{ ...td, whiteSpace: 'nowrap', fontSize: 13, fontWeight: 800 }}>
                               {c.completedUrl
                                 ? <span style={{ color: '#86efac' }}>✓ Returned<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.completedAt).toLocaleDateString()}</span></span>
-                                : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
+                                : c.checkedInAt
+                                  ? <span title={`Checked in on the phone by ${c.checkedInBy || '—'}`} style={{ color: '#7dd3fc' }}>🅿️ Checked in<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.checkedInAt).toLocaleDateString()}</span></span>
+                                  : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
                               {c.warranty && (
                                 <div title={`Warranty claim by ${c.warranty.by} ${new Date(c.warranty.at).toLocaleDateString()}`}
                                   style={{ marginTop: 5, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
@@ -472,6 +474,16 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                                     </div>
                                   );
                                 })()}
+                                {c.checkedInAt && !c.completedUrl && (
+                                  <>
+                                    {/* Checked in on the phone — the returned copy still has to go in (click the row). */}
+                                    <style>{'@keyframes slMissingGlow{0%,100%{box-shadow:0 0 6px rgba(248,113,113,.4)}50%{box-shadow:0 0 18px rgba(248,113,113,.85)}}@media (prefers-reduced-motion: reduce){.sl-missing{animation:none!important}}'}</style>
+                                    <div className="sl-missing" title="Click to open this contract and upload the completed (returned) contract"
+                                      style={{ cursor: 'pointer', textAlign: 'center', padding: '8px 14px', borderRadius: 9, fontSize: 13, fontWeight: 900, color: '#fecaca', background: 'rgba(248,113,113,.16)', border: '1px solid rgba(248,113,113,.7)', animation: 'slMissingGlow 1.8s ease-in-out infinite' }}>
+                                      ⚠ Completed contract not uploaded
+                                    </div>
+                                  </>
+                                )}
                                 {!(c.completedUrl || c.fileUrl) && (
                                   <>
                                     {/* Warning only — everything else is inside the contract (click the row). */}
@@ -544,8 +556,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       </div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center' }}>
         {tabBtn('requests', '🙋 Loaner Request', upcomingReqs)}
-        {/* Bubble = contracts showing "⚠ Signed contract not uploaded" */}
-        {tabBtn('list', `📋 Contracts (${contracts.length})`, contracts.filter(c => !c.fileUrl && !c.completedUrl).length)}
+        {/* Bubble = contracts showing "⚠ Signed contract not uploaded" or "⚠ Completed contract not uploaded" */}
+        {tabBtn('list', `📋 Contracts (${contracts.length})`, contracts.filter(c => !c.completedUrl && (!c.fileUrl || c.checkedInAt)).length)}
         {tabBtn('inventory', '🚙 Loaner Inventory')}
         <style>{'@keyframes slBadgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}@media (prefers-reduced-motion: reduce){.sl-tab-badge{animation:none!important}}'}</style>
         {tabBtn('maintenance', '🔧 Loaner Maintenance', maintCount)}
@@ -671,7 +683,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                   <div style={{ fontSize: 12.5, color: '#94a3b8', margin: '3px 0 10px', lineHeight: 1.45 }}>
                     {editing.completedUrl
                       ? <>✓ Completed contract uploaded by {editing.completedBy} {new Date(editing.completedAt).toLocaleDateString()} ({editing.completedFileName}).{editing.fileUrl ? ' The original is kept too.' : ''}</>
-                      : 'Scan the contract once the loaner is checked back in and upload it here. The original stays on file.'}
+                      : editing.checkedInAt
+                        ? <span style={{ color: '#fde68a' }}>🅿️ Checked in on the phone by {editing.checkedInBy || '—'} {new Date(editing.checkedInAt).toLocaleString()}{editing.checkInMileageUrl ? <> · <a href={editing.checkInMileageUrl} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#7dd3fc' }}>🔢 mileage picture</a></> : ''} — upload the completed contract.</span>
+                        : 'Scan the contract once the loaner is checked back in and upload it here. The original stays on file.'}
                   </div>
                   <input ref={completedRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadCompleted(e.target.files && e.target.files[0])} />
                   <button disabled={busy} style={{ ...btn('56,189,248'), fontSize: 14, padding: '9px 18px' }} onClick={() => setWarrantyAsk(true)}>

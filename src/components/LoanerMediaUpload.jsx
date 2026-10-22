@@ -20,6 +20,13 @@ import QuickMediaSend from './QuickMediaSend';
 // pops a warning listing it. After Send (check-in or out) it asks "Was any damage found?" — Yes
 // opens a camera screen whose files land on that loaner's damage page as media
 // to sort (damage.json `pending`), where they're matched to the damaged part.
+// Open contract: a loaner whose contract is still out (Service Loaner, no
+// completed copy, not checked in yet) pops "Are you checking in this loaner for
+// <customer>?" — Yes fills the name and picks Checking In.
+// Mileage: picking Checking In / Out pops a "take a picture of the mileage"
+// screen that opens the camera; Send needs that picture. A check-in Send stamps
+// the open contract checkedInAt, so the website shows it Checked in with
+// "Completed contract not uploaded" until the returned copy goes in.
 
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const fmtSize = (b) => (b >= 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
@@ -65,6 +72,12 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [dmgSeen, setDmgSeen] = useState({});      // vehicle id → damage warning dismissed
   const [askDamage, setAskDamage] = useState(null); // after Send: { vehicle, kind, customer, done } — "Was any damage found?"
   const [damageCap, setDamageCap] = useState(null); // same, while the damage camera screen is open
+  const [contracts, setContracts] = useState([]);   // Service Loaner contracts (open ones pop the check-in question)
+  const [openAsked, setOpenAsked] = useState({});  // contract id → check-in question answered
+  const [mileAsk, setMileAsk] = useState(false);   // "take a picture of the mileage" pop-up
+  const mileNext = useRef(false);                  // the next capture is the mileage picture
+  const mileRef = useRef(null);
+  useEffect(() => { ((io || github).loadServiceLoaners || github.loadServiceLoaners)().then(d => setContracts(d.contracts || [])).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { ((io || github).loadLoanerDamage)().then(d => setDamage((d.reports || []).filter(r => r.status !== 'repaired'))).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -82,23 +95,48 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const blHit = hasName ? blacklistHit(blacklist, { firstName: first, lastName: last }) : null;
   const ready = !!vehicle && hasName && !!kind;
   const vehicleDamage = vehicle ? damage.filter(r => r.vehicleId === vehicle.id || (r.vin && r.vin === vehicle.vin)) : [];
-  const canSend = ready && files.length > 0 && !saving;
+  // Still-out contract on this car: no returned copy yet and not checked in.
+  const openContract = vehicle && vehicle.vin ? contracts.find(c => !c.completedUrl && !c.checkedInAt
+    && String(c.vin || '').trim().toUpperCase() === String(vehicle.vin).toUpperCase()) : null;
+  const hasMileage = files.some(f => f.mileage);
+  const canSend = ready && files.length > 0 && hasMileage && !saving;
+
+  // Checking In / Out → the mileage picture comes first.
+  function chooseKind(k) {
+    setKind(k); setError('');
+    if (!files.some(f => f.mileage)) setMileAsk(true);
+  }
+  function takeMileage() {
+    setMileAsk(false);
+    mileNext.current = true;
+    mileRef.current?.click();
+  }
+  function confirmCheckIn(c) {
+    setOpenAsked(a => ({ ...a, [c.id]: true }));
+    setFirst(String(c.firstName || '').trim());
+    setLast(String(c.lastName || '').trim());
+    setError('');
+    chooseKind('in');
+  }
 
   function addFiles(e) {
     const input = e.target;
     const picked = Array.from(input.files || []);
     input.value = '';
     if (!picked.length) return;
+    const isMileage = mileNext.current;
+    mileNext.current = false;
     const ok = picked.filter(f => f.type.startsWith('image/') || f.type.startsWith('video/') || /\.(jpe?g|png|heic|webp|mov|mp4)$/i.test(f.name));
     setError(ok.length < picked.length ? 'Only pictures and videos can be added.' : '');
     const fresh = ok.map(file => ({
       id: genId(), file, preview: URL.createObjectURL(file),
       kind: file.type.startsWith('video/') || /\.(mov|mp4)$/i.test(file.name) ? 'video' : 'image', progress: 0,
+      mileage: isMileage,
     }));
     if (!fresh.length) return;
     setFiles(prev => {
       const next = [...prev, ...fresh];
-      setAdded({ kind: fresh.every(f => f.kind === 'video') ? 'video' : fresh.every(f => f.kind === 'image') ? 'image' : 'mixed', n: fresh.length, total: next.length });
+      setAdded({ mileage: isMileage, kind: fresh.every(f => f.kind === 'video') ? 'video' : fresh.every(f => f.kind === 'image') ? 'image' : 'mixed', n: fresh.length, total: next.length });
       return next;
     });
   }
@@ -134,7 +172,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         const url = await upload(`${folder}/${f.id}.${ext}`, f.file,
           p => setFiles(prev => prev.map(x => (x.id === f.id ? { ...x, progress: p } : x))));
         setFiles(prev => prev.map(x => (x.id === f.id ? { ...x, progress: 1 } : x)));
-        uploaded.push({ url, name: f.file.name || `${f.kind}.${ext}`, type: f.file.type || '', kind: f.kind, size: f.file.size });
+        uploaded.push({ url, name: f.file.name || `${f.kind}.${ext}`, type: f.file.type || '', kind: f.kind, size: f.file.size, ...(f.mileage ? { mileage: true } : {}) });
       }
     } catch (err) {
       setError(`${err.message || 'Upload failed.'} Nothing was sent — check the connection and tap Send again.`);
@@ -149,6 +187,15 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         at: new Date().toISOString(), by: String(currentUser || '').toUpperCase(), files: uploaded,
       };
       await updateLoanerMedia(cur => ({ ...cur, sessions: [...cur.sessions, rec] }), `${kind === 'in' ? 'check in' : 'check out'} ${rec.stockNo}`);
+      // Back in: the contract that's out on this car shows Checked in on the website.
+      if (kind === 'in' && openContract) {
+        const mileUrl = (uploaded.find(u => u.mileage) || {}).url || '';
+        try {
+          await ((io || github).updateServiceLoaners || github.updateServiceLoaners)(cur => ({ ...cur, contracts: cur.contracts.map(c => c.id === openContract.id
+            ? { ...c, checkedInAt: rec.at, checkedInBy: rec.by, checkInMediaId: rec.id, checkInMileageUrl: mileUrl } : c) }), `checked in RO ${openContract.ro || '(none)'}`);
+          setContracts(cs => cs.map(c => c.id === openContract.id ? { ...c, checkedInAt: rec.at } : c));
+        } catch { /* the pictures are saved; the contract can still be finished on the website */ }
+      }
       files.forEach(f => URL.revokeObjectURL(f.preview));
       setAskDamage({ vehicle, kind, customer: `${rec.customerFirst} ${rec.customerLast}`.trim(), done: { stockNo: rec.stockNo, kind, count: uploaded.length } });
       setFiles([]); setStock(''); setKind(''); setFirst(''); setLast('');
@@ -286,7 +333,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           {['out', 'in'].map(k => {
             const on = kind === k, K = KIND[k];
             return (
-              <button key={k} type="button" disabled={!vehicle || !hasName || saving} onClick={() => setKind(k)}
+              <button key={k} type="button" disabled={!vehicle || !hasName || saving} onClick={() => chooseKind(k)}
                 style={{ flex: 1, borderRadius: 10, padding: '16px 8px', fontSize: 15.5, fontWeight: 900, cursor: vehicle && hasName ? 'pointer' : 'not-allowed',
                   background: on ? `rgba(${K.rgb},.22)` : 'rgba(255,255,255,0.05)', border: `2px solid ${on ? `rgb(${K.rgb})` : 'rgba(255,255,255,0.14)'}`, color: on ? `rgb(${K.rgb})` : '#cbd5e1' }}>
                 {K.icon} {K.label}
@@ -300,6 +347,13 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
       <div style={{ ...CARD, opacity: ready ? 1 : 0.5 }}>
         <label style={LABEL}>4 · Pictures &amp; videos</label>
         <input ref={camRef} type="file" accept="image/*,video/*" capture="environment" onChange={addFiles} style={{ display: 'none' }} />
+        <input ref={mileRef} type="file" accept="image/*" capture="environment" onChange={addFiles} style={{ display: 'none' }} />
+        {ready && !hasMileage && (
+          <button type="button" onClick={() => setMileAsk(true)} disabled={saving}
+            style={{ width: '100%', marginBottom: 8, background: 'rgba(251,191,36,.14)', border: '1px solid rgba(251,191,36,.65)', color: '#fde68a', borderRadius: 10, padding: '15px 8px', cursor: 'pointer', fontSize: 16, fontWeight: 900 }}>
+            🔢 Take the MILEAGE picture first
+          </button>
+        )}
         <input ref={libraryRef} type="file" accept="image/*,video/*" multiple onChange={addFiles} style={{ display: 'none' }} />
         <button type="button" onClick={() => pick(camRef)} disabled={saving}
           style={{ width: '100%', background: 'rgba(96,165,250,.12)', border: '1px dashed rgba(96,165,250,.6)', color: '#e2e8f0', borderRadius: 10, padding: '20px 8px', cursor: ready ? 'pointer' : 'not-allowed', fontSize: 17, fontWeight: 900 }}>
@@ -321,7 +375,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
                   {f.kind === 'video' && <span style={{ position: 'absolute', left: 3, bottom: 1, fontSize: 13 }}>🎥</span>}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{f.kind === 'video' ? 'Video' : 'Picture'} · {fmtSize(f.file.size)}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{f.mileage ? <span style={{ color: '#fde68a' }}>🔢 Mileage</span> : f.kind === 'video' ? 'Video' : 'Picture'} · {fmtSize(f.file.size)}</div>
                   {(saving || f.progress > 0) && (
                     <div style={{ marginTop: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 4, height: 6, overflow: 'hidden' }}>
                       <div style={{ width: `${Math.round(f.progress * 100)}%`, height: '100%', background: f.progress >= 1 ? '#4ade80' : '#60a5fa', transition: 'width .2s' }} />
@@ -354,6 +408,46 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         }}>
         {saving ? '⏳ Sending… keep this screen open' : `✓ Done — Send${files.length ? ` ${files.length} file${files.length === 1 ? '' : 's'}` : ''}`}
       </button>
+
+      {openContract && !openAsked[openContract.id] && !saving && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2060, background: 'rgba(2,6,23,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
+          <div style={{ ...CARD, background: '#0f1b30', borderColor: 'rgba(74,222,128,.55)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
+            <div style={{ fontSize: 40 }}>🅿️</div>
+            <div style={{ color: '#94a3b8', fontSize: 13.5 }}>{vehicle.stockNo ? `Stock #${vehicle.stockNo}` : vehicle.vin} · {vehicleText(vehicle)} is OUT</div>
+            <div style={{ fontWeight: 900, fontSize: 20, color: '#f8fafc', marginTop: 12, lineHeight: 1.35 }}>
+              Are you checking in this loaner for <span style={{ color: '#86efac' }}>{[openContract.firstName, openContract.lastName].filter(Boolean).join(' ') || 'this customer'}</span>?
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 18 }}>
+              <button type="button" onClick={() => confirmCheckIn(openContract)}
+                style={{ borderRadius: 10, padding: '17px 8px', fontSize: 17, fontWeight: 900, background: 'rgba(74,222,128,.2)', color: '#86efac', border: '1px solid rgba(74,222,128,.7)', cursor: 'pointer' }}>
+                Yes
+              </button>
+              <button type="button" onClick={() => setOpenAsked(a => ({ ...a, [openContract.id]: true }))}
+                style={{ borderRadius: 10, padding: '17px 8px', fontSize: 17, fontWeight: 900, background: 'rgba(255,255,255,.06)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,.2)', cursor: 'pointer' }}>
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mileAsk && !saving && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2070, background: 'rgba(2,6,23,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
+          <div style={{ ...CARD, background: '#0f1b30', borderColor: 'rgba(251,191,36,.6)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
+            <div style={{ fontSize: 44 }}>🔢</div>
+            <div style={{ fontWeight: 900, fontSize: 21, color: '#fde68a', marginTop: 4 }}>Take a picture of the MILEAGE</div>
+            <div style={{ color: '#cbd5e1', fontSize: 14.5, marginTop: 8, lineHeight: 1.45 }}>
+              {KIND[kind] ? `${KIND[kind].icon} ${KIND[kind].label} — ` : ''}turn the car on and get the odometer in the picture so the miles can be read.
+            </div>
+            <button type="button" onClick={takeMileage}
+              style={{ width: '100%', marginTop: 18, borderRadius: 10, padding: '17px 12px', fontSize: 17, fontWeight: 900, background: 'linear-gradient(180deg,#fbbf24,#d97706)', color: '#422006', border: '1px solid rgba(251,191,36,.7)', cursor: 'pointer' }}>
+              📷 Open camera
+            </button>
+            <button type="button" onClick={() => setMileAsk(false)}
+              style={{ ...SMALL_BTN, width: '100%', marginTop: 10, padding: '12px', fontSize: 14 }}>Later</button>
+          </div>
+        </div>
+      )}
 
       {vehicle && vehicleDamage.length > 0 && !dmgSeen[vehicle.id] && !saving && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 2050, background: 'rgba(2,6,23,.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
@@ -429,9 +523,9 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           <div style={{ ...CARD, background: '#0f1b30', borderColor: 'rgba(74,222,128,.45)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
             <div style={{ fontSize: 40 }}>{added.kind === 'video' ? '🎥' : added.kind === 'image' ? '📷' : '📎'}</div>
             <div style={{ fontWeight: 900, fontSize: 19, color: '#4ade80', marginTop: 6 }}>
-              ✓ {added.n > 1 ? `${added.n} ${added.kind === 'video' ? 'videos' : added.kind === 'image' ? 'pictures' : 'files'}` : added.kind === 'video' ? 'Video' : 'Picture'} added
+              ✓ {added.mileage ? 'Mileage picture' : added.n > 1 ? `${added.n} ${added.kind === 'video' ? 'videos' : added.kind === 'image' ? 'pictures' : 'files'}` : added.kind === 'video' ? 'Video' : 'Picture'} added
             </div>
-            <div style={{ color: '#94a3b8', fontSize: 14, marginTop: 4 }}>{added.total} file{added.total === 1 ? '' : 's'} ready to send. Need another picture or video?</div>
+            <div style={{ color: '#94a3b8', fontSize: 14, marginTop: 4 }}>{added.total} file{added.total === 1 ? '' : 's'} ready to send. {added.mileage ? 'Now take the pictures / videos of the car.' : 'Need another picture or video?'}</div>
             <button type="button" onClick={() => { setAdded(null); camRef.current?.click(); }}
               style={{ width: '100%', marginTop: 18, borderRadius: 10, padding: '16px 12px', fontSize: 17, fontWeight: 900, background: 'linear-gradient(180deg,#60a5fa,#2563eb)', color: '#fff', border: '1px solid rgba(96,165,250,.6)', cursor: 'pointer' }}>
               📷 Take More
