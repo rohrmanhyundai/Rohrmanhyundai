@@ -132,12 +132,14 @@
       "make": "HYUNDAI",
       "model": "KONA SEL PREMIUM AWD",
       "mileage": "1658",
-      "notes": "",
+      "notes": "WINDSHIELD BEING REPLACED TUESDAY",
       "addedAt": "2026-10-16T19:37:41.681Z",
       "addedBy": "SHAWN",
       "unitNo": "TU393247",
       "serviceStart": "2026-07-01",
-      "fleetSyncedAt": "2026-10-22T13:34:18.961Z"
+      "fleetSyncedAt": "2026-10-22T13:34:18.961Z",
+      "notesAt": "2026-10-22T15:32:51.011Z",
+      "notesBy": "HOLLI"
     },
     {
       "id": "li-mvbdeh0v6oy2",
