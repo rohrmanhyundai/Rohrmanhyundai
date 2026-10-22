@@ -67,7 +67,7 @@ export function fluidSheetHtml(v, { year, vin, decoded, by } = {}) {
       <td class="eng${engineMatches(f.engine, disp) ? ' mine' : ''}">${esc(f.engine || 'All')}</td>
       <td class="vol">${esc(f.volume)}</td>
       <td>${esc(f.spec)}</td>
-      <td class="${mono(f.partNumber) ? 'mono' : ''}">${esc(f.partNumber)}</td>
+      <td class="${mono(f.partNumber) ? 'mono' : ''}">${esc(f.partNumber)}${!f.isFilter && f.filter ? `${f.partNumber ? '<br>' : ''}<b class="${mono(f.filter) ? 'mono' : ''}">${esc(f.filter)}</b>` : ''}</td>
     </tr>`).join('');
   const title = `${name}${v.code ? ` ${v.code}` : ''} — Fluid Specs`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>${CSS}</style></head><body>

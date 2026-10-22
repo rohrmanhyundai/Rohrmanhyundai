@@ -4,7 +4,7 @@ import { openaiRequest } from './openai';
 // public/data/fluid-specs.json → { updatedAt, vehicles: [{ id, make, model, code,
 //   yearFrom, yearTo, source: { fileName, uploadedAt, by },
 //   fluids: [{ fluid, engine, volume, spec, partNumber, note, filter }] }] }
-// `filter` (oil filter P/N) is typed by hand on Engine Oil lines — the PDFs don't have it.
+// `filter` is a part # typed by hand on any line (the oil filter on Engine Oil lines) — the PDFs don't have it.
 // Spec sheets come in two shapes: owner's-manual pages with a real text layer
 // (e.g. the Palisade "Maintenance Specs") and HMA fluid-spec articles whose text
 // is drawn as outlines — no text at all (e.g. the Sonata one, several model

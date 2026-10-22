@@ -192,7 +192,10 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                     <td style={{ ...td, color: engineMatches(f.engine, disp) ? '#86efac' : '#94a3b8' }}>{f.engine || 'All'}</td>
                     <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>{f.isFilter ? <span style={{ color: '#475569' }}>—</span> : f.volume}</td>
                     <td style={td}>{f.isFilter ? <span style={{ color: '#475569' }}>—</span> : f.spec}</td>
-                    <td style={{ ...td, fontFamily: /^\d/.test(f.partNumber) ? 'ui-monospace, Menlo, monospace' : 'inherit', fontSize: f.isFilter ? 14 : 12.5, fontWeight: f.isFilter ? 900 : 400, color: f.isFilter ? '#fff' : td.color }}>{f.partNumber}</td>
+                    <td style={{ ...td, fontFamily: /^\d/.test(f.partNumber) ? 'ui-monospace, Menlo, monospace' : 'inherit', fontSize: f.isFilter ? 14 : 12.5, fontWeight: f.isFilter ? 900 : 400, color: f.isFilter ? '#fff' : td.color }}>
+                      {f.partNumber}
+                      {!f.isFilter && f.filter && <div style={{ fontSize: 13.5, fontWeight: 900, color: '#fff', marginTop: f.partNumber ? 3 : 0 }}><span style={{ color: '#fcd34d' }}>🔧 </span>{f.filter}</div>}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -254,7 +257,7 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
         )}
         <div style={{ overflowX: 'auto', marginTop: 12 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto', minWidth: 760 }}>
-            <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={{ ...th, color: '#fcd34d' }} title="Typed by hand — engine oil lines only">🔧 Oil filter P/N</th><th style={th} /></tr></thead>
+            <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={{ ...th, color: '#fcd34d' }} title="Typed by hand — any line (oil filter on Engine Oil lines)">🔧 Filter / extra P/N</th><th style={th} /></tr></thead>
             <tbody>
               {d.fluids.map((f, j) => {
                 const ch = cmp && cmp.changed[j];
@@ -270,12 +273,10 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                     </td>
                   ))}
                   <td style={{ ...td, padding: 4 }}>
-                    {isEngineOil(f)
-                      ? <input value={f.filter || ''} onChange={setRow(j, 'filter')} disabled={busy} placeholder="＋ Type oil filter P/N"
-                          style={{ ...cell, minWidth: 150, fontWeight: 800, ...(f.filter
-                            ? { border: '1px solid rgba(74,222,128,.7)', background: 'rgba(74,222,128,.08)' }
-                            : { border: '1px dashed rgba(251,191,36,.75)', background: 'rgba(251,191,36,.07)' }) }} />
-                      : <span style={{ color: '#475569', fontSize: 12, paddingLeft: 8 }}>—</span>}
+                    <input value={f.filter || ''} onChange={setRow(j, 'filter')} disabled={busy} placeholder={isEngineOil(f) ? '＋ Type oil filter P/N' : '＋ Type part #'}
+                      style={{ ...cell, minWidth: 150, fontWeight: 800, ...(f.filter
+                        ? { border: '1px solid rgba(74,222,128,.7)', background: 'rgba(74,222,128,.08)' }
+                        : { border: '1px dashed rgba(251,191,36,.75)', background: 'rgba(251,191,36,.07)' }) }} />
                   </td>
                   <td style={{ ...td, padding: 4 }}>
                     <button disabled={busy} title="Remove this line" onClick={() => setDraft(d._key, x => ({ ...x, fluids: x.fluids.filter((_, n) => n !== j) }))} style={{ ...btn('248,113,113', false), padding: '4px 8px' }}>✕</button>
