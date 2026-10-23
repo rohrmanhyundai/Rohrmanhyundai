@@ -303,15 +303,20 @@ async function mutateGitHubJson(path, mutate, message) {
 // embedded search text) crossed that, which is why display fell back to a stale
 // Pages copy. Returns null on any failure so callers can fall back.
 async function readGitHubFile(headers, path) {
+  // A read that never answers (worker stall) used to leave pages on
+  // "Loading…" forever — give up after 10s so callers fall back to raw.
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 10000) : null;
   try {
     const res = await fetch(
       `${ghBase(headers)}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
-      { headers: { ...headers, Accept: 'application/vnd.github.raw' }, cache: 'no-store' }
+      { headers: { ...headers, Accept: 'application/vnd.github.raw' }, cache: 'no-store', signal: ctrl ? ctrl.signal : undefined }
     );
     noteRateLimit(res);
     if (!res.ok) return null;
     return JSON.parse(await res.text());
   } catch { return null; }
+  finally { if (timer) clearTimeout(timer); }
 }
 
 // ── Rate-limit awareness ──────────────────────────────────────────────────────
@@ -2304,7 +2309,7 @@ export async function loadGithubFile(path) {
     if (data !== null) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}${path}?v=${Date.now()}`, { cache: 'no-store' });
+    const res = path.startsWith('data/') ? await fetchDataFile(path.slice(5)) : await fetch(`${BASE}${path}?v=${Date.now()}`, { cache: 'no-store' });
     if (res.ok) return await res.json();
   } catch {}
   return null;
