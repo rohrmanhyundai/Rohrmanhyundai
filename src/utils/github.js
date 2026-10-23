@@ -7,6 +7,7 @@ const BASE = import.meta.env.BASE_URL;
 import { rollAdvisorMonths } from './calculations.js';
 import { uploadFileToS3, deleteFileFromS3, deleteS3ObjectByUrl, ensureAwsCreds } from './s3.js';
 import { API_URL, getSession, setSession } from './api.js';
+import { fetchDataFile } from './liveData.js';
 
 // ── Where requests go ─────────────────────────────────────────────────────────
 // Nothing in the browser holds a GitHub token any more. Signed-in requests go
@@ -61,7 +62,7 @@ export async function loadForceRefresh() {
   } catch {}
   // CDN fallback (may lag until next deploy; the API path above is primary).
   try {
-    const res = await fetch(`${BASE}data/force-refresh.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`force-refresh.json`);
     if (res.ok) { const d = await res.json(); if (d && typeof d.ts === 'number') return d; }
   } catch {}
   return null;
@@ -429,7 +430,7 @@ export async function loadAdvisorNotes(advisorName, date) {
   } catch {}
   // Fallback: GitHub Pages (last resort if API fails)
   try {
-    const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/${date}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`advisor-notes/${advisorName}/${date}.json`);
     if (!res.ok) return null;
     return await res.json();
   } catch { return null; }
@@ -461,7 +462,7 @@ export async function loadUsers() {
   } catch {}
   // Fallback: GitHub Pages CDN
   try {
-    const res = await fetch(`${BASE}data/users.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`users.json`);
     if (!res.ok) return null;
     return parseUsersPayload(await res.json());
   } catch { return null; }
@@ -567,7 +568,7 @@ export async function loadDocumentIndex() {
     if (data) return Array.isArray(data) ? data : [];
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/documents/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`documents/index.json`);
     if (!res.ok) return [];
     return await res.json();
   } catch { return []; }
@@ -663,7 +664,7 @@ export async function loadHotRepairs(kind = 'hot-repairs') {
     if (data) return Array.isArray(data) ? data : [];
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/${kind}/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`${kind}/index.json`);
     if (!res.ok) return [];
     return await res.json();
   } catch { return []; }
@@ -865,7 +866,7 @@ export async function loadCompletedReviews(advisorName) {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/service-invitation/completed/${name}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`service-invitation/completed/${name}.json`);
     if (!res.ok) return [];
     return await res.json();
   } catch { return []; }
@@ -889,7 +890,7 @@ export async function loadServiceInvitations() {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/service-invitation/data.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`service-invitation/data.json`);
     if (!res.ok) return [];
     return await res.json();
   } catch { return []; }
@@ -913,7 +914,7 @@ export async function loadAdvisorNoteIndex(advisorName) {
   } catch {}
   // Fallback: GitHub Pages
   try {
-    const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`advisor-notes/${advisorName}/index.json`);
     if (!res.ok) return [];
     const data = await res.json();
     return data.dates || [];
@@ -931,7 +932,7 @@ export async function loadSchedules() {
     if (data) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/schedules.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`schedules.json`);
     if (res.ok) return await res.json();
   } catch {}
   return {};
@@ -1008,7 +1009,7 @@ export async function loadChatMessages() {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/chat/messages.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`chat/messages.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1043,7 +1044,7 @@ export async function loadWarrantyIndex() {
     if (data) return Array.isArray(data) ? data : [];
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/warranty/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`warranty/index.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1055,7 +1056,7 @@ export async function loadWarrantyContract(id) {
     if (data) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/warranty/${id}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`warranty/${id}.json`);
     if (res.ok) return await res.json();
   } catch {}
   return null;
@@ -1100,7 +1101,7 @@ export async function loadWarrantyCompanies() {
     if (data && typeof data === 'object') return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/warranty/companies.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`warranty/companies.json`);
     if (res.ok) return await res.json();
   } catch {}
   return {};
@@ -1160,7 +1161,7 @@ export async function loadTireWarrantyIndex() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/tire-warranty/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`tire-warranty/index.json`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json)) return json;
@@ -1215,7 +1216,7 @@ export async function loadAdditionalTimeIndex() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/additional-time/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`additional-time/index.json`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json)) return json;
@@ -1302,7 +1303,7 @@ export async function loadRegistrationIndex() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/registrations/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`registrations/index.json`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json)) return json;
@@ -1347,7 +1348,7 @@ export async function loadWarrantyMedia() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/warranty/media.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`warranty/media.json`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json)) return json;
@@ -1400,7 +1401,7 @@ export async function loadApplicants(mgr) {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/applicants/${String(mgr).toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`applicants/${String(mgr).toUpperCase()}.json`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json)) return json;
@@ -1449,7 +1450,7 @@ export async function loadHubOrder(user) {
     if (data && typeof data === 'object' && !Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/hub-order/${String(user).toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`hub-order/${String(user).toUpperCase()}.json`);
     if (res.ok) {
       const json = await res.json();
       if (json && typeof json === 'object' && !Array.isArray(json)) return json;
@@ -1483,7 +1484,7 @@ export async function loadTirePromos() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/tire-promos/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`tire-promos/index.json`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json)) return json;
@@ -1531,7 +1532,7 @@ export async function loadTirePromoNote() {
     if (data && typeof data === 'object') return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/tire-promos/note.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`tire-promos/note.json`);
     if (res.ok) {
       const json = await res.json();
       if (json && typeof json === 'object') return json;
@@ -1569,7 +1570,7 @@ export async function loadWipData(techName) {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/wip/${techName.toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`wip/${techName.toUpperCase()}.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1627,7 +1628,7 @@ export async function pollWipData(techName) {
   // Error path (r.data === null): fall back to the static copy so a hiccup or a
   // spent quota doesn't wipe the board out.
   try {
-    const res = await fetch(`${BASE}data/wip/${techName.toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`wip/${techName.toUpperCase()}.json`);
     if (res.ok) return { changed: true, data: await res.json() };
   } catch {}
   return { changed: false };
@@ -1641,7 +1642,7 @@ export async function loadCoaching(techName) {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/coaching/${username}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`coaching/${username}.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1662,7 +1663,7 @@ export async function loadAwaitingData() {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/wip/AWAITING.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`wip/AWAITING.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1684,7 +1685,7 @@ export async function pollAwaitingData() {
   if (!r.changed) return { changed: false };
   if (Array.isArray(r.data)) return { changed: true, data: r.data };
   try {
-    const res = await fetch(`${BASE}data/wip/AWAITING.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`wip/AWAITING.json`);
     if (res.ok) return { changed: true, data: await res.json() };
   } catch {}
   return { changed: false };
@@ -1714,7 +1715,7 @@ export async function loadUserActivity(username) {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/activity/${u}.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`activity/${u}.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1771,7 +1772,7 @@ export async function loadCoachingViews() {
     if (data && typeof data === 'object') return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/coaching-views.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`coaching-views.json`);
     if (res.ok) return await res.json();
   } catch {}
   return {};
@@ -1812,7 +1813,7 @@ export async function loadFormerEmployees() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/former-employees.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`former-employees.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -1932,7 +1933,7 @@ export async function loadRoArchive() {
     if (Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/repair-order-archive.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`repair-order-archive.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -2106,7 +2107,7 @@ export async function loadChargeAccounts() {
     if (data && Array.isArray(data.accounts)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/charge-accounts.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`charge-accounts.json`);
     if (res.ok) return await res.json();
   } catch {}
   return null;
@@ -2128,7 +2129,7 @@ export async function loadTechChatMessages() {
     if (data && Array.isArray(data)) return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/tech-chat/messages.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`tech-chat/messages.json`);
     if (res.ok) return await res.json();
   } catch {}
   return [];
@@ -2367,7 +2368,7 @@ export async function loadTechPay() {
     if (data && typeof data === 'object') return data;
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/tech-pay.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetchDataFile(`tech-pay.json`);
     if (res.ok) {
       const json = await res.json();
       if (json && typeof json === 'object') return json;

@@ -67,6 +67,7 @@ import { recalcTech, recalcAdvisorSummary, roh50Goals } from './utils/calculatio
 import { userDisplayName } from './utils/userDisplay';
 
 import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages, loadGithubFile } from './utils/github';
+import { fetchDataFile } from './utils/liveData';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -358,8 +359,8 @@ export default function App() {
       // Try GitHub API first — instant after a save, no GitHub Pages rebuild wait
       let payload = await loadDashboardData();
       if (!payload) {
-        // Fallback: GitHub Pages CDN (no auth token or API unavailable)
-        const res = await fetch(`${BASE}data/data.json?v=${Date.now()}`, { cache: 'no-store' });
+        // Fallback: raw main, then the site copy (no auth token or API unavailable)
+        const res = await fetchDataFile(`data.json`);
         if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
         payload = await res.json();
       }

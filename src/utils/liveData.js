@@ -46,3 +46,17 @@ export async function fetchLiveJson(path, { fresh = false } = {}) {
   }
   return null;
 }
+
+// Fallback read for signed-in pages when the GitHub API read fails (shared
+// token rate-limited, worker hiccup). Returns a fetch Response like before,
+// but tries raw "main" first — the site's own /data/ copy can be days old, and
+// falling straight to it is what left dashboards stuck on yesterday's numbers
+// while the TV (which reads raw) was right.
+export async function fetchDataFile(path) {
+  const bust = `v=${Date.now()}`;
+  try {
+    const res = await fetch(`${RAW}${path}?${bust}`, { cache: 'no-store' });
+    if (res.ok || res.status === 404) return res;
+  } catch { /* fall through to the site copy */ }
+  return fetch(`${BASE}data/${path}?${bust}`, { cache: 'no-store' });
+}
