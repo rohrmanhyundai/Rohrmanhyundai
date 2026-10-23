@@ -76,21 +76,5 @@
     "partsArrivedDate": "10/21/2026",
     "highPriority": true,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mvk34z4twxrp",
-    "ro": "781780",
-    "roDate": "2026-10-22",
-    "vehicle": "2022 Hyundai Accent",
-    "jobDesc": "CUSTOMER STATES ENGINE OVERHEATING.(HAPPENS AT IDLE AND WHILE DRIVING) CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
