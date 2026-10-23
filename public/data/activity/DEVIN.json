@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-23T15:28:53.584Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-10-23T15:22:32.119Z",
     "type": "page",
     "label": "parts-hub"
