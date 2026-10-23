@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-23T13:59:27.559Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-10-23T12:30:48.704Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1006,45 +1011,5 @@
     "at": "2026-09-23T14:01:31.199Z",
     "type": "page",
     "label": "deferred-service"
-  },
-  {
-    "at": "2026-09-23T13:52:29.337Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-23T13:52:23.799Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-09-23T13:14:52.530Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-23T13:14:28.423Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-09-23T13:13:51.375Z",
-    "type": "page",
-    "label": "big-money-lof"
-  },
-  {
-    "at": "2026-09-23T13:13:51.364Z",
-    "type": "page",
-    "label": "big-money-lof"
-  },
-  {
-    "at": "2026-09-23T13:13:40.085Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-23T13:13:38.085Z",
-    "type": "page",
-    "label": "dashboard"
   }
 ]
