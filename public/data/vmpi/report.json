@@ -1,8 +1,8 @@
 {
-  "savedAt": "2026-10-22T11:14:30.499Z",
+  "savedAt": "2026-10-23T12:10:45.445Z",
   "by": "Shawn",
-  "fileName": "Screenshot 2026-10-22 at 7.13.47 AM.png",
-  "stamp": "10/22/2026 (screenshot)",
+  "fileName": "Screenshot 2026-10-23 at 8.10.00 AM.png",
+  "stamp": "10/23/2026 (screenshot)",
   "store": "LAF Hyundai",
   "techs": [
     {
@@ -15,50 +15,43 @@
     {
       "name": "CARTER JEAN",
       "first": "CARTER",
-      "pct": 0.617,
-      "ros": 60,
-      "withVideo": 37
+      "pct": 0.657,
+      "ros": 67,
+      "withVideo": 44
     },
     {
       "name": "GAVEN LAUGHNER",
       "first": "GAVEN",
-      "pct": 0.759,
-      "ros": 58,
-      "withVideo": 44
+      "pct": 0.781,
+      "ros": 64,
+      "withVideo": 50
     },
     {
       "name": "KADEN WILSON",
       "first": "KADEN",
-      "pct": 0.797,
-      "ros": 64,
-      "withVideo": 51
-    },
-    {
-      "name": "CORY SWINDLE",
-      "first": "CORY",
-      "pct": 0.818,
-      "ros": 33,
-      "withVideo": 27
+      "pct": 0.789,
+      "ros": 71,
+      "withVideo": 56
     },
     {
       "name": "CHRIS FOLEY",
       "first": "CHRIS",
-      "pct": 0.836,
-      "ros": 73,
-      "withVideo": 61
+      "pct": 0.85,
+      "ros": 80,
+      "withVideo": 68
     },
     {
-      "name": "BRYSON HUTSELL",
+      "name": "BRYSON HUTSEL",
       "first": "BRYSON",
-      "pct": 0.838,
-      "ros": 74,
-      "withVideo": 62
+      "pct": 0.852,
+      "ros": 81,
+      "withVideo": 69
     },
     {
       "name": "TRENTON MCQUINN",
       "first": "TRENTON",
-      "pct": 0.913,
-      "ros": 46,
+      "pct": 0.933,
+      "ros": 45,
       "withVideo": 42
     }
   ]
