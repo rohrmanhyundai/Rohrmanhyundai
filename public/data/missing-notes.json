@@ -1,33 +1,37 @@
 {
-  "updatedAt": "2026-10-22T22:01:05.229Z",
+  "updatedAt": "2026-10-23T20:48:39.301Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "781780",
-        "vehicle": "2022 Hyundai Accent"
+        "ro": "781807",
+        "vehicle": "2025 Hyundai Santa Cruz"
       },
       {
-        "ro": "781778",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "781771",
-        "vehicle": "2017 Hyundai Tucson"
-      },
-      {
-        "ro": "781766",
-        "vehicle": "2024 Hyundai IONIQ 5"
+        "ro": "781806",
+        "vehicle": "2027 Hyundai IONIQ 5"
       },
       {
         "ro": "781750",
         "vehicle": "2027 Hyundai IONIQ 5"
       }
     ],
-    "MATTHEW": [
+    "JORDAN": [
       {
-        "ro": "781731",
-        "vehicle": "2025 Hyundai Kona"
+        "ro": "781804",
+        "vehicle": "2020 Hyundai Sonata"
+      },
+      {
+        "ro": "781800",
+        "vehicle": "2010 Ford Mustang"
+      },
+      {
+        "ro": "781798",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
       }
     ],
     "CORY": [
@@ -38,12 +42,6 @@
       {
         "ro": "781625",
         "vehicle": "2014 Toyota Corolla"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
       }
     ]
   }
