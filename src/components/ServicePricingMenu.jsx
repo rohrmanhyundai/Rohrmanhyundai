@@ -1135,7 +1135,22 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
           </div>
           <div style={{ flex: 1 }} />
           {/* Sunbit financing — click copies the pay-over-time page link to send a customer */}
-          <button onClick={copySunbit} title="Copy the Sunbit pay-over-time link" style={{ position: 'relative', display: 'flex', alignItems: 'center', background: '#fff', border: '1px solid rgba(255,255,255,.6)', borderRadius: 10, padding: '4px 10px', cursor: 'pointer' }}>
+          <style>{`
+            @keyframes sbNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+            @keyframes sbShine { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+            @keyframes sbGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(251,146,60,.0); } 50% { box-shadow: 0 0 16px 4px rgba(251,146,60,.75); } }
+            .sb-cta { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+            .sb-cta-text { font-size: 12.5px; font-weight: 900; letter-spacing: .02em; white-space: nowrap; background: linear-gradient(90deg, #fb923c, #fde047, #a78bfa, #60a5fa, #fb923c); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sbShine 2.4s linear infinite; }
+            .sb-cta-arrow { font-size: 22px; line-height: 1; color: #fb923c; filter: drop-shadow(0 0 6px rgba(251,146,60,.8)); animation: sbNudge .9s ease-in-out infinite; }
+            .sb-logo-btn { animation: sbGlow 1.8s ease-in-out infinite; }
+            @media (max-width: 640px) { .sb-cta-text { display: none; } }
+            @media (prefers-reduced-motion: reduce) { .sb-cta-text, .sb-cta-arrow, .sb-logo-btn { animation: none; } }
+          `}</style>
+          <div className="sb-cta" onClick={copySunbit}>
+            <span className="sb-cta-text">Click here to copy Sunbit store link</span>
+            <span className="sb-cta-arrow">➜</span>
+          </div>
+          <button className="sb-logo-btn" onClick={copySunbit} title="Copy the Sunbit pay-over-time link" style={{ position: 'relative', display: 'flex', alignItems: 'center', background: '#fff', border: '1px solid rgba(255,255,255,.6)', borderRadius: 10, padding: '4px 10px', cursor: 'pointer' }}>
             <img src={`${import.meta.env.BASE_URL}sunbit-logo.png`} alt="Sunbit" style={{ height: 28, display: 'block' }} />
             {sunbitCopied && <span style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translate(-50%, 6px)', whiteSpace: 'nowrap', background: '#16a34a', color: '#fff', fontSize: 11, fontWeight: 800, padding: '3px 8px', borderRadius: 6, zIndex: 1 }}>✓ Link copied</span>}
           </button>
