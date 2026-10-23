@@ -302,6 +302,35 @@
           "size": 3605397
         }
       ]
+    },
+    {
+      "id": "mvl4ueeghm9i",
+      "vehicleId": "li-mvbdo36foh48",
+      "stockNo": "LHY2609",
+      "vin": "5NTJBDDE4TH164629",
+      "kind": "out",
+      "customerFirst": "SHAWN",
+      "customerLast": "LAUGHNER",
+      "customerName": "SHAWN LAUGHNER",
+      "at": "2026-10-23T15:36:31.534Z",
+      "by": "HOLLI",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE4TH164629/mvl4ueeghm9i/mvl4sqrws9w0.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2037542,
+          "mileage": true
+        },
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE4TH164629/mvl4ueeghm9i/mvl4tgauqp5b.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 3993144
+        }
+      ]
     }
   ]
 }
