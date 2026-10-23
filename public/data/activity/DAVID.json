@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-23T18:56:27.203Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-10-23T14:15:57.370Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -991,29 +996,5 @@
     "at": "2026-09-23T20:21:59.094Z",
     "type": "page",
     "label": "tire-quote"
-  },
-  {
-    "at": "2026-09-23T17:27:20.837Z",
-    "type": "action",
-    "label": "deferred-contacted",
-    "details": "779922"
-  },
-  {
-    "at": "2026-09-23T15:14:57.613Z",
-    "type": "action",
-    "label": "deferred-contacted",
-    "details": "779685"
-  },
-  {
-    "at": "2026-09-23T15:11:19.958Z",
-    "type": "action",
-    "label": "deferred-contacted",
-    "details": "779907"
-  },
-  {
-    "at": "2026-09-23T15:00:16.117Z",
-    "type": "action",
-    "label": "deferred-contacted",
-    "details": "779904"
   }
 ]
