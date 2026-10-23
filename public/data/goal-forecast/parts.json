@@ -243,19 +243,20 @@
       "2026-10-19": 2817.53,
       "2026-10-18": 0,
       "2026-10-20": 4627.33,
-      "2026-10-21": 1266.27
+      "2026-10-21": 1266.27,
+      "2026-10-22": 4494
     },
     "partsBreakdown": {
       "mtd": {
-        "cpParts": 16022,
+        "cpParts": 16586,
         "cpTire": 0,
-        "warrantyParts": 33822,
-        "internalParts": 15357,
+        "warrantyParts": 36419,
+        "internalParts": 10342,
         "internalTire": 0,
-        "oilParts": 5200,
+        "oilParts": 5620,
         "oilRetail": 1450,
-        "wholesale": 31433,
-        "total": 73557
+        "wholesale": 35878,
+        "total": 78051
       },
       "ly": {
         "cpParts": 19147,
@@ -263,9 +264,9 @@
         "warrantyParts": 45554,
         "internalParts": 11582,
         "internalTire": 0,
-        "oilParts": 7721,
+        "oilParts": 8643,
         "oilRetail": 2907,
-        "wholesale": 46673,
+        "wholesale": 76996,
         "total": 106102
       }
     }
