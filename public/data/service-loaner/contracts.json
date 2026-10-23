@@ -329,7 +329,13 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvldy0pl-1ru0d3fo.pdf",
       "completedFileName": "benham invoice.pdf",
       "completedAt": "2026-10-23T19:51:15.035Z",
-      "completedBy": "HOLLI"
+      "completedBy": "HOLLI",
+      "warranty": {
+        "amount": 180,
+        "at": "2026-10-23T19:51:16.959Z",
+        "by": "HOLLI",
+        "fromContract": true
+      }
     },
     {
       "id": "sl-mvfsctw0emsa",
