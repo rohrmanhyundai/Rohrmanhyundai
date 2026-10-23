@@ -29,5 +29,26 @@
       "reportedBy": "SHAWN"
     }
   ],
-  "pending": []
+  "pending": [
+    {
+      "id": "mvl4u6sn4n9w",
+      "note": "Windshield",
+      "by": "HOLLI",
+      "at": "2026-10-23T15:36:20.655Z",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-damage/LHY2609/mvl4u6sn4n9w/mvl4u4a46d2h.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 3829014
+        }
+      ],
+      "vehicleId": "li-mvbdo36foh48",
+      "vin": "5NTJBDDE4TH164629",
+      "stockNo": "LHY2609",
+      "kind": "out",
+      "customer": "SHAWN LAUGHNER"
+    }
+  ]
 }
