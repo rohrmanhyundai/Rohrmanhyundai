@@ -123,11 +123,15 @@
       ],
       "description": "",
       "photos": [],
-      "status": "open",
+      "status": "done",
       "requestedAt": "2026-10-19T20:43:01.176Z",
       "requestedBy": "SHAWN",
       "editedAt": "2026-10-21T15:54:47.797Z",
-      "editedBy": "HOLLI"
+      "editedBy": "HOLLI",
+      "doneAt": "2026-10-23T13:18:52.095Z",
+      "doneBy": "HOLLI",
+      "doneNote": "",
+      "doneMileage": "4665"
     },
     {
       "id": "lm-mvfq1ilf19pi",
