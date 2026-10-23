@@ -13,5 +13,20 @@
     "partsArrived": true,
     "partsArrivedDate": "10/23/2026",
     "isNew": false
+  },
+  {
+    "id": "mvlfzsqzj66n",
+    "ro": "781806",
+    "roDate": "2026-10-23",
+    "vehicle": "2027 Hyundai IONIQ 5",
+    "jobDesc": "CUSTOMER STATES- driver front bumper sensor fallen into bumper. Farthest to driver side over wheel",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
