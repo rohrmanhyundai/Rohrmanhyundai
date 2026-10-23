@@ -1049,7 +1049,14 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 // the Package Builder — pick services, apply a coupon (with an optional cap) —
 // but nothing is saved or posted; it just prices a job on the spot. Services the
 // manager flagged "No coupon" on the pricing menu arrive locked out of the coupon.
+const SUNBIT_URL = 'https://www.rohrmanhyundai.com/service-now-pay-over-time.html';
+
 function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose, zIndex = 1000, advisorName = '' }) {
+  const [sunbitCopied, setSunbitCopied] = useState(false);
+  const copySunbit = () => {
+    const done = () => { setSunbitCopied(true); setTimeout(() => setSunbitCopied(false), 1800); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(SUNBIT_URL).then(done).catch(() => {});
+  };
   // The coupon cap is manager-locked: it always starts from the saved menu value.
   const [draft, setDraft] = useState(() => ({ items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', taxRate: '7', taxBase: 'parts' }));
   const [search, setSearch] = useState('');
@@ -1127,6 +1134,11 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
             <div style={{ fontSize: 11.5, color: '#94a3b8' }}>Price a job & apply a coupon — quotes aren't saved</div>
           </div>
           <div style={{ flex: 1 }} />
+          {/* Sunbit financing — click copies the pay-over-time page link to send a customer */}
+          <button onClick={copySunbit} title="Copy the Sunbit pay-over-time link" style={{ position: 'relative', display: 'flex', alignItems: 'center', background: '#fff', border: '1px solid rgba(255,255,255,.6)', borderRadius: 10, padding: '4px 10px', cursor: 'pointer' }}>
+            <img src={`${import.meta.env.BASE_URL}sunbit-logo.png`} alt="Sunbit" style={{ height: 28, display: 'block' }} />
+            {sunbitCopied && <span style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translate(-50%, 6px)', whiteSpace: 'nowrap', background: '#16a34a', color: '#fff', fontSize: 11, fontWeight: 800, padding: '3px 8px', borderRadius: 6, zIndex: 1 }}>✓ Link copied</span>}
+          </button>
           <button onClick={onClose} style={{ ...iconBtn(false), width: 34 }}>✕</button>
         </div>
 
