@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-23T13:22:01.429Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-23T13:21:57.608Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-10-23T13:21:52.673Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-10-21T21:26:55.122Z",
     "type": "page",
     "label": "advisor-calendar"
