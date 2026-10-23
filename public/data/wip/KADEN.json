@@ -38,5 +38,21 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "mvlfzrn3x9dw",
+    "ro": "781798",
+    "roDate": "2026-10-23",
+    "vehicle": "2018 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES- P420 codes",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
