@@ -25,22 +25,6 @@
     "partsArrivedDate": ""
   },
   {
-    "id": "mvk350g64faz",
-    "ro": "781771",
-    "roDate": "2026-10-22",
-    "vehicle": "2017 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES- flashing CEL",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mvl31wry1cz",
     "ro": "781781",
     "roDate": "2026-10-22",
