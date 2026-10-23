@@ -22,8 +22,8 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "MATTHEW CLARK",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "10/23/2026",
     "isNew": false
   },
   {
