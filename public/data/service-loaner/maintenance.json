@@ -39,11 +39,15 @@
       ],
       "description": "",
       "photos": [],
-      "status": "open",
+      "status": "done",
       "requestedAt": "2026-10-19T20:41:27.318Z",
       "requestedBy": "SHAWN",
       "editedAt": "2026-10-21T17:29:17.818Z",
-      "editedBy": "SHAWN"
+      "editedBy": "SHAWN",
+      "doneAt": "2026-10-23T13:18:30.175Z",
+      "doneBy": "HOLLI",
+      "doneNote": "",
+      "doneMileage": "4956"
     },
     {
       "id": "lm-mvfpzytftjx4",
