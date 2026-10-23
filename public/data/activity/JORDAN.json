@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-23T14:02:21.549Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-10-23T14:02:20.750Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-10-23T11:58:55.427Z",
     "type": "page",
     "label": "dashboard"
@@ -1091,26 +1101,6 @@
   },
   {
     "at": "2026-09-23T18:48:11.350Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-23T13:43:51.768Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-09-23T13:43:50.140Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-09-23T13:43:50.132Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-09-23T13:43:48.615Z",
     "type": "page",
     "label": "advisor-calendar"
   }
