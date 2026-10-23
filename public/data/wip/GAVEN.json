@@ -10,8 +10,8 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": ""
+    "partsArrived": true,
+    "partsArrivedDate": "10/23/2026"
   },
   {
     "id": "mumz965rg8m1",
