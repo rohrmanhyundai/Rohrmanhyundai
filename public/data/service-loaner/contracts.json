@@ -72,7 +72,10 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvl69hek-rk6ap84o.pdf",
       "completedFileName": "ODELL INVOICE.pdf",
       "completedAt": "2026-10-23T16:16:12.751Z",
-      "completedBy": "HOLLI"
+      "completedBy": "HOLLI",
+      "warranty": null,
+      "editedAt": "2026-10-23T16:16:23.795Z",
+      "editedBy": "HOLLI"
     },
     {
       "id": "sl-mvjxt9x36gcs",
