@@ -325,7 +325,11 @@
       "dueTime": "08:13",
       "reportSyncedAt": "2026-10-20T20:16:55.138Z",
       "editedAt": "2026-10-20T20:16:55.138Z",
-      "editedBy": "SHAWN"
+      "editedBy": "SHAWN",
+      "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvldy0pl-1ru0d3fo.pdf",
+      "completedFileName": "benham invoice.pdf",
+      "completedAt": "2026-10-23T19:51:15.035Z",
+      "completedBy": "HOLLI"
     },
     {
       "id": "sl-mvfsctw0emsa",
