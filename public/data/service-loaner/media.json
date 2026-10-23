@@ -273,6 +273,35 @@
           "size": 3712227
         }
       ]
+    },
+    {
+      "id": "mvl3h636yv9i",
+      "vehicleId": "li-mvbdgt6hpbez",
+      "stockNo": "LHY2583",
+      "vin": "KMHL64JA8TA540913",
+      "kind": "out",
+      "customerFirst": "CHRISTOPHER",
+      "customerLast": "ODELL",
+      "customerName": "CHRISTOPHER ODELL",
+      "at": "2026-10-23T14:58:25.819Z",
+      "by": "HOLLI",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/KMHL64JA8TA540913/mvl3h636yv9i/mvl3f6jffg3i.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2748576,
+          "mileage": true
+        },
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/KMHL64JA8TA540913/mvl3h636yv9i/mvl3gdnddixh.mov",
+          "name": "81446023141__9EE87D2F-0F26-471F-A7AB-428D030EF1C3.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 3605397
+        }
+      ]
     }
   ]
 }
