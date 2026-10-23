@@ -1,6 +1,33 @@
 {
   "contracts": [
     {
+      "id": "sl-mvl9u97i741l",
+      "raNo": "A1339",
+      "firstName": "Jordan",
+      "lastName": "Troxel",
+      "ro": "",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHL64JA2TA540230",
+      "unitNo": "TA540230",
+      "plate": "",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "SONATA SEL SPORT FWD",
+      "mileageOut": "5713",
+      "dateOut": "2026-10-22",
+      "timeOut": "16:22",
+      "dueDate": "2026-10-23",
+      "dueTime": "16:22",
+      "phone": "",
+      "notes": "",
+      "fileUrl": "",
+      "fileName": "",
+      "uploadedAt": "2026-10-23T17:56:20.382Z",
+      "by": "SHAWN",
+      "fromReport": true,
+      "reportSyncedAt": "2026-10-23T17:56:20.382Z"
+    },
+    {
       "id": "sl-mvl4uhyaaek7",
       "firstName": "SHAWN",
       "lastName": "LAUGHNER",
@@ -11,7 +38,7 @@
       "make": "HYUNDAI",
       "model": "SANTA CRUZ SEL AWD",
       "unitNo": "TH164629",
-      "dateOut": "2023-10-23",
+      "dateOut": "2026-10-23",
       "timeOut": "11:39",
       "mileageOutUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE4TH164629/mvl4ueeghm9i/mvl4sqrws9w0.jpg",
       "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvl56iea-0vojdfs8.pdf",
@@ -28,10 +55,13 @@
       "raNo": "A1341",
       "advisor": "JORDAN TROXEL",
       "mileageOut": "4961",
-      "dueDate": "2023-10-27",
+      "dueDate": "2026-10-27",
       "dueTime": "11:39",
       "plate": "227M30",
-      "phone": "7654047675"
+      "phone": "7654047675",
+      "reportSyncedAt": "2026-10-23T17:56:20.382Z",
+      "editedAt": "2026-10-23T17:56:20.382Z",
+      "editedBy": "SHAWN"
     },
     {
       "id": "sl-mvl3hicarsep",
@@ -85,7 +115,7 @@
       "vin": "KMHL64JA8TA540488",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT AWD BLACK",
+      "model": "SONATA SEL SPORT AWD",
       "dateOut": "2026-10-22",
       "timeOut": "15:24",
       "raNo": "A1338",
@@ -104,8 +134,9 @@
       "uploadedAt": "2026-10-22T19:31:53.079Z",
       "by": "HOLLI",
       "warranty": null,
-      "editedAt": "2026-10-22T19:34:15.968Z",
-      "editedBy": "HOLLI"
+      "editedAt": "2026-10-23T17:56:20.382Z",
+      "editedBy": "SHAWN",
+      "reportSyncedAt": "2026-10-23T17:56:20.382Z"
     },
     {
       "id": "sl-mvjww3zczs6z",
@@ -118,7 +149,7 @@
       "make": "HYUNDAI",
       "model": "SANTA CRUZ SEL AWD",
       "unitNo": "TH166861",
-      "dateOut": "2022-10-22",
+      "dateOut": "2026-10-22",
       "timeOut": "15:03",
       "mileageOutUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE7TH166861/mvjww04yia2r/mvjwv15zkb84.jpg",
       "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvjx4d65-kyuzrm3j.pdf",
@@ -135,13 +166,14 @@
       "raNo": "A1337",
       "advisor": "DAVID RILEY",
       "mileageOut": "157",
-      "dueDate": "2023-10-23",
+      "dueDate": "2026-10-23",
       "dueTime": "15:03",
       "plate": "227M32",
       "phone": "5748706683",
       "warranty": null,
-      "editedAt": "2026-10-22T19:12:59.217Z",
-      "editedBy": "HOLLI"
+      "editedAt": "2026-10-23T17:56:20.382Z",
+      "editedBy": "SHAWN",
+      "reportSyncedAt": "2026-10-23T17:56:20.382Z"
     },
     {
       "id": "sl-mviieoie4phm",
