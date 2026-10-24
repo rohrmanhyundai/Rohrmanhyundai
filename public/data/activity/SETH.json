@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-24T12:34:30.943Z",
+    "type": "page",
+    "label": "parts-hub"
+  },
+  {
+    "at": "2026-10-24T12:34:28.079Z",
+    "type": "page",
+    "label": "charge-account-list"
+  },
+  {
+    "at": "2026-10-24T12:34:20.502Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-10-24T11:21:55.741Z",
     "type": "action",
     "label": "parts-received-chat",
